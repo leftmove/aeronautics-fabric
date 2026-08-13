@@ -1,0 +1,110 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.fabricmc.fabric-loom-remap'
+}
+
+repositories {
+    maven {
+        name = 'NeoForge'
+        url = 'https://maven.neoforged.net/releases'
+    }
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org/'
+    }
+}
+
+def generatedResources = project.parent.project('common').file('src/generated/resources')
+def commonResourcesDir = project.parent.project('common').file('src/main/resources')
+
+sourceSets.main.resources {
+    srcDir commonResourcesDir
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    include(modApi("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}"))
+
+    compileOnly("net.neoforged:neoforge:${neoforge_version}:universal") { transitive = false }
+    compileOnly("net.neoforged:mergetool:2.0.3:api")
+    compileOnly("net.neoforged:bus:8.0.5")
+    compileOnly("com.google.code.findbugs:jsr305:3.0.2")
+    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    compileOnly("com.tterrag.registrate:Registrate:${registrate_version}")
+    compileOnly("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}") { transitive = false }
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+    compileOnly("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
+        transitive = false
+    }
+    compileOnly("maven.modrinth:natures-compass:$minecraft_version-$natures_compass_version-neoforge")
+    compileOnly("maven.modrinth:explorers-compass:$minecraft_version-$explorers_compass_version-neoforge")
+
+    modImplementation("net.createmod.ponder:ponder-fabric:${ponder_version}+mc${minecraft_version}")
+    modImplementation("dev.engine-room.flywheel:flywheel-fabric-${minecraft_version}:${flywheel_version}")
+
+    modImplementation("foundry.veil:veil-fabric-${minecraft_version}:${veil_version}") {
+        exclude group: "maven.modrinth"
+    }
+
+    modApi("dev.ryanhcode.sable:sable-fabric-${minecraft_version}:${sable_version}") {
+        exclude group: "foundry.veil"
+        exclude group: "com.tterrag.registrate"
+    }
+
+    compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}")
+    modCompileOnly("dev.ryanhcode.sable-companion:sable-companion-fabric-${minecraft_version}:${sable_companion_version}")
+
+    include(modImplementation("teamreborn:energy:${team_reborn_energy_version}") {
+        transitive = false
+    })
+
+    modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    modCompileOnly("com.terraformersmc:modmenu:${modmenu_version}")
+
+    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-common-api:$computercraft_tweaked_version")
+    modCompileOnly("cc.tweaked:cc-tweaked-$minecraft_version-fabric-api:$computercraft_tweaked_version")
+
+    compileOnly("maven.modrinth:iris:${iris_fabric_version}")
+    compileOnly("maven.modrinth:sodium:${sodium_fabric_version}")
+}
+
+loom {
+    def aw = project.parent.project('common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+
+    runs {
+        client {
+            client()
+            setConfigName("${mod_name} Fabric Client")
+            ideConfigGenerated(true)
+            runDir("runs/client")
+        }
+        server {
+            server()
+            setConfigName("${mod_name} Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/server")
+        }
+    }
+}
+
+if (generatedResources.exists()) {
+    sourceSets.main.resources {
+        srcDir generatedResources.absolutePath
+    }
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude 'META-INF/accesstransformer.cfg'
+}

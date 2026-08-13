@@ -12,11 +12,18 @@ import java.util.Set;
 public class AeroMixinPlugin implements IMixinConfigPlugin {
     private boolean sodiumPresent;
     private boolean irisPresent;
+    private boolean neoforgePresent;
 
     @Override
     public void onLoad(final String mixinPackage) {
         this.sodiumPresent = SodiumCompat.isLoaded();
         this.irisPresent = IrisCompat.isLoaded();
+        try {
+            Class.forName("net.neoforged.neoforge.client.ChunkRenderTypeSet");
+            this.neoforgePresent = true;
+        } catch (final ClassNotFoundException ignored) {
+            this.neoforgePresent = false;
+        }
     }
 
     @Override
@@ -26,6 +33,10 @@ public class AeroMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(final String targetClassName, final String mixinClassName) {
+        if (mixinClassName.endsWith("ChunkRenderTypeSetAccessor")) {
+            return this.neoforgePresent;
+        }
+
         if (mixinClassName.startsWith("dev.eriksonn.aeronautics.mixin.render.vanilla")) {
             return !this.sodiumPresent;
         }

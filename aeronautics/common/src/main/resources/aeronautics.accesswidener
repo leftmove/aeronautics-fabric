@@ -1,3 +1,5 @@
+classTweaker v1 named
+
 # Particles
 accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration
 

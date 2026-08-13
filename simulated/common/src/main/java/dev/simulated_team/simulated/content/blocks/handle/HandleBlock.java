@@ -30,7 +30,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
@@ -163,7 +162,7 @@ public class HandleBlock extends AbstractDirectionalAxisBlock implements IBE<Han
 
 
     public enum Variant implements StringRepresentable {
-        IRON(Ingredient.of(Tags.Items.NUGGETS_IRON)),
+        IRON(Ingredient.of(AllTags.commonItemTag("nuggets/iron"))),
         COPPER(Ingredient.of(AllTags.commonItemTag("nuggets/copper"))),
         DYED(null);
 

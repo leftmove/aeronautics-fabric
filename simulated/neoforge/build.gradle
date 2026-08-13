@@ -1,5 +1,6 @@
 plugins {
     id 'multiloader-loader'
+    id 'multiloader-neoforge'
     id 'net.neoforged.moddev'
 }
 

@@ -2,6 +2,7 @@ package dev.simulated_team.simulated.index;
 
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import com.tterrag.registrate.builders.ItemBuilder;
@@ -24,7 +25,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
-import net.neoforged.neoforge.common.Tags;
 
 public class SimItems {
     public static final SimulatedRegistrate REGISTRATE = Simulated.getRegistrate();
@@ -59,9 +59,9 @@ public class SimItems {
                     .pattern(" S ")
                     .pattern("NSN")
                     .pattern(" S ")
-                    .define('S', Tags.Items.STRINGS)
-                    .define('N', Tags.Items.NUGGETS_IRON)
-                    .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(Tags.Items.STRINGS))
+                    .define('S', AllTags.commonItemTag("strings"))
+                    .define('N', AllTags.commonItemTag("nuggets/iron"))
+                    .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.commonItemTag("strings")))
                     .save(prov))
             .register();
 
@@ -98,7 +98,7 @@ public class SimItems {
             REGISTRATE.item("plunger_launcher", PlungerLauncherItem::new)
                     .properties(p -> p.stacksTo(1).durability(200))
                     .model(AssetLookup.itemModelWithPartials())
-                    .tag(Tags.Items.ENCHANTABLES, ItemTags.DURABILITY_ENCHANTABLE)
+                    .tag(AllTags.commonItemTag("enchantable"), ItemTags.DURABILITY_ENCHANTABLE)
                     .register();
 
     private static ItemEntry<Item> ingredient(final String name) {

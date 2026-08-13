@@ -2,6 +2,7 @@ package dev.eriksonn.aeronautics.index;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.DyedBlockList;
@@ -59,8 +60,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.common.Tags;
 
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
@@ -201,8 +200,8 @@ public class AeroBlocks {
                             .define('S', CommonMetal.IRON.plates)
                             .define('A', AllItems.ANDESITE_ALLOY)
                             .define('C', AeroTags.ItemTags.BURNER_FIRE)
-                            .define('R', Tags.Items.DUSTS_REDSTONE)
-                            .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(Tags.Items.DUSTS_REDSTONE))
+                            .define('R', AllTags.commonItemTag("dusts/redstone"))
+                            .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.commonItemTag("dusts/redstone")))
                             .save(p))
                     .register();
 
@@ -274,13 +273,7 @@ public class AeroBlocks {
                     .initialProperties(SharedProperties::softMetal)
                     .transform(axeOrPickaxe())
                     .transform(AeroStress.setImpact(4.0))
-                    .blockstate((ctx, prov) -> {
-                        prov.getVariantBuilder(ctx.getEntry()).forAllStates((state) ->
-                                ConfiguredModel.builder().modelFile(AssetLookup.partialBaseModel(ctx, prov))
-                                        .rotationY(state.getValue(BlockStateProperties.HORIZONTAL_AXIS) == Direction.Axis.X ? 90 : 0)
-                                        .rotationX(state.getValue(SmartPropellerBlock.CEILING) ? 180 : 0)
-                                        .build());
-                    })
+                    .blockstate(AeroBlockStateGen::smartPropellerBlockstate)
                     .item()
                     .transform(customItemModel())
                     .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC, c.get(), 2)

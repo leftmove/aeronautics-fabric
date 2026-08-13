@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "dev.eriksonn.aeronautics.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "BlockRenderDispatcherMixin"
+  ],
+  "mixins": [
+    "LavaFluidMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

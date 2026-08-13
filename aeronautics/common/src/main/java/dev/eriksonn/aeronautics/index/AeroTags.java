@@ -14,7 +14,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.Tags;
 
 import static net.minecraft.tags.BlockTags.DAMPENS_VIBRATIONS;
 
@@ -56,7 +55,7 @@ public class AeroTags {
 					.add(Blocks.CAMPFIRE, Blocks.MAGMA_BLOCK, Blocks.TORCH, Blocks.WALL_TORCH, AllBlocks.LIT_BLAZE_BURNER.get(), Blocks.FIRE);
 			prov.tag(LEVITITE_ADJACENT_CATALYZER)
 					.add(Blocks.NETHERRACK)
-					.addTag(Tags.Blocks.STORAGE_BLOCKS_COAL);
+					.addTag(AllTags.commonBlockTag("storage_blocks/coal"));
 
 			prov.tag(LEVITITE_SOUL_CATALYZER)
 					.add(Blocks.SOUL_CAMPFIRE, Blocks.SOUL_TORCH, Blocks.SOUL_WALL_TORCH, Blocks.SOUL_FIRE);

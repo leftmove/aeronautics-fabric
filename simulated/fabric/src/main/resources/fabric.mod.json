@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "license": "${license}",
+  "icon": "${mod_id}.png",
+  "environment": "*",
+  "accessWidener": "simulated.accesswidener",
+  "entrypoints": {
+    "main": [
+      "dev.simulated_team.simulated.fabric.SimulatedFabric"
+    ],
+    "client": [
+      "dev.simulated_team.simulated.fabric.SimulatedFabricClient"
+    ],
+    "modmenu": [
+      "dev.simulated_team.simulated.fabric.SimulatedModMenu"
+    ],
+    "jei_mod_plugin": [
+      "dev.simulated_team.simulated.fabric.compat.jei.SimulatedFabricJEI"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}-fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}",
+    "sable": "*",
+    "create": ">=${create_mod_version}",
+    "flywheel": ">=${flywheel_mod_version}",
+    "veil": ">=${veil_version}"
+  }
+}

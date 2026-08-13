@@ -1,6 +1,7 @@
 plugins {
     // https://projects.neoforged.net/neoforged/moddevgradle
     id 'net.neoforged.moddev' version '2.0.140' apply false
+    id 'net.fabricmc.fabric-loom-remap' version '1.16.1' apply false
 }
 
 allprojects {
@@ -57,6 +58,12 @@ subprojects {
         maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
         maven { url = "https://mvn.devos.one/snapshots" } // Registrate
         maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
+        maven { url = "https://mvn.devos.one/releases/" } // Porting Lib
+        maven { url = "https://maven.fabricmc.net/" }
+        maven { url = "https://maven.shedaniel.me/" }
+        maven { url = "https://maven.terraformersmc.com/" }
+        maven { url = "https://maven.architectury.dev/" }
+        maven { url = "https://maven.quiltmc.org/repository/release" }
 
         maven { url = "https://maven.theillusivec4.top/" } // Curios API
 

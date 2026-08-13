@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(SessionSearchTrees.class)
 public class SessionSearchTreesMixin {
-    @ModifyVariable(method = "lambda$updateCreativeTooltips$15", at = @At(value = "STORE"))
+    @ModifyVariable(method = "getTooltipLines", at = @At("HEAD"), argsOnly = true)
     private static TooltipFlag markAsCreativeSearch(final TooltipFlag value) {
         ((TooltipFlagExtension)value).simulated$setCreativeSearch(true);
         return value;

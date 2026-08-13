@@ -49,6 +49,7 @@ if (project.path.endsWith(":common")) {
     dependencies {
         compileOnly "net.neoforged:neoforge:$neoforge_version"
         compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+        compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.7.1'
 
         compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:${project.sable_companion_version}")
 
@@ -132,7 +133,10 @@ processResources {
             'create_mod_version'           : create_mod_version,
             'flywheel_mod_version'         : flywheel_mod_version,
             'credits'                      : credits,
-            'java_version'                 : java_version
+            'java_version'                 : java_version,
+            'forgeconfigapiport_version'   : project.findProperty('forgeconfigapiport_version') ?: '',
+            'veil_version'                 : project.findProperty('veil_version') ?: '',
+            'modmenu_version'              : project.findProperty('modmenu_version') ?: ''
     ]
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {

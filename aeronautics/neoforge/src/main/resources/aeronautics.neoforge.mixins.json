@@ -4,6 +4,8 @@
   "package": "dev.eriksonn.aeronautics.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "BlockRenderDispatcherMixin",
+    "self_mixins.GustEntityMixin"
   ],
   "client": [
     "BlockRenderDispatcherMixin"

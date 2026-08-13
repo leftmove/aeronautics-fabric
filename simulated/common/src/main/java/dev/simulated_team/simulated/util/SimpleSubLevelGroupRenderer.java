@@ -10,8 +10,6 @@ import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.entity.EntitySubLevelUtil;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.mixinhelpers.sublevel_render.vanilla.VanillaSubLevelBlockEntityRenderer;
-import dev.ryanhcode.sable.mixinterface.BlockEntityRenderDispatcherExtension;
-import dev.ryanhcode.sable.neoforge.mixinhelper.compatibility.flywheel.SubLevelEmbedding;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.sublevel.render.SubLevelRenderData;
@@ -19,8 +17,8 @@ import dev.ryanhcode.sable.sublevel.render.dispatcher.SubLevelRenderDispatcher;
 import dev.ryanhcode.sable.sublevel.render.dispatcher.VanillaSubLevelRenderDispatcher;
 import dev.ryanhcode.sable.sublevel.render.vanilla.VanillaSingleSubLevelRenderData;
 import dev.simulated_team.simulated.mixin_interface.diagram.LightTextureExtension;
-import dev.simulated_team.simulated.mixin_interface.diagram.VisualManagerExtension;
 import dev.simulated_team.simulated.mixin_interface.diagram.VisualizationManagerExtension;
+import dev.simulated_team.simulated.service.SimDiagramFlywheelService;
 import foundry.veil.api.client.render.CameraMatrices;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
@@ -156,36 +154,9 @@ public class SimpleSubLevelGroupRenderer {
             // Render block-entities with visuals normally
             if (visualizationManager instanceof final VisualizationManagerExtension extension) {
                 extension.sable$setDrawingDiagram(true);
-
-                for (final ClientSubLevel beSubLevel : subLevels) {
-                    final BlockEntityRenderDispatcherExtension dispatcher = (BlockEntityRenderDispatcherExtension) beRenderer.getBlockEntityRenderDispatcher();
-
-                    final SubLevelEmbedding embeddingInfo = ((VisualManagerExtension) visualizationManager.blockEntities()).sable$getBEEmbeddingInfo(beSubLevel);
-
-                    if (embeddingInfo == null) {
-                        continue;
-                    }
-
-                    final Vector3d chunkOffset = new Vector3d();
-                    final Matrix4f transformation = new Matrix4f();
-                    final Matrix4f transformationInverse = new Matrix4f();
-
-                    final SubLevelRenderData data = beSubLevel.getRenderData();
-
-                    beSubLevel.renderPose().rotationPoint().negate(chunkOffset.zero());
-                    data.getTransformation(cameraPosition.x, cameraPosition.y, cameraPosition.z, transformation);
-
-                    final Vector3f c = transformation.invert(transformationInverse).transformPosition(new Vector3f());
-                    dispatcher.sable$setCameraPosition(new Vec3(c.x - chunkOffset.x(), c.y - chunkOffset.y(), c.z - chunkOffset.z()));
-
-                    final PoseStack beMatrices = new PoseStack();
-                    beMatrices.pushPose();
-                    beMatrices.mulPose(transformation);
-                    beRenderer.renderBlockEntities(embeddingInfo.blockEntities(), beMatrices, partialTicks, -chunkOffset.x, -chunkOffset.y, -chunkOffset.z);
-                    beMatrices.popPose();
-
-                    dispatcher.sable$setCameraPosition(null);
-                }
+                SimDiagramFlywheelService.INSTANCE.renderEmbeddedBlockEntities(
+                        visualizationManager, subLevels, beRenderer,
+                        new Vec3(cameraPosition.x, cameraPosition.y, cameraPosition.z), partialTicks);
             }
 
             // Render normal block-entities

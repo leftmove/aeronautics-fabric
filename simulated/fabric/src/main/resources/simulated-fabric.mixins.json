@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "package": "dev.simulated_team.simulated.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "plugin": "dev.simulated_team.simulated.fabric.mixin.SimulatedFabricMixinPlugin",
+  "client": [
+    "diagram.VisualizationManagerImplMixin"
+  ],
+  "mixins": [
+    "CreateBlockEntityBuilderMixin",
+    "EntityPersistentDataMixin",
+    "LevelSignalMixin",
+    "RedStoneWireBlockMixin",
+    "harvesters.BlockBreakingTileEntityMixin",
+    "harvesters.SableHarvesterMixin",
+    "harvesters.SawTileEntityMixin",
+    "self_mixins.DiagramEntityMixin",
+    "self_mixins.HoneyGlueEntityMixin",
+    "self_mixins.PlungerLauncherItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
