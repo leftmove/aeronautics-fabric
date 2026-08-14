@@ -25,12 +25,12 @@ public final class SimFabricClientEvents {
 		ClientTickEvents.END_CLIENT_TICK.register(SimulatedCommonClientEvents::postClientTick);
 
 		HudRenderCallback.EVENT.register((graphics, tickDelta) -> {
-			SimulatedCommonClientEvents.renderOverlays(graphics, tickDelta.getGameTimeDeltaPartialTick(false));
-			LinkedTypewriterItemBindHandler.OVERLAY.render(graphics, tickDelta);
+			SimulatedCommonClientEvents.renderOverlays(graphics, tickDelta);
+			LinkedTypewriterItemBindHandler.renderOverlay(graphics, tickDelta);
 		});
 
-		ItemTooltipCallback.EVENT.register((stack, context, flag, lines) ->
-				SimulatedCommonClientEvents.appendTooltip(stack, flag, Minecraft.getInstance().player, lines));
+		ItemTooltipCallback.EVENT.register((stack, context, lines) ->
+				SimulatedCommonClientEvents.appendTooltip(stack, context, Minecraft.getInstance().player, lines));
 
 		int index = 0;
 		for (final PreparableReloadListener listener : FabricSimpleResourceManagerRegistry.LISTENERS) {

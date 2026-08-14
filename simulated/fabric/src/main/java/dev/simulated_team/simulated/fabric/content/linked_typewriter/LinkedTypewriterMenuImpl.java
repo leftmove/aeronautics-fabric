@@ -2,12 +2,11 @@ package dev.simulated_team.simulated.fabric.content.linked_typewriter;
 
 import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.LinkedTypewriterBlockEntity;
 import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.screen.LinkedTypewriterMenuCommon;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlotItemHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class LinkedTypewriterMenuImpl extends LinkedTypewriterMenuCommon {
 
@@ -35,13 +34,8 @@ public class LinkedTypewriterMenuImpl extends LinkedTypewriterMenuCommon {
 
 	private class GhostSlotHandler extends SlotItemHandler {
 
-		public GhostSlotHandler(final IItemHandler itemHandler, final int index, final int xPosition, final int yPosition) {
+		public GhostSlotHandler(final ItemStackHandler itemHandler, final int index, final int xPosition, final int yPosition) {
 			super(itemHandler, index, xPosition, yPosition);
-		}
-
-		@Override
-		public boolean isFake() {
-			return true;
 		}
 
 		@Override

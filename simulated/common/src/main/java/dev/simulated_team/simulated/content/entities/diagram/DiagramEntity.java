@@ -53,8 +53,6 @@ import net.minecraft.world.level.block.DiodeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
@@ -398,7 +396,6 @@ public class DiagramEntity extends HangingEntity implements ISyncPersistentData,
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void lerpTo(final double pX, final double pY, final double pZ, final float pYRot, final float pXRot, final int pSteps, final boolean teleport) {
         final BlockPos blockpos =
                 this.pos.offset(BlockPos.containing(pX - this.getX(), pY - this.getY(), pZ - this.getZ()));

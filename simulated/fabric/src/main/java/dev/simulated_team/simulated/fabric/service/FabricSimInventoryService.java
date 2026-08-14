@@ -18,7 +18,6 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
 
@@ -64,15 +63,13 @@ public class FabricSimInventoryService implements SimInventoryService {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends InventoryLoaderWrapper> T getWrappedAllItemsFromContraption(final MountedStorageManager manager) {
-		final IItemHandler handler = manager.getAllItems();
-		return handler == null ? null : (T) new InventoryLoaderWrapperImpl(handler);
+		return (T) new InventoryLoaderWrapperImpl(manager.getAllItems());
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends InventoryLoaderWrapper> T getWrappedMountedItemsFromContraption(final MountedStorageManager manager) {
-		final IItemHandler handler = manager.getMountedItems();
-		return handler == null ? null : (T) new InventoryLoaderWrapperImpl(handler);
+		return (T) new InventoryLoaderWrapperImpl(manager.getMountedItems());
 	}
 
 	public static void registerLookups() {

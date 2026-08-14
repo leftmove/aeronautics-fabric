@@ -3,13 +3,10 @@ package dev.simulated_team.simulated.index;
 import com.simibubi.create.AllBlocks;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import dev.simulated_team.simulated.Simulated;
-import dev.simulated_team.simulated.data.SimBlockStateGen;
 import dev.simulated_team.simulated.ponder.new_ponder_tooltip.NewPonderTooltipManager;
 import dev.simulated_team.simulated.ponder.scenes.*;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.RegistryObject;
 
 public class SimPonderScenes {
     public static void register(final PonderSceneRegistrationHelper<ResourceLocation> registry) {
@@ -22,7 +19,7 @@ public class SimPonderScenes {
                 .addStoryBoard("physics_assembler/block_properties", PhysicsAssemblerScenes::physicsAssemblerBlockProperties)
                 .addStoryBoard("physics_assembler/sub_level_splitting", PhysicsAssemblerScenes::physicsAssemblerSubLevelSplitting);
 
-        helper.forComponents(vanillaItemProvider("slime_ball"))
+        registry.forComponents(new ResourceLocation("minecraft", "slime_ball"))
                 .addStoryBoard("physics_assembler/sub_level_splitting", PhysicsAssemblerScenes::physicsAssemblerSubLevelSplitting);
 
         helper.forComponents(SimBlocks.SWIVEL_BEARING)
@@ -98,12 +95,5 @@ public class SimPonderScenes {
                 .addStoryBoard("honey_glue/intro", HoneyGlueScenes::honeyGlueIntro)
                 .addStoryBoard("honey_glue/super_glue", HoneyGlueScenes::honeyGlueSuperGlue);
 
-    }
-
-    private static ItemProviderEntry<Item> vanillaItemProvider(final String id) {
-        return new ItemProviderEntry<>(
-                Simulated.getRegistrate(),
-                RegistryObject.create(new ResourceLocation("minecraft", id), net.minecraftforge.registries.ForgeRegistries.ITEMS)
-        );
     }
 }

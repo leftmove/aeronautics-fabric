@@ -4,6 +4,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+
 public interface SimItemService {
 
     SimItemService INSTANCE = ServiceUtil.load(SimItemService.class);
@@ -15,4 +17,6 @@ public interface SimItemService {
     int getBurnTime(final ItemStack stack);
 
     int getSuperheatedBurnTime(final ItemStack stack);
+
+    List<ItemStack> getLinkedControllerFrequencyItems(ItemStack stack);
 }

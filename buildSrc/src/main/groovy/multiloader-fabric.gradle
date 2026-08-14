@@ -41,7 +41,7 @@ dependencies {
 
     compileOnly 'org.jspecify:jspecify:1.0.0'
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
-    compileOnly("dev.ryanhcode.sable:sable-fabric-1.21.1:${sable_version}") {
+    compileOnly("dev.ryanhcode.sable:sable-neoforge-1.21.1:${sable_version}") {
         transitive = false
         attributes {
             attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
@@ -88,6 +88,12 @@ loom {
             runDir("runs/server")
         }
     }
+}
+
+tasks.named('compileJava', JavaCompile) {
+    exclude '**/SteeringWheelGenerator.java'
+    exclude '**/DirectionalGearshiftGenerator.java'
+    exclude '**/RedstoneAccumulatorBlockStateGen.java'
 }
 
 if (generatedResources.exists()) {

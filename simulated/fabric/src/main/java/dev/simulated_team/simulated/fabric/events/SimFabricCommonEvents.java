@@ -1,12 +1,14 @@
 package dev.simulated_team.simulated.fabric.events;
 
 import dev.simulated_team.simulated.command.SimCommand;
+import dev.simulated_team.simulated.compat.ItemComponents;
 import dev.simulated_team.simulated.content.end_sea.EndSeaPhysicsData;
 import dev.simulated_team.simulated.data.advancements.SimAdvancementTriggers;
 import dev.simulated_team.simulated.data.advancements.SimAdvancements;
 import dev.simulated_team.simulated.events.SimulatedCommonClientEvents;
 import dev.simulated_team.simulated.events.SimulatedCommonEvents;
 import dev.simulated_team.simulated.fabric.service.FabricSimInventoryService;
+import dev.simulated_team.simulated.fabric.service.FabricSimPlatformService;
 import dev.simulated_team.simulated.fabric.service.compat.FabricSimPeripheralService;
 import dev.simulated_team.simulated.index.SimArmInteractions;
 import dev.simulated_team.simulated.index.SimItems;
@@ -18,13 +20,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -33,7 +33,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.world.level.ItemLike;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -47,14 +47,18 @@ public final class SimFabricCommonEvents {
 		ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> SimulatedCommonEvents.onChunkLoad(world, chunk, false));
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> SimulatedCommonEvents.onPlayerLoggedIn(handler.player));
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SimCommand.register(dispatcher, registryAccess));
-		ServerLifecycleEvents.SERVER_STOPPED.register(SimulatedCommonEvents::onServerStopped);
+		ServerLifecycleEvents.SERVER_STARTED.register(FabricSimPlatformService::setServer);
+		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+			FabricSimPlatformService.setServer(null);
+			SimulatedCommonEvents.onServerStopped(server);
+		});
 		ServerTickEvents.END_WORLD_TICK.register(level -> {
 			if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
 				SimulatedCommonEvents.onServerTickEnd(serverLevel);
 			}
 		});
 		ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) ->
-				EndSeaPhysicsData.syncDataPacket(packet -> player.connection.send(packet)));
+				EndSeaPhysicsData.syncDataPacket(foundry.veil.api.network.VeilPacketManager.player(player)));
 
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(wrap(EndSeaPhysicsData.ReloadListener.ID, EndSeaPhysicsData.ReloadListener.INSTANCE));
 
@@ -94,8 +98,7 @@ public final class SimFabricCommonEvents {
 			return InteractionResultHolder.pass(player.getItemInHand(hand));
 		});
 
-		DefaultItemComponentEvents.MODIFY.register(context -> SimulatedCommonEvents.modifyDefaultComponents((itemLike, patchConsumer) ->
-				context.modify(itemLike.asItem(), builder -> applyPatch(builder, patchConsumer))));
+		SimulatedCommonEvents.modifyDefaultComponents((itemLike, patchConsumer) -> applyDefaultComponents(itemLike, patchConsumer));
 
 		SimArmInteractions.init();
 		SimAdvancements.register();
@@ -104,19 +107,17 @@ public final class SimFabricCommonEvents {
 		FabricSimPeripheralService.registerLookups();
 	}
 
-	private static DataComponentMap.Builder applyPatch(final DataComponentMap.Builder builder, final Consumer<DataComponentPatch.Builder> patchConsumer) {
-		final DataComponentPatch.Builder patchBuilder = DataComponentPatch.builder();
-		patchConsumer.accept(patchBuilder);
-		final PatchedDataComponentMap map = new PatchedDataComponentMap(DataComponentMap.EMPTY);
-		map.applyPatch(patchBuilder.build());
-		for (final TypedDataComponent<?> component : map) {
-			set(builder, component);
+	private static void applyDefaultComponents(final ItemLike itemLike, final Consumer<DataComponentPatch.Builder> patchConsumer) {
+		final DataComponentPatch.Builder builder = DataComponentPatch.builder();
+		patchConsumer.accept(builder);
+		for (final var entry : builder.build().entrySet()) {
+			entry.getValue().ifPresent(value -> setDefault(itemLike, entry.getKey(), value));
 		}
-		return builder;
 	}
 
-	private static <T> void set(final DataComponentMap.Builder builder, final TypedDataComponent<T> component) {
-		builder.set(component.type(), component.value());
+	@SuppressWarnings("unchecked")
+	private static <T> void setDefault(final ItemLike itemLike, final DataComponentType<?> type, final Object value) {
+		ItemComponents.setDefault(itemLike, (DataComponentType<T>) type, (T) value);
 	}
 
 	public static IdentifiableResourceReloadListener wrap(final ResourceLocation id, final PreparableReloadListener listener) {

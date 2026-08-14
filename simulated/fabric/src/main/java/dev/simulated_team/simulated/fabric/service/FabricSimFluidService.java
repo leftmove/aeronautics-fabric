@@ -1,6 +1,9 @@
 package dev.simulated_team.simulated.fabric.service;
 
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import dev.simulated_team.simulated.service.SimFluidService;
+import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
+import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -33,5 +36,12 @@ public class FabricSimFluidService implements SimFluidService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void fillCreateFluidTank(final Object tankBlockEntity, final Fluid fluid, final int millibuckets) {
+		if (tankBlockEntity instanceof final FluidTankBlockEntity be) {
+			TransferUtil.insertFluid(be.getFluidStorage(null), new FluidStack(fluid, millibuckets * 81L));
+		}
 	}
 }

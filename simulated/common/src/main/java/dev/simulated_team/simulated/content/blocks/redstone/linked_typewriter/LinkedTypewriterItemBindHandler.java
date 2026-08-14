@@ -41,8 +41,6 @@ import java.util.List;
  */
 public class LinkedTypewriterItemBindHandler {
 
-    public static final net.minecraftforge.client.gui.overlay.IGuiOverlay OVERLAY = (gui, graphics, partialTick, width, height) -> renderOverlay(graphics, partialTick);
-
     private static BlockPos clickedPos;
     private static final List<AABB> outlines = new ArrayList<>();
     private static boolean firstTick = false;

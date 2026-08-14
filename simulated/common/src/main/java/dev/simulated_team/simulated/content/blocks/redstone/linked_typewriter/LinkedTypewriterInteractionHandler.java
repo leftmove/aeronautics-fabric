@@ -1,6 +1,5 @@
 package dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter;
 
-import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.foundation.utility.ControlsUtil;
 import dev.simulated_team.simulated.index.SimSoundEvents;
@@ -8,12 +7,12 @@ import dev.simulated_team.simulated.mixin.accessor.KeyMappingsAccessor;
 import dev.simulated_team.simulated.network.packets.linked_typewriter.TypewriterDisconnectUser;
 import dev.simulated_team.simulated.network.packets.linked_typewriter.TypewriterKeyInteractionPacket;
 import dev.simulated_team.simulated.network.packets.linked_typewriter.TypewriterKeySavePacket;
+import dev.simulated_team.simulated.service.SimItemService;
 import foundry.veil.api.network.VeilPacketManager;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -211,11 +210,7 @@ public class LinkedTypewriterInteractionHandler {
             return;
         }
 
-        final net.minecraftforge.items.ItemStackHandler linkedControllerData = LinkedControllerItem.getFrequencyItems(item);
-        final List<ItemStack> linkedControllerItems = new ObjectArrayList<>();
-        for (int i = 0; i < Math.max(12, linkedControllerData.getSlots()); i++) {
-            linkedControllerItems.add(i < linkedControllerData.getSlots() ? linkedControllerData.getStackInSlot(i) : ItemStack.EMPTY);
-        }
+        final List<ItemStack> linkedControllerItems = SimItemService.INSTANCE.getLinkedControllerFrequencyItems(item);
         while (linkedControllerItems.size() < 12) {
             linkedControllerItems.add(ItemStack.EMPTY);
         }

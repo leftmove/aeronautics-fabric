@@ -6,7 +6,7 @@ import dev.simulated_team.simulated.index.SimEntityTypes;
 import dev.simulated_team.simulated.service.SimEntityService;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
 
 public class FabricSimEntityService implements SimEntityService {
@@ -32,12 +32,12 @@ public class FabricSimEntityService implements SimEntityService {
 			if (data.immuneToFire()) {
 				p.fireImmune();
 			}
-			p.clientTrackingRange(data.clientTrackingRange());
-			p.updateInterval(data.updateFrequency());
-			p.sized(data.width(), data.height());
-			if (data.eyeHeight() != 0) {
-				p.eyeHeight(data.eyeHeight());
-			}
+			p.trackRangeChunks(data.clientTrackingRange());
+			p.trackedUpdateRate(data.updateFrequency());
+			p.dimensions(data.fixed()
+					? EntityDimensions.fixed(data.width(), data.height())
+					: EntityDimensions.scalable(data.width(), data.height()));
+			p.forceTrackedVelocityUpdates(data.sendVelocity());
 		});
 	}
 }

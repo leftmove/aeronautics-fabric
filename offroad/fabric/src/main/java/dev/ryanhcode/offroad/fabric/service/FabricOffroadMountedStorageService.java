@@ -5,8 +5,9 @@ import com.simibubi.create.content.contraptions.MountedStorageManager;
 import dev.ryanhcode.offroad.content.blocks.borehead_bearing.BoreheadAttachedStorage;
 import dev.ryanhcode.offroad.content.blocks.borehead_bearing.BoreheadBearingBlockEntity;
 import dev.ryanhcode.offroad.service.OffroadMountedStorageService;
-import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
 import java.lang.ref.WeakReference;
 
@@ -56,24 +57,45 @@ public class FabricOffroadMountedStorageService implements OffroadMountedStorage
 			}
 
 			@Override
-			public @NotNull ItemStack insertItem(final int slot, final @NotNull ItemStack stack, final boolean simulate) {
-				if (FabricBoreheadBearingMountedStorage.this.insertAllowed) {
-					return super.insertItem(slot, stack, simulate);
+			public long insert(final ItemVariant resource, final long maxAmount, final TransactionContext transaction) {
+				if (!FabricBoreheadBearingMountedStorage.this.insertAllowed) {
+					return 0;
 				}
-				return stack;
+				return super.insert(resource, maxAmount, transaction);
 			}
 
 			@Override
-			public @NotNull ItemStack extractItem(final int slot, final int amount, final boolean simulate) {
-				final BoreheadBearingBlockEntity bbe = FabricBoreheadBearingMountedStorage.this.attachedBoreheadBearing.get();
-				if (bbe != null) {
-					final ItemStack extracted = super.extractItem(slot, amount, simulate);
-					if (!extracted.isEmpty()) {
-						bbe.startUnstalling();
-						return extracted;
-					}
+			public long insertSlot(final int slot, final ItemVariant resource, final long maxAmount, final TransactionContext transaction) {
+				if (!FabricBoreheadBearingMountedStorage.this.insertAllowed) {
+					return 0;
 				}
-				return ItemStack.EMPTY;
+				return super.insertSlot(slot, resource, maxAmount, transaction);
+			}
+
+			@Override
+			public long extract(final ItemVariant resource, final long maxAmount, final TransactionContext transaction) {
+				final BoreheadBearingBlockEntity bbe = FabricBoreheadBearingMountedStorage.this.attachedBoreheadBearing.get();
+				if (bbe == null) {
+					return 0;
+				}
+				final long extracted = super.extract(resource, maxAmount, transaction);
+				if (extracted > 0) {
+					TransactionCallback.onSuccess(transaction, bbe::startUnstalling);
+				}
+				return extracted;
+			}
+
+			@Override
+			public long extractSlot(final int slot, final ItemVariant resource, final long maxAmount, final TransactionContext transaction) {
+				final BoreheadBearingBlockEntity bbe = FabricBoreheadBearingMountedStorage.this.attachedBoreheadBearing.get();
+				if (bbe == null) {
+					return 0;
+				}
+				final long extracted = super.extractSlot(slot, resource, maxAmount, transaction);
+				if (extracted > 0) {
+					TransactionCallback.onSuccess(transaction, bbe::startUnstalling);
+				}
+				return extracted;
 			}
 		}
 	}

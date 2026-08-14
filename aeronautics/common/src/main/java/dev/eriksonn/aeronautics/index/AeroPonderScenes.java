@@ -5,16 +5,13 @@ import dev.eriksonn.aeronautics.Aeronautics;
 import dev.eriksonn.aeronautics.content.ponder.scenes.*;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 public class AeroPonderScenes {
 
-    public static void register(final PonderSceneRegistrationHelper<ResourceLocation> registry) {
-        final PonderSceneRegistrationHelper<ItemProviderEntry<?>> helper = registry.withKeyFunction(ItemProviderEntry::getId);
+	public static void register(final PonderSceneRegistrationHelper<ResourceLocation> registry) {
+		final PonderSceneRegistrationHelper<ItemProviderEntry<?>> helper = registry.withKeyFunction(ItemProviderEntry::getId);
 
-        helper.forComponents(aeroItemProvider("levitite_blend_bucket"))
+		registry.forComponents(Aeronautics.path("levitite_blend_bucket"))
                 .addStoryBoard("levitite/blend", LevititeScenes::levititeBlend)
                 .addStoryBoard("levitite/levitite",(builder,util) -> LevititeScenes.levitite(builder,util,false));
         helper.forComponents(AeroBlocks.LEVITITE)
@@ -50,12 +47,5 @@ public class AeroPonderScenes {
         helper.forComponents(AeroBlocks.WOODEN_PROPELLER)
                 .addStoryBoard("propeller_bearing/thrust", (builder,util) -> PropellerScenes.propellerBearingThrust(builder,util,true))
                 .addStoryBoard("airpressure/miniprop",(builder,util) -> AirPressureScenes.airPressure(builder,util,new AirPressureScenes.Miniprop()));
-    }
-
-    private static ItemProviderEntry<Item> aeroItemProvider(final String id) {
-        return new ItemProviderEntry<>(
-                Aeronautics.getRegistrate(),
-                RegistryObject.create(Aeronautics.path(id), ForgeRegistries.ITEMS)
-        );
     }
 }

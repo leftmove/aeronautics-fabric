@@ -38,6 +38,7 @@ import dev.simulated_team.simulated.index.SimItems;
 import dev.simulated_team.simulated.index.sounds.SimLazySoundType;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import dev.simulated_team.simulated.registrate.simulated_tab.CreativeTabItemTransforms;
+import dev.simulated_team.simulated.service.SimLootService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -165,7 +166,7 @@ public class AeroBlocks {
                         .withExistingParent(colorName + "_envelope_encased_shaft",
                                 p.modLoc("block/envelope_encased_shaft/block"))
                         .texture("0", p.modLoc("block/envelope_block/envelope_" + colorName))))
-                .loot((p, b) -> p.m_247577_(b, LootTable.lootTable()
+                .loot((p, b) -> SimLootService.INSTANCE.add(p, b, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(LootItem.lootTableItem(DYED_ENVELOPE_BLOCKS.get(color)))

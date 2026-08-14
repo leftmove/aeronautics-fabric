@@ -3,7 +3,7 @@ package dev.simulated_team.simulated.registrate;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.tterrag.registrate.builders.Builder;
+import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
@@ -14,13 +14,10 @@ import dev.simulated_team.simulated.index.SimRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,16 +83,12 @@ public class SimulatedRegistrate extends CreateRegistrate {
     }
 
     @Override
-    protected <R, T extends R> @NotNull RegistryEntry<T> accept(final String name, final ResourceKey<? extends Registry<R>> type, final Builder<R, T, ?, ?> builder, final NonNullSupplier<? extends T> creator, final NonNullFunction<RegistryObject<T>, ? extends RegistryEntry<T>> entryFactory) {
-        final RegistryEntry<T> entry = super.accept(name, type, builder, creator, entryFactory);
-
-        if (type.equals(Registries.ITEM)) {
-            final RegistryEntry<? extends Item> itemEntry = (RegistryEntry<? extends Item>) entry;
-            TAB_ITEMS.add(itemEntry::get);
-            ITEM_TO_SECTION.put(entry.getId(), this.currentSection);
-        }
-
-        return entry;
+    public <T extends Item, P> ItemBuilder<T, P> item(final P parent, final String name, final NonNullFunction<Item.Properties, T> factory) {
+        final ResourceLocation section = this.currentSection;
+        return super.item(parent, name, factory).onRegister(item -> {
+            TAB_ITEMS.add(() -> item);
+            ITEM_TO_SECTION.put(BuiltInRegistries.ITEM.getKey(item), section);
+        });
     }
 
     public void addExtraItem(final ResourceLocation item) {

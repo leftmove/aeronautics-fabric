@@ -1,6 +1,7 @@
 package dev.simulated_team.simulated.fabric;
 
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
+import com.simibubi.create.foundation.item.render.CustomRenderedItems;
 import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.SimulatedClient;
 import dev.simulated_team.simulated.content.items.plunger_launcher.PlungerLauncherItemRenderer;
@@ -12,7 +13,6 @@ import dev.simulated_team.simulated.index.SimItems;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 
 public class SimulatedFabricClient implements ClientModInitializer {
 
@@ -32,8 +32,8 @@ public class SimulatedFabricClient implements ClientModInitializer {
 	}
 
 	private static void registerRenderer(final net.minecraft.world.item.Item item, final CustomRenderedItemModelRenderer renderer) {
-		BuiltinItemRendererRegistry.INSTANCE.register(item, (stack, mode, matrices, vertexConsumers, light, overlay) ->
-				((BlockEntityWithoutLevelRenderer) renderer).renderByItem(stack, mode, matrices, vertexConsumers, light, overlay));
+		BuiltinItemRendererRegistry.INSTANCE.register(item, renderer);
+		CustomRenderedItems.register(item);
 	}
 
 	public static BaseConfigScreen configScreen(final net.minecraft.client.gui.screens.Screen parent) {

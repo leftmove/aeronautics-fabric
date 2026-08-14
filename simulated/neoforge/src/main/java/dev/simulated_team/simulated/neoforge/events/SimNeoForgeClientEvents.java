@@ -99,7 +99,7 @@ public class SimNeoForgeClientEvents {
 
         @SubscribeEvent
         public static void registerGuiOverlays(final RegisterGuiOverlaysEvent event) {
-            event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "linked_typewriter_binding", LinkedTypewriterItemBindHandler.OVERLAY);
+            event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "linked_typewriter_binding", (gui, graphics, partialTick, width, height) -> LinkedTypewriterItemBindHandler.renderOverlay(graphics, partialTick));
         }
 
         @SubscribeEvent

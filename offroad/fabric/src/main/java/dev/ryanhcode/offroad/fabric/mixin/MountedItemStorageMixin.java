@@ -6,8 +6,8 @@ import com.simibubi.create.api.contraption.storage.item.MountedItemStorage;
 import com.simibubi.create.content.contraptions.Contraption;
 import dev.ryanhcode.offroad.content.contraptions.borehead_contraption.BoreheadBearingContraption;
 import dev.ryanhcode.offroad.fabric.mixin_helpers.WrappedWrappedMountedItemStorage;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.lang.ref.WeakReference;
@@ -15,8 +15,8 @@ import java.lang.ref.WeakReference;
 @Mixin(MountedItemStorage.class)
 public class MountedItemStorageMixin {
 	@WrapMethod(method = "getHandlerForMenu")
-	public IItemHandlerModifiable offroad$wrapHandler(final StructureTemplate.StructureBlockInfo info, final Contraption contraption, final Operation<IItemHandlerModifiable> original) {
-		final IItemHandlerModifiable originalCall = original.call(info, contraption);
+	public SlottedStackStorage offroad$wrapHandler(final StructureTemplate.StructureBlockInfo info, final Contraption contraption, final Operation<SlottedStackStorage> original) {
+		final SlottedStackStorage originalCall = original.call(info, contraption);
 		if (contraption instanceof BoreheadBearingContraption && originalCall != null) {
 			return new WrappedWrappedMountedItemStorage(new WeakReference<>(contraption), originalCall);
 		}

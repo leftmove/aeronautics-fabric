@@ -14,4 +14,6 @@ public interface SimFluidService {
     long mbToLoaderUnits(final long mb);
 
     Fluid getFluidInItem(ItemStack stack);
+
+    void fillCreateFluidTank(Object tankBlockEntity, Fluid fluid, int millibuckets);
 }

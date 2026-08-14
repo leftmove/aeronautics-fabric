@@ -5,9 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import dev.simulated_team.simulated.index.SimClickInteractions;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,7 +32,7 @@ public class GoggleOverlayRendererMixin {
     }
 
     @Inject(method = "renderOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(FFF)F"), remap = false, cancellable = true)
-    private static void dontRenderTheText(final ForgeGui gui, final GuiGraphics guiGraphics, final float partialTicks, final int width, final int height, final CallbackInfo ci) {
+    private static void dontRenderTheText(final CallbackInfo ci, @Local(argsOnly = true) final float partialTicks) {
         if (hoverTicks - partialTicks <= 0) {
             ci.cancel();
         }

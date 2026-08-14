@@ -1,5 +1,7 @@
 package dev.simulated_team.simulated.fabric.multiloader.tanks;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import dev.simulated_team.simulated.multiloader.tanks.CFluidType;
 import dev.simulated_team.simulated.multiloader.tanks.SingleTank;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -7,8 +9,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
-import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class SingleTankStorage extends SnapshotParticipant<Tuple<CFluidType, Long>> implements SingleSlotStorage<FluidVariant> {
 
@@ -22,15 +26,29 @@ public class SingleTankStorage extends SnapshotParticipant<Tuple<CFluidType, Lon
 		if (type == null || type.isBlank()) {
 			return FluidVariant.blank();
 		}
-		final DataComponentPatch patch = type.data() == null ? DataComponentPatch.EMPTY : type.data();
-		return FluidVariant.of(type.fluid(), patch);
+		CompoundTag nbt = null;
+		if (type.data() != null && !type.data().isEmpty()) {
+			final DataResult<Tag> result = DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, type.data());
+			if (result.result().isPresent() && result.result().get() instanceof final CompoundTag tag) {
+				nbt = tag;
+			}
+		}
+		return FluidVariant.of(type.fluid(), nbt);
 	}
 
 	public static CFluidType toCType(final FluidVariant variant) {
 		if (variant.isBlank()) {
 			return CFluidType.BLANK;
 		}
-		return new CFluidType(variant.getFluid(), ItemComponents.view(variant));
+		DataComponentPatch data = DataComponentPatch.EMPTY;
+		final CompoundTag nbt = variant.getNbt();
+		if (nbt != null) {
+			final DataResult<Pair<DataComponentPatch, Tag>> result = DataComponentPatch.CODEC.decode(NbtOps.INSTANCE, nbt);
+			if (result.result().isPresent()) {
+				data = result.result().get().getFirst();
+			}
+		}
+		return new CFluidType(variant.getFluid(), data);
 	}
 
 	@Override

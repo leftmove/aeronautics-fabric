@@ -1,7 +1,7 @@
 package dev.simulated_team.simulated.fabric.service.compat;
 
 import dan200.computercraft.api.network.wired.WiredElement;
-import dan200.computercraft.api.network.wired.WiredElementLookup;
+import dan200.computercraft.api.node.wired.WiredElementLookup;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.PeripheralLookup;
 import net.fabricmc.loader.api.FabricLoader;

@@ -13,6 +13,7 @@ import dev.simulated_team.simulated.index.SimPartialModels;
 import dev.simulated_team.simulated.index.SimRenderTypes;
 import dev.simulated_team.simulated.util.SimDistUtil;
 import dev.simulated_team.simulated.util.SimMathUtils;
+import dev.simulated_team.simulated.service.SimPlatformService;
 import foundry.veil.Veil;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.irisshaders.iris.Iris;
@@ -91,7 +92,7 @@ public class PhysicsStaffItemRenderer extends CustomRenderedItemModelRenderer {
         final float tiltAmount = Mth.lerp(partialTicks, clientHandler.previousTilt, clientHandler.tilt);
         final Quaternionf utilQuat = new Quaternionf();
 
-        boolean shadersActive = net.minecraftforge.fml.ModList.get().isLoaded("iris") || net.minecraftforge.fml.ModList.get().isLoaded("oculus");
+        boolean shadersActive = SimPlatformService.INSTANCE.isLoaded("iris") || SimPlatformService.INSTANCE.isLoaded("oculus");
 
         if (context.firstPerson()) {
             if (clientHandler.getDragSession() != null) {
@@ -165,7 +166,7 @@ public class PhysicsStaffItemRenderer extends CustomRenderedItemModelRenderer {
         renderer.render(SimPartialModels.PHYSICS_STAFF_OUTER_CUBE.get(), SimRenderTypes.itemGlowingTranslucent(shadersActive), LightTexture.FULL_BRIGHT);
 
         // Iris doesn't allow individual render types to be ended, so all batches must be ended for the translucent parts to draw correctly
-        if ((net.minecraftforge.fml.ModList.get().isLoaded("iris") || net.minecraftforge.fml.ModList.get().isLoaded("oculus")) && !shadersActive) {
+        if ((SimPlatformService.INSTANCE.isLoaded("iris") || SimPlatformService.INSTANCE.isLoaded("oculus")) && !shadersActive) {
             Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         }
     }

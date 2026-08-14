@@ -62,6 +62,7 @@ import dev.simulated_team.simulated.data.SimBlockStateGen;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import dev.simulated_team.simulated.registrate.simulated_tab.CreativeTabItemTransforms;
 import dev.simulated_team.simulated.service.SimBlockStateService;
+import dev.simulated_team.simulated.service.SimLootService;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -146,7 +147,7 @@ public class SimBlocks {
                     .initialProperties(SharedProperties::netheriteMetal)
                     .properties(properties -> properties
                             .destroyTime(5f))
-                    .loot((p, b) -> p.m_247577_(b, p.createSingleItemTable(SWIVEL_BEARING.get())))
+                    .loot((p, b) -> SimLootService.INSTANCE.add(p, b, p.createSingleItemTable(SWIVEL_BEARING.get())))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .register();
 
@@ -818,7 +819,7 @@ public class SimBlocks {
                             .texture("1", p.modLoc("block/symmetric_sail/side_" + colorName))
                             .texture("particle", Create.asResource("block/sail/canvas_" + colorName))))
                     .tag(BlockTags.MINEABLE_WITH_AXE, AllTags.AllBlockTags.WINDMILL_SAILS.tag, SimTags.Blocks.SYMMETRIC_SAILS)
-                    .loot((p, b) -> p.m_247577_(b, p.createSingleItemTable(WHITE_SYMMETRIC_SAIL.get())))
+                    .loot((p, b) -> SimLootService.INSTANCE.add(p, b, p.createSingleItemTable(WHITE_SYMMETRIC_SAIL.get())))
                     .register();
         }
     });
@@ -875,9 +876,7 @@ public class SimBlocks {
                             blockState -> prov.models().getExistingFile(
                                     prov.modLoc("block/spring/" + (blockState.getValue(SpringBlock.SIZE) == SpringBlock.Size.MEDIUM ? "" : (blockState.getValue(SpringBlock.SIZE).getSerializedName() + "_")) + "block"))))
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag, AllTags.AllBlockTags.BRITTLE.tag, AllTags.AllBlockTags.NON_MOVABLE.tag, SimTags.Blocks.LIGHT)
-                    .loot((tables, block) -> {
-                        tables.m_247577_(block, tables.createSingleItemTable(SimItems.SPRING.get()));
-                    })
+                    .loot((tables, block) -> SimLootService.INSTANCE.add(tables, block, tables.createSingleItemTable(SimItems.SPRING.get())))
                     .register();
 
     private static BlockBuilder<HandleBlock, CreateRegistrate> createHandle(@Nullable final DyeColor color, final HandleBlock.Variant variant) {

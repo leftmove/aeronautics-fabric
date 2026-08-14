@@ -3,63 +3,67 @@ package dev.simulated_team.simulated.fabric.entity;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.entity.ExtraSpawnData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ExtraSpawnDataHandler {
+	public static final ResourceLocation ID = Simulated.path("extra_spawn_data");
 	private static final Map<Integer, byte[]> PENDING = new ConcurrentHashMap<>();
 
 	private ExtraSpawnDataHandler() {
 	}
 
 	public static void register() {
-		PayloadTypeRegistry.playS2C().register(ExtraSpawnDataPayload.TYPE, ExtraSpawnDataPayload.STREAM_CODEC);
 		EntityTrackingEvents.START_TRACKING.register(ExtraSpawnDataHandler::onStartTracking);
 	}
 
 	public static void registerClient() {
-		ClientPlayNetworking.registerGlobalReceiver(ExtraSpawnDataPayload.TYPE, ExtraSpawnDataHandler::handleClient);
+		ClientPlayNetworking.registerGlobalReceiver(ID, (client, handler, buf, responseSender) -> {
+			final int entityId = buf.readVarInt();
+			final byte[] data = buf.readByteArray();
+			client.execute(() -> {
+				final var level = Minecraft.getInstance().level;
+				if (level == null) {
+					PENDING.put(entityId, data);
+					return;
+				}
+				final Entity entity = level.getEntity(entityId);
+				if (entity == null) {
+					PENDING.put(entityId, data);
+					return;
+				}
+				apply(entity, data);
+			});
+		});
 		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> applyPending(entity));
 	}
 
-	private static void onStartTracking(final Entity entity, final Player player) {
-		if (!(entity instanceof final ExtraSpawnData extra) || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) {
+	private static void onStartTracking(final Entity entity, final ServerPlayer player) {
+		if (!(entity instanceof final ExtraSpawnData extra)) {
 			return;
 		}
 
-		final RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), entity.registryAccess());
-		extra.writeSpawnData(buf);
-		final byte[] data = new byte[buf.readableBytes()];
-		buf.readBytes(data);
-		ServerPlayNetworking.send(serverPlayer, new ExtraSpawnDataPayload(entity.getId(), data));
-	}
+		final RegistryFriendlyByteBuf dataBuf = new RegistryFriendlyByteBuf(Unpooled.buffer(), entity.level().registryAccess());
+		extra.writeSpawnData(dataBuf);
+		final byte[] data = new byte[dataBuf.readableBytes()];
+		dataBuf.readBytes(data);
 
-	private static void handleClient(final ExtraSpawnDataPayload payload, final ClientPlayNetworking.Context context) {
-		context.client().execute(() -> {
-			final var level = Minecraft.getInstance().level;
-			if (level == null) {
-				PENDING.put(payload.entityId(), payload.data());
-				return;
-			}
-			final Entity entity = level.getEntity(payload.entityId());
-			if (entity == null) {
-				PENDING.put(payload.entityId(), payload.data());
-				return;
-			}
-			apply(entity, payload.data());
-		});
+		final FriendlyByteBuf buf = PacketByteBufs.create();
+		buf.writeVarInt(entity.getId());
+		buf.writeByteArray(data);
+		ServerPlayNetworking.send(player, ID, buf);
 	}
 
 	private static void applyPending(final Entity entity) {
@@ -73,23 +77,7 @@ public final class ExtraSpawnDataHandler {
 		if (!(entity instanceof final ExtraSpawnData extra)) {
 			return;
 		}
-		final RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(data), entity.registryAccess());
+		final RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(data), entity.level().registryAccess());
 		extra.readSpawnData(buf);
-	}
-
-	public record ExtraSpawnDataPayload(int entityId, byte[] data) implements CustomPacketPayload {
-		public static final CustomPacketPayload.Type<ExtraSpawnDataPayload> TYPE =
-				new CustomPacketPayload.Type<>(dev.simulated_team.simulated.Simulated.path("extra_spawn_data"));
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, ExtraSpawnDataPayload> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT, ExtraSpawnDataPayload::entityId,
-				ByteBufCodecs.BYTE_ARRAY, ExtraSpawnDataPayload::data,
-				ExtraSpawnDataPayload::new
-		);
-
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
 	}
 }

@@ -4,7 +4,7 @@ import dev.eriksonn.aeronautics.Aeronautics;
 import dev.eriksonn.aeronautics.events.AeronauticsClientEvents;
 import dev.eriksonn.aeronautics.index.AeroBlocks;
 import dev.eriksonn.aeronautics.index.client.AeroRenderTypes;
-import dev.eriksonn.aeronautics.mixin.levitite.ChunkRenderTypeSetAccessor;
+import dev.eriksonn.aeronautics.neoforge.mixin.ChunkRenderTypeSetAccessor;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
