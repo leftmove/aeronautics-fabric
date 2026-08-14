@@ -23,14 +23,33 @@ public class AirPoofParticleData implements ParticleOptions, ICustomParticleData
     }
 
     @Override
-    public MapCodec<AirPoofParticleData> getCodec(final ParticleType<AirPoofParticleData> type) {
-        return CODEC;
+    public com.mojang.serialization.Codec<AirPoofParticleData> getCodec(final ParticleType<AirPoofParticleData> type) { return CODEC.codec(); }
+
+    
+    @Override
+    public ParticleOptions.Deserializer<AirPoofParticleData> getDeserializer() {
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public AirPoofParticleData fromCommand(final ParticleType<AirPoofParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return INSTANCE;
+            }
+
+            @Override
+            public AirPoofParticleData fromNetwork(final ParticleType<AirPoofParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return INSTANCE;
+            }
+        };
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, AirPoofParticleData> getStreamCodec() {
-        return STREAM_CODEC;
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
     }
+
+    @Override
+    public String writeToString() {
+        return this.getType().toString();
+    }
+
 
     @Override
     public ParticleType<?> getType() {

@@ -2,6 +2,7 @@ package dev.eriksonn.aeronautics.index;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
 import com.simibubi.create.foundation.block.DyedBlockList;
@@ -17,6 +18,7 @@ import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import dev.eriksonn.aeronautics.Aeronautics;
+import dev.eriksonn.aeronautics.mixin.accessor.FireBlockAccessor;
 import dev.eriksonn.aeronautics.config.server.AeroStress;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.envelope.EnvelopeBlock;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.envelope.EnvelopeEncasedShaftBlock;
@@ -36,6 +38,7 @@ import dev.simulated_team.simulated.index.SimItems;
 import dev.simulated_team.simulated.index.sounds.SimLazySoundType;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import dev.simulated_team.simulated.registrate.simulated_tab.CreativeTabItemTransforms;
+import dev.simulated_team.simulated.service.SimLootService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -51,20 +54,20 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.common.Tags;
 
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class AeroBlocks {
     private static final SimulatedRegistrate REGISTRATE = Aeronautics.getRegistrate();
@@ -163,10 +166,15 @@ public class AeroBlocks {
                         .withExistingParent(colorName + "_envelope_encased_shaft",
                                 p.modLoc("block/envelope_encased_shaft/block"))
                         .texture("0", p.modLoc("block/envelope_block/envelope_" + colorName))))
-                .loot((p, b) -> p.add(b, p.createSingleItemTable(DYED_ENVELOPE_BLOCKS.get(color))
-                        .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
+                .loot((p, b) -> SimLootService.INSTANCE.add(p, b, LootTable.lootTable()
+                        .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
-                                .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
+                                .add(LootItem.lootTableItem(DYED_ENVELOPE_BLOCKS.get(color)))
+                                .when(ExplosionCondition.survivesExplosion()))
+                        .withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))
+                                .when(ExplosionCondition.survivesExplosion()))))
                 .tag(AeroTags.BlockTags.ENVELOPE)
                 .transform(axeOnly())
                 .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
@@ -201,8 +209,8 @@ public class AeroBlocks {
                             .define('S', CommonMetal.IRON.plates)
                             .define('A', AllItems.ANDESITE_ALLOY)
                             .define('C', AeroTags.ItemTags.BURNER_FIRE)
-                            .define('R', Tags.Items.DUSTS_REDSTONE)
-                            .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(Tags.Items.DUSTS_REDSTONE))
+                            .define('R', AllTags.forgeItemTag("dusts/redstone"))
+                            .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.forgeItemTag("dusts/redstone")))
                             .save(p))
                     .register();
 
@@ -274,13 +282,7 @@ public class AeroBlocks {
                     .initialProperties(SharedProperties::softMetal)
                     .transform(axeOrPickaxe())
                     .transform(AeroStress.setImpact(4.0))
-                    .blockstate((ctx, prov) -> {
-                        prov.getVariantBuilder(ctx.getEntry()).forAllStates((state) ->
-                                ConfiguredModel.builder().modelFile(AssetLookup.partialBaseModel(ctx, prov))
-                                        .rotationY(state.getValue(BlockStateProperties.HORIZONTAL_AXIS) == Direction.Axis.X ? 90 : 0)
-                                        .rotationX(state.getValue(SmartPropellerBlock.CEILING) ? 180 : 0)
-                                        .build());
-                    })
+                    .blockstate(AeroBlockStateGen::smartPropellerBlockstate)
                     .item()
                     .transform(customItemModel())
                     .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC, c.get(), 2)
@@ -367,7 +369,7 @@ public class AeroBlocks {
             .tag(SableTags.ALWAYS_CHUNK_RENDERING)
             .item(BlockItem::new)
             .tag(AeroTags.ItemTags.LEVITITE)
-            .properties(p -> p.component(AeroDataComponents.LEVITATING, Levitating.LEVITITE))
+            .properties(p -> ItemComponents.with(p, AeroDataComponents.LEVITATING, Levitating.LEVITITE))
             .build()
             .register();
 
@@ -388,13 +390,13 @@ public class AeroBlocks {
                     .tag(SableTags.ALWAYS_CHUNK_RENDERING)
                     .item(BlockItem::new)
                     .tag(AeroTags.ItemTags.LEVITITE)
-                    .properties(p -> p.component(AeroDataComponents.LEVITATING, Levitating.PEARLESCENT_LEVITITE))
+                    .properties(p -> ItemComponents.with(p, AeroDataComponents.LEVITATING, Levitating.PEARLESCENT_LEVITITE))
                     .build()
                     .register();
 
     private static <B extends Block, R> NonNullUnaryOperator<BlockBuilder<B, R>> flammable(final int encouragement, final int flamability) {
-        return builder -> builder.onRegisterAfter(Registries.BLOCK, block -> ((FireBlock) Blocks.FIRE)
-                .setFlammable(block, encouragement, flamability));
+        return builder -> builder.onRegisterAfter(Registries.BLOCK, block ->
+                ((FireBlockAccessor) Blocks.FIRE).aeronautics$setFlammable(block, encouragement, flamability));
     }
 
     public static void init() {

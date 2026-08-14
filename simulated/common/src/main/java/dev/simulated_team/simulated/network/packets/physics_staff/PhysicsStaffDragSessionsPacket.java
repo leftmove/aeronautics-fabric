@@ -17,13 +17,14 @@ import org.joml.Vector3d;
 
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record PhysicsStaffDragSessionsPacket(ResourceKey<Level> dimension, List<Pair<UUID, Vector3d>> sessions) implements CustomPacketPayload {
     public static Type<PhysicsStaffDragSessionsPacket> TYPE = new Type<>(Simulated.path("physics_staff_drag_sessions"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PhysicsStaffDragSessionsPacket> CODEC = StreamCodec.composite(
-            ResourceKey.streamCodec(Registries.DIMENSION), i -> i.dimension,
-            CatnipStreamCodecBuilders.list(Pair.streamCodec(UUIDUtil.STREAM_CODEC, SimCodecUtil.STREAM_VECTOR3D)), i -> i.sessions,
+            StreamCodecs.resourceKey(Registries.DIMENSION), i -> i.dimension,
+            CatnipStreamCodecBuilders.list(StreamCodecs.catnipPair(StreamCodecs.UUID, SimCodecUtil.STREAM_VECTOR3D)), i -> i.sessions,
             PhysicsStaffDragSessionsPacket::new
     );
 

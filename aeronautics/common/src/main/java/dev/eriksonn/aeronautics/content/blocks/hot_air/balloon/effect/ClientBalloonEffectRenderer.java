@@ -12,7 +12,6 @@ import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.post.PostPipeline;
 import foundry.veil.api.client.render.post.PostProcessingManager;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
-import foundry.veil.api.client.render.shader.uniform.ShaderUniformAccess;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -79,13 +78,13 @@ public class ClientBalloonEffectRenderer {
      */
     private static void renderBalloonEffects(final BalloonMap balloonMap, final Matrix4fc frustumMatrix, final Matrix4fc projectionMatrix, final int renderTick) {
         final Minecraft minecraft = Minecraft.getInstance();
-        final float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+        final float partialTicks = Minecraft.getInstance().getFrameTime();
 
         final ShaderProgram shader = VeilRenderSystem.setShader(SHADER_ID);
         if (shader == null) return;
 
         overlayFbo.bind(false);
-        overlayFbo.clear(0.0f, 0.0f, 0.0f, 0.0f, GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
+        overlayFbo.clear();
 
         RenderSystem.setShaderTexture(0, SIDE_TEXTURE);
         RenderSystem.setShaderTexture(1, TOP_TEXTURE);
@@ -101,10 +100,7 @@ public class ClientBalloonEffectRenderer {
 
         final float scrollAmount = (renderTick + partialTicks) / -20.0f;
 
-        final ShaderUniformAccess scrollUniform = shader.getUniformSafe("Scroll");
-        final ShaderUniformAccess yCutoffUniform = shader.getUniformSafe("CutoffY");
-
-        scrollUniform.setFloat((float) (Math.floor(scrollAmount * 16.0f) / 16.0f));
+        shader.setFloat("Scroll", (float) (Math.floor(scrollAmount * 16.0f) / 16.0f));
 
         final float brightness = 0.85f;
         final float alpha = 1.0f;
@@ -131,7 +127,7 @@ public class ClientBalloonEffectRenderer {
             }
 
             filledPercent = Mth.clamp(filledPercent, 0.0f, 1.0f);
-            yCutoffUniform.setFloat((1.0f - filledPercent) * (balloon.getHeight() + 1.0f));
+            shader.setFloat("CutoffY", (1.0f - filledPercent) * (balloon.getHeight() + 1.0f));
 
             renderRegion.render(modelViewMat, projMat);
         }
@@ -149,7 +145,7 @@ public class ClientBalloonEffectRenderer {
     private static void applyHeatingToScreen() {
         final PostProcessingManager manager = VeilRenderSystem.renderer().getPostProcessingManager();
         final PostPipeline pipeline = manager.getPipeline(POST_SHADER_ID);
-        final PostPipeline.Context context = manager.getPostPipelineContext();
+        final PostPipeline.Context context = manager.getContext();
 
         context.setFramebuffer(FBO_ID, overlayFbo);
         manager.runPipeline(pipeline);

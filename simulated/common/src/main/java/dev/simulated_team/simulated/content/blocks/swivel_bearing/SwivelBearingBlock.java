@@ -19,7 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -54,25 +54,25 @@ public class SwivelBearingBlock extends DirectionalKineticBlock implements IBE<S
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack itemStack, final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+        final ItemStack heldItem = player.getItemInHand(interactionHand);
         if (!player.mayBuild()) {
-            return ItemInteractionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
         if (player.isShiftKeyDown()) {
-            return ItemInteractionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
         if (player.getItemInHand(interactionHand).isEmpty()) {
             if (level.isClientSide) {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
 
             this.withBlockEntityDo(level, blockPos, be -> be.assembleNextTick = true);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
-        final ItemStack heldItem = player.getItemInHand(interactionHand);
         final IPlacementHelper helper = PlacementHelpers.get(placementHelperId);
         if (helper.matchesItem(heldItem)) {
             return helper
@@ -81,7 +81,7 @@ public class SwivelBearingBlock extends DirectionalKineticBlock implements IBE<S
         }
 
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class SwivelBearingBlock extends DirectionalKineticBlock implements IBE<S
     }
 
     @Override
-    protected VoxelShape getShape(final BlockState blockState, final BlockGetter blockGetter, final BlockPos blockPos, final CollisionContext collisionContext) {
+    public VoxelShape getShape(final BlockState blockState, final BlockGetter blockGetter, final BlockPos blockPos, final CollisionContext collisionContext) {
         return blockState.getValue(ASSEMBLED) ? SimBlockShapes.SWIVEL_BEARING_ASSEMBLED.get(blockState.getValue(FACING)) : Shapes.block();
     }
 

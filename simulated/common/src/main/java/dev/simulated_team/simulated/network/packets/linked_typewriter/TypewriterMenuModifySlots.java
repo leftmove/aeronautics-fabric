@@ -8,14 +8,15 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record TypewriterMenuModifySlots(ItemStack first, ItemStack second) implements CustomPacketPayload {
 
     public static Type<TypewriterMenuModifySlots> TYPE = new Type<>(Simulated.path("entry_modify"));
 
     public static StreamCodec<RegistryFriendlyByteBuf, TypewriterMenuModifySlots> CODEC = StreamCodec.composite(
-            ItemStack.OPTIONAL_STREAM_CODEC, TypewriterMenuModifySlots::first,
-            ItemStack.OPTIONAL_STREAM_CODEC, TypewriterMenuModifySlots::second,
+            StreamCodecs.OPTIONAL_ITEM_STACK, TypewriterMenuModifySlots::first,
+            StreamCodecs.OPTIONAL_ITEM_STACK, TypewriterMenuModifySlots::second,
             TypewriterMenuModifySlots::new
     );
 

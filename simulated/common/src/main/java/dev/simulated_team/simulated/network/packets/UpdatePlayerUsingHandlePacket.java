@@ -13,13 +13,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record UpdatePlayerUsingHandlePacket(float desiredRange, boolean remove, BlockPos interactionPos) implements CustomPacketPayload {
 
     public static StreamCodec<RegistryFriendlyByteBuf, UpdatePlayerUsingHandlePacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, UpdatePlayerUsingHandlePacket::desiredRange,
             ByteBufCodecs.BOOL, UpdatePlayerUsingHandlePacket::remove,
-            BlockPos.STREAM_CODEC, UpdatePlayerUsingHandlePacket::interactionPos,
+            StreamCodecs.BLOCK_POS, UpdatePlayerUsingHandlePacket::interactionPos,
             UpdatePlayerUsingHandlePacket::new);
 
     public static Type<UpdatePlayerUsingHandlePacket> TYPE = new Type<>(Simulated.path("update_player_handle"));

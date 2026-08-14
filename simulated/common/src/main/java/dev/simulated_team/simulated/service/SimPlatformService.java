@@ -5,4 +5,6 @@ public interface SimPlatformService {
 	SimPlatformService INSTANCE = ServiceUtil.load(SimPlatformService.class);
 
 	boolean isLoaded(String modId);
+
+	net.minecraft.server.MinecraftServer getCurrentServer();
 }

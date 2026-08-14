@@ -20,7 +20,7 @@ public abstract class FlywheelBlockEntityMixin extends SmartBlockEntity {
         super(type, pos, state);
     }
     @Inject(method = "read",at = @At("HEAD"))
-    public void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket, CallbackInfo ci, @Local(argsOnly = true) LocalBooleanRef localClientPacket)
+    public void read(CompoundTag compound, boolean clientPacket, CallbackInfo ci, @Local(argsOnly = true) LocalBooleanRef localClientPacket)
     {
         localClientPacket.set(localClientPacket.get() || isVirtual());
     }

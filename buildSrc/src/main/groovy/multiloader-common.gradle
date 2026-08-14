@@ -1,3 +1,5 @@
+import org.gradle.api.attributes.java.TargetJvmVersion
+
 plugins {
     id 'java-library'
     id 'maven-publish'
@@ -15,7 +17,6 @@ java {
 repositories {
     mavenCentral()
 
-    // https://docs.gradle.org/current/userguide/declaring_repositories.html#declaring_content_exclusively_found_in_one_repository
     exclusiveContent {
         forRepository {
             maven {
@@ -47,36 +48,38 @@ repositories {
 
 if (project.path.endsWith(":common")) {
     dependencies {
-        compileOnly "net.neoforged:neoforge:$neoforge_version"
         compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+        compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.7.1'
+        compileOnly 'org.jspecify:jspecify:1.0.0'
 
-        compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:${project.sable_companion_version}")
-
-        // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
         compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
-        annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
 
-        // neoforge version for JEI compat
-        compileOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+        compileOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
-        implementation ("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
-            exclude group: "foundry.veil"
-        }
+        modCompileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+        modCompileOnly("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
+        modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}")
+        compileOnly("com.tterrag.registrate:Registrate:${registrate_version}")
 
-        compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-        compileOnly("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
-        compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
-        implementation("com.tterrag.registrate:Registrate:${registrate_version}")
-
-        implementation("foundry.veil:veil-common-${minecraft_version}:${project.veil_version}") {
+        compileOnly("foundry.veil:Veil-forge-${minecraft_version}:${project.veil_version}") {
             exclude group: "maven.modrinth"
             exclude group: "com.tterrag.registrate"
         }
 
-        // Mod compat
+        compileOnly("dev.ryanhcode.sable:sable-neoforge-1.21.1:${sable_version}") {
+            transitive = false
+            attributes {
+                attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+            }
+        }
+        compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:${sable_companion_version}") {
+            transitive = false
+            attributes {
+                attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+            }
+        }
+
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-common-api:$computercraft_tweaked_version")
-        compileOnly("maven.modrinth:natures-compass:$minecraft_version-$natures_compass_version-neoforge")
-        compileOnly("maven.modrinth:explorers-compass:$minecraft_version-$explorers_compass_version-neoforge")
         compileOnly("maven.modrinth:sodium:$sodium_version")
         compileOnly("maven.modrinth:iris:$iris_version")
     }
@@ -108,7 +111,8 @@ jar {
                 'Implementation-Title'  : project.name,
                 'Implementation-Version': project.jar.archiveVersion,
                 'Implementation-Vendor' : mod_author,
-                'Built-On-Minecraft'    : minecraft_version
+                'Built-On-Minecraft'    : minecraft_version,
+                'MixinConfigs'          : "${mod_id}.mixins.json"
         ])
     }
 }
@@ -116,7 +120,7 @@ jar {
 processResources {
     var expandProps = [
             'version'                      : version,
-            'group'                        : project.group, //Else we target the task's group.
+            'group'                        : project.group,
             'minecraft_version'            : minecraft_version,
             'minecraft_version_range'      : minecraft_version_range,
             'fabric_version'               : fabric_version,
@@ -128,11 +132,16 @@ processResources {
             'description'                  : project.description,
             'neoforge_version'             : neoforge_version,
             'neoforge_loader_version_range': neoforge_loader_version_range,
-            'sable_mod_version_range'            : sable_mod_version_range,
+            'forge_version'                : forge_version,
+            'forge_loader_version_range'   : forge_loader_version_range,
+            'sable_mod_version_range'      : sable_mod_version_range,
             'create_mod_version'           : create_mod_version,
             'flywheel_mod_version'         : flywheel_mod_version,
             'credits'                      : credits,
-            'java_version'                 : java_version
+            'java_version'                 : java_version,
+            'forgeconfigapiport_version'   : project.findProperty('forgeconfigapiport_version') ?: '',
+            'veil_version'                 : project.findProperty('veil_version') ?: '',
+            'modmenu_version'              : project.findProperty('modmenu_version') ?: ''
     ]
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {

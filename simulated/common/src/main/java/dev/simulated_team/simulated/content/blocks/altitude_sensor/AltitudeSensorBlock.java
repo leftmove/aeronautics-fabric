@@ -12,7 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -39,15 +39,9 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class AltitudeSensorBlock extends FaceAttachedHorizontalDirectionalBlock implements IBE<AltitudeSensorBlockEntity>, IWrenchable, CommonRedstoneBlock {
     public static final EnumProperty<FaceType> DIAL = EnumProperty.create("dial", FaceType.class);
-    public static final MapCodec<AltitudeSensorBlock> CODEC = simpleCodec(AltitudeSensorBlock::new);
 
     public AltitudeSensorBlock(final Properties pProperties) {
         super(pProperties);
-    }
-
-    @Override
-    protected @NotNull MapCodec<? extends FaceAttachedHorizontalDirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Nullable
@@ -113,7 +107,7 @@ public class AltitudeSensorBlock extends FaceAttachedHorizontalDirectionalBlock 
     }
 
     @Override
-    protected int getDirectSignal(final BlockState state, final BlockGetter level, final BlockPos pos, final Direction direction) {
+    public int getDirectSignal(final BlockState state, final BlockGetter level, final BlockPos pos, final Direction direction) {
         if (direction != Direction.UP) {
             return 0;
         }
@@ -153,20 +147,14 @@ public class AltitudeSensorBlock extends FaceAttachedHorizontalDirectionalBlock 
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack stack,
-                                                       final @NotNull BlockState state,
-                                                       final @NotNull Level level,
-                                                       final @NotNull BlockPos pos,
-                                                       final @NotNull Player player,
-                                                       final @NotNull InteractionHand hand,
-                                                       final @NotNull BlockHitResult hitResult) {
-        return AllItems.WRENCH.isIn(stack) ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : this.onBlockEntityUseItemOn(level, pos, (be) -> {
+    public @NotNull InteractionResult use(final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull Player player, final @NotNull InteractionHand hand, final @NotNull BlockHitResult hitResult) {
+        return AllItems.WRENCH.isIn(player.getItemInHand(hand)) ? InteractionResult.PASS : this.onBlockEntityUse(level, pos, (be) -> {
 
             if (level.isClientSide) {
                 this.withBlockEntityDo(level, pos, AltitudeSensorScreen::open);
             }
 
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         });
     }
 

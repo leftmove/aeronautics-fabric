@@ -22,6 +22,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import dev.simulated_team.simulated.compat.Mc1201;
 
 public record HoneyGlueSpawnPacket(BlockPos from, BlockPos to) implements CustomPacketPayload {
     public static Type<HoneyGlueSpawnPacket> TYPE = new Type<>(Simulated.path("honey_glue_spawn"));
@@ -42,8 +43,8 @@ public record HoneyGlueSpawnPacket(BlockPos from, BlockPos to) implements Custom
     }
 
     private InteractionHand getHoneyGlueHand(final Player player) {
-        return player.getItemInHand(InteractionHand.MAIN_HAND).is(SimItems.HONEY_GLUE) ? InteractionHand.MAIN_HAND :
-                player.getItemInHand(InteractionHand.OFF_HAND).is(SimItems.HONEY_GLUE) ? InteractionHand.OFF_HAND :
+        return player.getItemInHand(InteractionHand.MAIN_HAND).is(SimItems.HONEY_GLUE.get()) ? InteractionHand.MAIN_HAND :
+                player.getItemInHand(InteractionHand.OFF_HAND).is(SimItems.HONEY_GLUE.get()) ? InteractionHand.OFF_HAND :
                         null;
     }
 
@@ -56,7 +57,7 @@ public record HoneyGlueSpawnPacket(BlockPos from, BlockPos to) implements Custom
         if (hand == null)
             return;
 
-        final AABB newBounds = AABB.encapsulatingFullBlocks(this.from, this.to);
+        final AABB newBounds = Mc1201.encapsulatingFullBlocks(this.from, this.to);
         final Pair<Boolean, String> pair = HoneyGlueMaxSizing.checkBounds(newBounds);
 
         if (pair.getFirst()) {
@@ -67,7 +68,7 @@ public record HoneyGlueSpawnPacket(BlockPos from, BlockPos to) implements Custom
             level.playSound(player, this.to, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.75f, 1.0f);
 
             final ItemStack honeyGlueItem = player.getItemInHand(hand);
-            honeyGlueItem.hurtAndBreak(1, level, player, (item) -> {});
+            honeyGlueItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
 
             final HoneyGlueEntity entity = SimEntityTypes.HONEY_GLUE.create(level);
             assert entity != null;

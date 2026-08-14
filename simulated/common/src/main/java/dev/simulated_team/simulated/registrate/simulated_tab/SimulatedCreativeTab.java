@@ -10,7 +10,6 @@ import dev.simulated_team.simulated.mixin_interface.SpriteContentsExtension;
 import dev.simulated_team.simulated.mixin_interface.TickerExtension;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import foundry.veil.api.client.color.Color;
-import foundry.veil.api.client.color.Colorc;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -71,18 +70,17 @@ public class SimulatedCreativeTab {
 				setPlaying(bannerTexture, isHovering);
 			}
 
-			graphics.blitSprite(bannerTexture, x, y, w, h);
+			graphics.blit(bannerTexture, x, y, 0, 0, w, h, w, h);
 
 			Component text = section.title().text();
 			int textWidth = font.width(text);
 
-			Colorc background = section.title().background();
-			graphics.fill(x + 2, y + 2, x + textWidth + 8, y + h - 2, background.argb());
+			Color background = section.title().background();
+			graphics.fill(x + 2, y + 2, x + textWidth + 8, y + h - 2, background.getRGBA());
 
-			Colorc light = section.title().color();
-			Colorc dark = section.title().secondaryColor()
-					.orElse(light.darken(0.2f, new Color()));
-			drawAuraText(graphics, text, dark.argb(), light.argb(), x + 5, y + 5);
+			Color light = section.title().color();
+			Color dark = section.title().secondaryColor().orElse(light.darkenCopy(0.2f));
+			drawAuraText(graphics, text, dark.getRGBA(), light.getRGBA(), x + 5, y + 5);
 		}
 		ps.popPose();
 		RenderSystem.disableDepthTest();
@@ -98,7 +96,7 @@ public class SimulatedCreativeTab {
 		PoseStack ps = graphics.pose();
 		ps.pushPose();
 		ps.translate(0, 0, 1);
-		Matrix4f pose = ps.last().copy().pose();
+		Matrix4f pose = new Matrix4f(ps.last().pose());
 		Vector3f position = pose.transformPosition(new Vector3f(x, y, 0));
 		Vector3f corner = pose.transformPosition(new Vector3f(x + font.width(text), y + font.lineHeight / 1.8f, 0));
 
@@ -178,7 +176,7 @@ public class SimulatedCreativeTab {
 	}
 
 	public static void setPlaying(ResourceLocation resourceLocation, boolean playing) {
-		TextureAtlasSprite sprite = Minecraft.getInstance().getGuiSprites().getSprite(resourceLocation);
+		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(resourceLocation);
 		SpriteContents.Ticker ticker = ((SpriteContentsExtension) sprite.contents()).simulated$getTicker();
 		if(ticker instanceof TickerExtension extension) {
 			extension.simulated$setPlaying(playing);

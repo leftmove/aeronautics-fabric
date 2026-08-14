@@ -90,7 +90,7 @@ public class PlungerLauncherItem extends Item implements CustomArmPoseItem {
 
             final LaunchedPlungerEntity plunger = duck.simulated$getLaunchedPlunger();
             if (plunger == null || plunger.isRemoved()) {
-                newPlunger.setData(LaunchedPlungerEntity.IS_FIRST, true);
+                newPlunger.getEntityData().set(LaunchedPlungerEntity.IS_FIRST, true);
                 duck.simulated$setLaunchedPlunger(newPlunger);
                 ShootableGadgetItemMethods.applyCooldown(player, heldStack, interactionHand, b -> b.getItem() instanceof PlungerLauncherItem, 4);
                 reloadCooldown = false;
@@ -109,7 +109,7 @@ public class PlungerLauncherItem extends Item implements CustomArmPoseItem {
 //            VeilPacketManager.tracking(player).sendPacket(new PlungerLauncherShootPacket(interactionHand));
 
             if (!BacktankUtil.canAbsorbDamage(player, maxUses()))
-                heldStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(interactionHand));
+                heldStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(interactionHand));
         } else {
             SimulatedClient.PLUNGER_LAUNCHER_RENDER_HANDLER.dontAnimateItem(interactionHand);
         }
@@ -146,7 +146,7 @@ public class PlungerLauncherItem extends Item implements CustomArmPoseItem {
                 barrelPos,
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
-                CollisionContext.empty()
+                net.minecraft.world.entity.EntityType.PLAYER.create(null)
         )).getLocation();
         barrelPos = Sable.HELPER.projectOutOfSubLevel(level, barrelPos);
 

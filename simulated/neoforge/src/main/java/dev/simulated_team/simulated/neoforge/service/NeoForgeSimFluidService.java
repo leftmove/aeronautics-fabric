@@ -1,11 +1,12 @@
 package dev.simulated_team.simulated.neoforge.service;
 
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import dev.simulated_team.simulated.service.SimFluidService;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class NeoForgeSimFluidService implements SimFluidService {
     public long mbToLoaderUnits(final long mb) {
@@ -14,13 +15,16 @@ public class NeoForgeSimFluidService implements SimFluidService {
 
     @Override
     public Fluid getFluidInItem(final ItemStack stack) {
-        final IFluidHandlerItem handler = stack.getCapability(Capabilities.FluidHandler.ITEM);
-        if(handler != null) {
+        return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).map(handler -> {
             final FluidStack fluid = handler.getFluidInTank(0);
-            if(!fluid.isEmpty()) {
-                return fluid.getFluid();
-            }
+            return fluid.isEmpty() ? null : fluid.getFluid();
+        }).orElse(null);
+    }
+
+    @Override
+    public void fillCreateFluidTank(final Object tankBlockEntity, final Fluid fluid, final int millibuckets) {
+        if (tankBlockEntity instanceof final FluidTankBlockEntity be) {
+            be.getTankInventory().fill(new FluidStack(fluid, millibuckets), IFluidHandler.FluidAction.EXECUTE);
         }
-        return null;
     }
 }

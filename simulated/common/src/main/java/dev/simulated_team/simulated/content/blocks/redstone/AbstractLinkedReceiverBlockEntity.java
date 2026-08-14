@@ -136,16 +136,16 @@ public abstract class AbstractLinkedReceiverBlockEntity extends SmartBlockEntity
     }
 
     @Override
-    public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    public void write(final CompoundTag compound, final boolean clientPacket) {
         compound.putInt("Receive", this.getReceivedSignal());
         compound.putDouble("ReceivedValue", this.rawSignalValue);
         compound.putBoolean("ReceivedChanged", this.receivedSignalChanged);
-        super.write(compound, registries, clientPacket);
+        super.write(compound, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
+        super.read(compound, clientPacket);
         this.receivedSignal = compound.getInt("Receive");
         this.rawSignalValue = compound.getDouble("ReceivedValue");
         this.receivedSignalChanged = compound.getBoolean("ReceivedChanged");

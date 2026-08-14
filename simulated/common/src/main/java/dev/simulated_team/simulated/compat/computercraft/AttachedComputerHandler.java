@@ -1,12 +1,15 @@
 package dev.simulated_team.simulated.compat.computercraft;
 
-import dan200.computercraft.api.peripheral.AttachedComputerSet;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class AttachedComputerHandler {
 
-    private final AttachedComputerSet attachedComputers = new AttachedComputerSet();
+    private final Set<IComputerAccess> attachedComputers = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public void attach(IComputerAccess computer) {
         this.attachedComputers.add(computer);
@@ -17,6 +20,8 @@ public class AttachedComputerHandler {
     }
 
     public void queueEvent(String event, @Nullable Object... args) {
-        this.attachedComputers.queueEvent(event, args);
+        for (final IComputerAccess computer : this.attachedComputers) {
+            computer.queueEvent(event, args);
+        }
     }
 }

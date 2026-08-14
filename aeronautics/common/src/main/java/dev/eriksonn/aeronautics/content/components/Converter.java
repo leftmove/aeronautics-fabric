@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public record Converter(ItemStack item, int ticks, Optional<ResourceLocation> sound, Optional<ResourceLocation> particle) {
 	public static final Codec<Converter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -30,7 +31,7 @@ public record Converter(ItemStack item, int ticks, Optional<ResourceLocation> so
 	public static Converter cloudSkipper() {
 		return new Converter(AeroItems.MUSIC_DISC_CLOUD_SKIPPER.asStack(), 60,
 				Optional.of(AeroSoundEvents.CLOUD_SKIPPER_TRANSFORM.id()),
-				Optional.of(ResourceLocation.withDefaultNamespace("white_smoke")));
+				Optional.of(new ResourceLocation("white_smoke")));
 	}
 
 	public Converter(Converter converter, int ticks) {
@@ -41,12 +42,12 @@ public record Converter(ItemStack item, int ticks, Optional<ResourceLocation> so
 		if(converter.item().isEmpty()) return;
 
 		if(converter.ticks() > 0) {
-			stack.set(AeroDataComponents.CONVERTER, new Converter(converter, converter.ticks() - 1));
+			ItemComponents.set(stack, AeroDataComponents.CONVERTER, new Converter(converter, converter.ticks() - 1));
 		} else {
 			int count = stack.getCount();
 			entity.setItem(converter.item().copy());
 			ItemStack newItem = entity.getItem();
-			newItem.remove(AeroDataComponents.CONVERTER);
+			ItemComponents.remove(newItem, AeroDataComponents.CONVERTER);
 			newItem.setCount(count);
 
 			if(converter.sound().isPresent()) {

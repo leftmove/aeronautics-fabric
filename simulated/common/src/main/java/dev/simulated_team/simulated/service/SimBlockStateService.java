@@ -21,4 +21,10 @@ public interface SimBlockStateService {
 	<P extends AugerShaftBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> augerShaftGenerate(String name, boolean cog);
 
 	<T extends AbstractDirectionalAxisBlock> void directionalAxisBlock(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov, BiFunction<BlockState, Boolean, Object> modelFunc);
+
+	<T extends Block> void directionalGearshift(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov);
+
+	<T extends Block> void steeringWheel(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov);
+
+	<T extends Block> void redstoneAccumulator(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov);
 }

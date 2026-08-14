@@ -30,12 +30,12 @@ public abstract class InventoryLoaderWrapper implements AbstractContainer {
     public void setChanged() {}
 
     @Override
-    public CompoundTag write(final HolderLookup.Provider provider) {
+    public CompoundTag write() {
         return new CompoundTag();
     }
 
     @Override
-    public void read(final HolderLookup.Provider provider, final CompoundTag nbt) {
+    public void read(final CompoundTag nbt) {
 
     }
 

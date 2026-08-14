@@ -19,7 +19,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +36,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
+import net.minecraft.world.InteractionResult;
 
 public class PortableEngineBlock extends HorizontalKineticBlock implements IBE<PortableEngineBlockEntity> {
     private final static int BURN_TIME_THRESHOLD = 10 * 20 /* conversion from seconds to ticks */;
@@ -96,14 +97,15 @@ public class PortableEngineBlock extends HorizontalKineticBlock implements IBE<P
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack heldItem, final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+        final ItemStack heldItem = player.getItemInHand(interactionHand);
         final PortableEngineBlockEntity be = (PortableEngineBlockEntity) level.getBlockEntity(blockPos);
 
         final PortableEngineInventory inventory = be.inventory;
         final ContainerSlot slot = inventory.slot;
         final ItemStack currentItemStack = slot.getStack().copy();
         if (currentItemStack.isEmpty() && heldItem.isEmpty()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
 
         final DyeColor color = SimItemService.getDyeColor(heldItem);
@@ -114,7 +116,7 @@ public class PortableEngineBlock extends HorizontalKineticBlock implements IBE<P
             final BlockState newState = BlockHelper.copyProperties(blockState, SimBlocks.PORTABLE_ENGINES.get(color).getDefaultState());
             level.setBlockAndUpdate(blockPos, newState);
 
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (AllItems.CREATIVE_BLAZE_CAKE.isIn(heldItem)) {
@@ -132,7 +134,7 @@ public class PortableEngineBlock extends HorizontalKineticBlock implements IBE<P
             }
         } else {
             if ((!heldItem.isEmpty() && !inventory.canInsertItem(ItemInfoWrapper.generateFromStack(heldItem)))) {
-                return ItemInteractionResult.FAIL;
+                return InteractionResult.FAIL;
             }
 
             if (currentItemStack.isEmpty()) {
@@ -141,13 +143,13 @@ public class PortableEngineBlock extends HorizontalKineticBlock implements IBE<P
                 if (be.getCurrentBurnTime() <= 0) {
                     SimStats.PORTABLE_ENGINES_FED.awardTo(player);
                 }
-            } else if (ItemStack.isSameItem(heldItem, currentItemStack) && ItemStack.isSameItemSameComponents(heldItem, currentItemStack)) {
+            } else if (ItemStack.isSameItem(heldItem, currentItemStack) && ItemStack.isSameItemSameTags(heldItem, currentItemStack)) {
                 int targetAmount = currentItemStack.getCount() + heldItem.getCount();
                 targetAmount = Math.min(targetAmount, currentItemStack.getMaxStackSize());
                 final int transferAmount = Math.min(targetAmount - currentItemStack.getCount(), heldItem.getCount());
 
                 if (transferAmount <= 0)
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.sidedSuccess(level.isClientSide);
 
                 slot.shrink(-transferAmount);
                 heldItem.shrink(transferAmount);
@@ -170,7 +172,7 @@ public class PortableEngineBlock extends HorizontalKineticBlock implements IBE<P
 
         be.notifyUpdate();
 
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override

@@ -18,8 +18,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class AeroPonderTags {
 
@@ -48,49 +46,49 @@ public class AeroPonderTags {
         // Simulated Tags
 
         itemHelper.addToTag(SimPonderTags.PHYSICS_BEHAVIOR)
-                .add(AeroBlocks.PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.SMART_PROPELLER.asItem())
-                .add(AeroBlocks.ANDESITE_PROPELLER.asItem())
-                .add(AeroBlocks.WOODEN_PROPELLER.asItem())
-                .add(AeroBlocks.WHITE_ENVELOPE_BLOCK.asItem())
-                .add(AeroBlocks.HOT_AIR_BURNER.asItem())
-                .add(AeroBlocks.STEAM_VENT.asItem())
-                .add(AeroBlocks.LEVITITE.asItem())
-                .add(AeroBlocks.PEARLESCENT_LEVITITE.asItem());
+                .add(AeroBlocks.PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.SMART_PROPELLER.get().asItem())
+                .add(AeroBlocks.ANDESITE_PROPELLER.get().asItem())
+                .add(AeroBlocks.WOODEN_PROPELLER.get().asItem())
+                .add(AeroBlocks.WHITE_ENVELOPE_BLOCK.get().asItem())
+                .add(AeroBlocks.HOT_AIR_BURNER.get().asItem())
+                .add(AeroBlocks.STEAM_VENT.get().asItem())
+                .add(AeroBlocks.LEVITITE.get().asItem())
+                .add(AeroBlocks.PEARLESCENT_LEVITITE.get().asItem());
 
         itemHelper.addToTag(SimPonderTags.THRUST_PRODUCING_BLOCKS)
-                .add(AeroBlocks.PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.SMART_PROPELLER.asItem())
-                .add(AeroBlocks.ANDESITE_PROPELLER.asItem())
-                .add(AeroBlocks.WOODEN_PROPELLER.asItem());
+                .add(AeroBlocks.PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.SMART_PROPELLER.get().asItem())
+                .add(AeroBlocks.ANDESITE_PROPELLER.get().asItem())
+                .add(AeroBlocks.WOODEN_PROPELLER.get().asItem());
 
         // Create Tags
 
         itemHelper.addToTag(AllCreatePonderTags.KINETIC_APPLIANCES)
-                .add(AeroBlocks.PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.SMART_PROPELLER.asItem())
-                .add(AeroBlocks.ANDESITE_PROPELLER.asItem())
-                .add(AeroBlocks.WOODEN_PROPELLER.asItem())
-                .add(AeroBlocks.MOUNTED_POTATO_CANNON.asItem());
+                .add(AeroBlocks.PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.SMART_PROPELLER.get().asItem())
+                .add(AeroBlocks.ANDESITE_PROPELLER.get().asItem())
+                .add(AeroBlocks.WOODEN_PROPELLER.get().asItem())
+                .add(AeroBlocks.MOUNTED_POTATO_CANNON.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.ARM_TARGETS)
-                .add(AeroBlocks.MOUNTED_POTATO_CANNON.asItem());
+                .add(AeroBlocks.MOUNTED_POTATO_CANNON.get().asItem());
 
         //todo remove if this isn't actually implemented before release
         itemHelper.addToTag(AllCreatePonderTags.THRESHOLD_SWITCH_TARGETS)
-                .add(AeroBlocks.HOT_AIR_BURNER.asItem())
-                .add(AeroBlocks.STEAM_VENT.asItem());
+                .add(AeroBlocks.HOT_AIR_BURNER.get().asItem())
+                .add(AeroBlocks.STEAM_VENT.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.DISPLAY_SOURCES)
-                .add(AeroBlocks.HOT_AIR_BURNER.asItem())
-                .add(AeroBlocks.STEAM_VENT.asItem())
-                .add(AeroBlocks.PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.asItem())
-                .add(AeroBlocks.SMART_PROPELLER.asItem())
-                .add(AeroBlocks.ANDESITE_PROPELLER.asItem())
-                .add(AeroBlocks.WOODEN_PROPELLER.asItem());
+                .add(AeroBlocks.HOT_AIR_BURNER.get().asItem())
+                .add(AeroBlocks.STEAM_VENT.get().asItem())
+                .add(AeroBlocks.PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.GYROSCOPIC_PROPELLER_BEARING.get().asItem())
+                .add(AeroBlocks.SMART_PROPELLER.get().asItem())
+                .add(AeroBlocks.ANDESITE_PROPELLER.get().asItem())
+                .add(AeroBlocks.WOODEN_PROPELLER.get().asItem());
     }
 }

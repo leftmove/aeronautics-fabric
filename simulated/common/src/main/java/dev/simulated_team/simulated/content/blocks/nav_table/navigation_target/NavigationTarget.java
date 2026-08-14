@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public interface NavigationTarget {
 
@@ -121,6 +122,6 @@ public interface NavigationTarget {
 
     @Nullable
     static NavigationTarget ofStack(final ItemStack itemStack) {
-        return itemStack.get(SimDataComponents.TARGET);
+        return ItemComponents.get(itemStack, SimDataComponents.TARGET);
     }
 }

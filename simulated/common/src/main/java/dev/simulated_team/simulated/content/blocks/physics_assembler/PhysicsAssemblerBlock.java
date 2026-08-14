@@ -11,6 +11,7 @@ import dev.simulated_team.simulated.index.SimClickInteractions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -28,25 +29,19 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class PhysicsAssemblerBlock extends FaceAttachedHorizontalDirectionalBlock implements IBE<PhysicsAssemblerBlockEntity>, IWrenchable, BlockSubLevelAssemblyListener {
-    public static final MapCodec<PhysicsAssemblerBlock> CODEC = simpleCodec(PhysicsAssemblerBlock::new);
 
     public PhysicsAssemblerBlock(final Properties properties) {
         super(properties);
     }
 
     @Override
-    protected boolean canSurvive(final BlockState state, final LevelReader level, final BlockPos pos) {
+    public boolean canSurvive(final BlockState state, final LevelReader level, final BlockPos pos) {
         return canAttach(level, pos, getConnectedDirection(state).getOpposite());
     }
 
     public static boolean canAttach(final LevelReader reader, final BlockPos pos, final Direction direction) {
         final BlockPos blockpos = pos.relative(direction);
         return !reader.getBlockState(blockpos).getBlockSupportShape(reader, pos).getFaceShape(direction.getOpposite()).isEmpty();
-    }
-
-    @Override
-    protected MapCodec<? extends FaceAttachedHorizontalDirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -73,7 +68,7 @@ public class PhysicsAssemblerBlock extends FaceAttachedHorizontalDirectionalBloc
     }
 
     @Override
-    protected VoxelShape getCollisionShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
+    public VoxelShape getCollisionShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
         final Direction facing = state.getValue(FACING);
         return switch (state.getValue(FACE)) {
             case CEILING -> SimBlockShapes.PHYSICS_ASSEMBLER_CEILING_COLLISION.get(facing);
@@ -83,7 +78,7 @@ public class PhysicsAssemblerBlock extends FaceAttachedHorizontalDirectionalBloc
     }
 
     @Override
-    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos, final Player player, final BlockHitResult hitResult) {
+    public InteractionResult use(final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
         // Deployer interaction
         if (player instanceof DeployerFakePlayer) {
             if (!level.isClientSide) {

@@ -28,7 +28,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 
 public class DirectionalLinkedReceiverBlock extends WrenchableDirectionalBlock implements IBE<DirectionalLinkedReceiverBlockEntity>, IWrenchable, CommonRedstoneBlock {
-    public static final MapCodec<ModulatingLinkedReceiverBlock> CODEC = simpleCodec(ModulatingLinkedReceiverBlock::new);
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     static {
@@ -48,11 +47,6 @@ public class DirectionalLinkedReceiverBlock extends WrenchableDirectionalBlock i
     public DirectionalLinkedReceiverBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, false));
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override

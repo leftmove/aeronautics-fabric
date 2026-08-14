@@ -4,6 +4,11 @@ import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import dev.simulated_team.simulated.content.blocks.auger_shaft.AugerShaftBlock;
+import dev.simulated_team.simulated.content.blocks.directional_gearshift.DirectionalGearshiftBlock;
+import dev.simulated_team.simulated.content.blocks.directional_gearshift.DirectionalGearshiftGenerator;
+import dev.simulated_team.simulated.content.blocks.redstone.redstone_accumulator.RedstoneAccumulatorBlock;
+import dev.simulated_team.simulated.content.blocks.redstone.redstone_accumulator.RedstoneAccumulatorBlockStateGen;
+import dev.simulated_team.simulated.content.blocks.steering_wheel.SteeringWheelGenerator;
 import dev.simulated_team.simulated.content.blocks.util.AbstractDirectionalAxisBlock;
 import dev.simulated_team.simulated.data.SimBlockStateGen;
 import dev.simulated_team.simulated.data.neoforge.AugerShaftGen;
@@ -11,8 +16,8 @@ import dev.simulated_team.simulated.service.SimBlockStateService;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -65,6 +70,23 @@ public class NeoForgeSimBlockStateService implements SimBlockStateService {
                             .rotationY(yRot)
                             .build();
                 });
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends Block> void directionalGearshift(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov) {
+        DirectionalGearshiftGenerator.generate((DataGenContext<Block, DirectionalGearshiftBlock>) ctx, prov);
+    }
+
+    @Override
+    public <T extends Block> void steeringWheel(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov) {
+        new SteeringWheelGenerator().generate(ctx, prov);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends Block> void redstoneAccumulator(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov) {
+        RedstoneAccumulatorBlockStateGen.generate().accept((DataGenContext<Block, RedstoneAccumulatorBlock>) ctx, prov);
     }
 
 }

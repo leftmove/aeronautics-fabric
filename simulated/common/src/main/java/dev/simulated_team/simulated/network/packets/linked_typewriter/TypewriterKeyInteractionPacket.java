@@ -12,12 +12,13 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.lwjgl.glfw.GLFW;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record TypewriterKeyInteractionPacket(BlockPos interactionPos, int key, int scanCode, int action /*If it's being pressed etc*/) implements CustomPacketPayload {
     public static final Type<TypewriterKeyInteractionPacket> TYPE = new Type<>(Simulated.path("key_interaction"));
 
     public static final StreamCodec<ByteBuf, TypewriterKeyInteractionPacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, TypewriterKeyInteractionPacket::interactionPos,
+            StreamCodecs.BLOCK_POS, TypewriterKeyInteractionPacket::interactionPos,
             ByteBufCodecs.INT, TypewriterKeyInteractionPacket::key,
             ByteBufCodecs.INT, TypewriterKeyInteractionPacket::scanCode,
             ByteBufCodecs.INT, TypewriterKeyInteractionPacket::action,

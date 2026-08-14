@@ -27,4 +27,9 @@ public class KeyboardHandlerMixin {
             }
         }
     }
+
+    @Inject(method = "keyPress", at = @At("TAIL"))
+    private void simulated$afterKeyPress(final long windowPointer, final int key, final int scanCode, final int action, final int modifiers, final CallbackInfo ci) {
+        SimulatedCommonClientEvents.onAfterKeyPress(key, scanCode, action, modifiers);
+    }
 }

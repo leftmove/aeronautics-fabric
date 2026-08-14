@@ -27,7 +27,7 @@ public record CFluidType(Fluid fluid, DataComponentPatch data) {
         tag.putString("Fluid", BuiltInRegistries.FLUID.getKey(this.fluid).toString());
 
         final DataResult<Tag> result = DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, this.data);
-        if (result.isError()) {
+        if (result.error().isPresent()) {
             Simulated.LOGGER.warn(result.error().get().message());
         } else {
             tag.put("data", result.result().get());
@@ -37,11 +37,11 @@ public record CFluidType(Fluid fluid, DataComponentPatch data) {
     }
 
     public static CFluidType read(final CompoundTag tag) {
-        final Fluid fluid = BuiltInRegistries.FLUID.get(ResourceLocation.parse(tag.getString("Fluid")));
+        final Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(tag.getString("Fluid")));
         DataComponentPatch data = DataComponentPatch.EMPTY;
         if (tag.contains("data")) {
             final DataResult<Pair<DataComponentPatch, Tag>> result = DataComponentPatch.CODEC.decode(NbtOps.INSTANCE, tag.getCompound("data"));
-            if (result.isError()) {
+            if (result.error().isPresent()) {
                 Simulated.LOGGER.warn(result.error().get().message());
             } else {
                 data = result.result().get().getFirst();

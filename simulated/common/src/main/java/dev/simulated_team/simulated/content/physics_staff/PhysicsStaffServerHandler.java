@@ -92,15 +92,16 @@ public class PhysicsStaffServerHandler extends SavedData {
         return handle;
     }
 
-    private static PhysicsStaffServerHandler create(final ServerLevel level, final CompoundTag nbt, final HolderLookup.Provider registries) {
+    private static PhysicsStaffServerHandler create(final ServerLevel level, final CompoundTag nbt) {
         final PhysicsStaffServerHandler sd = new PhysicsStaffServerHandler(level);
         sd.loadLocks(nbt.getList(ID, Tag.TAG_INT_ARRAY));
         return sd;
     }
 
     public static PhysicsStaffServerHandler get(final ServerLevel level) {
-        final PhysicsStaffServerHandler data = level.getChunkSource().getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(PhysicsStaffServerHandler::new, (nbt, lookup) -> create(level, nbt, lookup), null),
+        final PhysicsStaffServerHandler data = level.getDataStorage().computeIfAbsent(
+                nbt -> create(level, nbt),
+                PhysicsStaffServerHandler::new,
                 PhysicsStaffServerHandler.ID);
         data.level = level;
 
@@ -186,7 +187,7 @@ public class PhysicsStaffServerHandler extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(final CompoundTag tag, final HolderLookup.@NotNull Provider provider) {
+    public @NotNull CompoundTag save(final CompoundTag tag) {
         final ListTag tags = new ListTag();
         this.saveLocks(tags);
         tag.put(ID, tags);

@@ -27,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 import java.util.List;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class LinkedTypewriterItem extends BlockItem {
     public LinkedTypewriterItem(final Block block, final Properties properties) {
@@ -73,7 +74,7 @@ public class LinkedTypewriterItem extends BlockItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand usedHand) {
-        final BlockHitResult blockHitResult = RaycastHelper.rayTraceRange(level, player, player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE));
+        final BlockHitResult blockHitResult = RaycastHelper.rayTraceRange(level, player, player.getBlockReach());
         if (blockHitResult.getType() == HitResult.Type.MISS && level.isClientSide) {
             LinkedTypewriterItemBindHandler.reset();
         }
@@ -82,10 +83,10 @@ public class LinkedTypewriterItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack, final TooltipContext context, final List<Component> tooltipComponents, final TooltipFlag tooltipFlag) {
+    public void appendHoverText(final ItemStack stack, final @javax.annotation.Nullable net.minecraft.world.level.Level context, final List<Component> tooltipComponents, final TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        if (stack.has(DataComponents.BLOCK_ENTITY_DATA)) {
-            final CompoundTag tag = stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
+        if (ItemComponents.has(stack, DataComponents.BLOCK_ENTITY_DATA)) {
+            final CompoundTag tag = ItemComponents.get(stack, DataComponents.BLOCK_ENTITY_DATA).copyTag();
             if (tag.contains("Keys", CompoundTag.TAG_LIST)) {
                 final int keyCount = tag.getList("Keys", CompoundTag.TAG_COMPOUND).size();
                 tooltipComponents.add(Component.translatable("simulated.linked_typewriter.key_count", keyCount).withStyle(ChatFormatting.GOLD));

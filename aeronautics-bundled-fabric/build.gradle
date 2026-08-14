@@ -1,0 +1,124 @@
+plugins {
+    id 'java-library'
+    id 'net.fabricmc.fabric-loom-remap'
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+}
+
+def modProps = new Properties()
+file("${rootProject.projectDir}/aeronautics-bundled/gradle.properties").withInputStream { modProps.load(it) }
+
+modProps.each { key, value ->
+    project.ext.set(key.toString(), value)
+}
+
+version = project.mod_version
+group = modProps.group
+description = modProps.description
+
+base {
+    archivesName = "create-aeronautics-bundled-fabric-${minecraft_version}"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+}
+
+repositories {
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org/'
+    }
+}
+
+evaluationDependsOn(':simulated:fabric')
+evaluationDependsOn(':aeronautics:fabric')
+evaluationDependsOn(':offroad:fabric')
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+}
+
+remapJar {
+    from(rootProject.file('LICENSE.md'))
+    nestedJars.from(project(':simulated:fabric').tasks.named('remapJar'))
+    nestedJars.from(project(':aeronautics:fabric').tasks.named('remapJar'))
+    nestedJars.from(project(':offroad:fabric').tasks.named('remapJar'))
+}
+
+processResources {
+    var expandProps = [
+            'version'                      : version,
+            'group'                        : project.group,
+            'minecraft_version'            : minecraft_version,
+            'minecraft_version_range'      : minecraft_version_range,
+            'fabric_version'               : fabric_version,
+            'fabric_loader_version'        : fabric_loader_version,
+            'mod_name'                     : mod_name,
+            'mod_author'                   : mod_author,
+            'mod_id'                       : mod_id,
+            'license'                      : license,
+            'description'                  : project.description,
+            'forge_version'                : forge_version,
+            'forge_loader_version_range'   : forge_loader_version_range,
+            'neoforge_version'             : neoforge_version,
+            'neoforge_loader_version_range': neoforge_loader_version_range,
+            'sable_mod_version_range'      : sable_mod_version_range,
+            'create_mod_version'           : create_mod_version,
+            'flywheel_mod_version'         : flywheel_mod_version,
+            'credits'                      : credits,
+            'java_version'                 : java_version,
+            'forgeconfigapiport_version'   : forgeconfigapiport_version,
+            'veil_version'                 : veil_version
+    ]
+
+    filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
+        expand expandProps
+    }
+    inputs.properties(expandProps)
+}
+
+publishMods {
+    def changelogFile = rootProject.file("changelog.md")
+
+    type = STABLE
+
+    file = remapJar.archiveFile
+    changelog = changelogFile.text
+
+    version = "$project.version+mc$minecraft_version"
+    displayName = "$mod_name Fabric $project.version for mc$minecraft_version"
+    modLoaders.add("fabric")
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
+        projectId = "676721"
+        projectSlug = "create-aeronautics"
+        minecraftVersions.add(minecraft_version)
+
+        clientRequired = true
+        serverRequired = true
+
+        requires("create")
+        requires("sable")
+        requires("fabric-api")
+        embeds("forge-config-api-port")
+    }
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "oWaK0Q19"
+        minecraftVersions.add(minecraft_version)
+
+        requires("create")
+        requires("sable")
+        requires("fabric-api")
+        embeds("forge-config-api-port")
+    }
+}

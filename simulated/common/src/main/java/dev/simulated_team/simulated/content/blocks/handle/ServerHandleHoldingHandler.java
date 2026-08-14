@@ -2,6 +2,7 @@ package dev.simulated_team.simulated.content.blocks.handle;
 
 import dev.simulated_team.simulated.index.SimStats;
 import dev.simulated_team.simulated.network.packets.handle.ClientboundPlayersHoldingHandlePacket;
+import dev.simulated_team.simulated.service.SimPlatformService;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -57,6 +58,13 @@ public class ServerHandleHoldingHandler {
 	}
 
 	public static void sync() {
-		CatnipServices.NETWORK.sendToAllClients(new ClientboundPlayersHoldingHandlePacket(holdingPlayers.keySet()));
+		final net.minecraft.server.MinecraftServer server = SimPlatformService.INSTANCE.getCurrentServer();
+		if (server == null) {
+			return;
+		}
+		final ClientboundPlayersHoldingHandlePacket packet = new ClientboundPlayersHoldingHandlePacket(holdingPlayers.keySet());
+		for (final net.minecraft.server.level.ServerPlayer player : server.getPlayerList().getPlayers()) {
+			foundry.veil.api.network.VeilPacketManager.dispatch(player, packet);
+		}
 	}
 }

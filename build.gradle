@@ -1,6 +1,19 @@
 plugins {
     // https://projects.neoforged.net/neoforged/moddevgradle
     id 'net.neoforged.moddev' version '2.0.140' apply false
+    id 'net.neoforged.moddev.legacyforge' version '2.0.140' apply false
+    id 'net.fabricmc.fabric-loom-remap' version '1.16.1' apply false
+}
+
+import org.gradle.api.attributes.java.TargetJvmVersion
+import org.gradle.api.attributes.CompatibilityCheckDetails
+import org.gradle.api.attributes.AttributeCompatibilityRule
+
+abstract class RelaxJvmVersionCompatibility implements AttributeCompatibilityRule<Integer> {
+    @Override
+    void execute(CompatibilityCheckDetails<Integer> details) {
+        details.compatible()
+    }
 }
 
 allprojects {
@@ -29,6 +42,16 @@ configureModSubprojects('aeronautics')
 configureModSubprojects('offroad')
 
 subprojects {
+    pluginManager.withPlugin('java') {
+        dependencies.attributesSchema.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE) {
+            compatibilityRules.add(RelaxJvmVersionCompatibility)
+        }
+        tasks.withType(JavaCompile).configureEach {
+            options.compilerArgs << '-Xmaxerrs' << '10000'
+            options.compilerArgs << '-Xmaxwarns' << '10000'
+        }
+    }
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -55,8 +78,16 @@ subprojects {
         }
 
         maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
-        maven { url = "https://mvn.devos.one/snapshots" } // Registrate
+        maven { url = "https://mvn.devos.one/snapshots" } // Create Fabric, Registrate Fabric
+        maven { url = "https://maven.ithundxr.dev/mirror" } // Forge Registrate
         maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
+        maven { url = "https://mvn.devos.one/releases/" } // Porting Lib
+        maven { url = "https://maven.jamieswhiteshirt.com/libs-release" } // Reach Entity Attributes
+        maven { url = "https://maven.fabricmc.net/" }
+        maven { url = "https://maven.shedaniel.me/" }
+        maven { url = "https://maven.terraformersmc.com/" }
+        maven { url = "https://maven.architectury.dev/" }
+        maven { url = "https://maven.quiltmc.org/repository/release" }
 
         maven { url = "https://maven.theillusivec4.top/" } // Curios API
 

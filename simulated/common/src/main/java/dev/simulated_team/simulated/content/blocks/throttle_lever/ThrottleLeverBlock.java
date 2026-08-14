@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
@@ -33,8 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class ThrottleLeverBlock extends FaceAttachedHorizontalDirectionalBlock implements IBE<ThrottleLeverBlockEntity>, IWrenchable, CommonRedstoneBlock {
-    public static MapCodec<ThrottleLeverBlock> CODEC = simpleCodec(ThrottleLeverBlock::new);
-    public static BooleanProperty INVERTED = BooleanProperty.create("inverted");
+        public static BooleanProperty INVERTED = BooleanProperty.create("inverted");
 
     public ThrottleLeverBlock(final Properties builder) {
         super(builder);
@@ -61,12 +61,7 @@ public class ThrottleLeverBlock extends FaceAttachedHorizontalDirectionalBlock i
     }
 
     @Override
-    protected MapCodec<? extends FaceAttachedHorizontalDirectionalBlock> codec() {
-        return CODEC;
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos, final Player player, final BlockHitResult hitResult) {
+    public InteractionResult use(final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
         if (AllItems.WRENCH.isIn(player.getMainHandItem())) {
             return InteractionResult.PASS;
         }
@@ -171,7 +166,7 @@ public class ThrottleLeverBlock extends FaceAttachedHorizontalDirectionalBlock i
     }
 
     @Override
-    protected boolean isPathfindable(final BlockState blockState, final PathComputationType pathComputationType) {
+    public boolean isPathfindable(final BlockState blockState, final BlockGetter level, final BlockPos pos, final PathComputationType pathComputationType) {
         return false;
     }
 }

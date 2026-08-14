@@ -36,14 +36,37 @@ public record GustParticleData(
     }
 
     @Override
-    public MapCodec<GustParticleData> getCodec(final ParticleType<GustParticleData> type) {
-        return CODEC;
+    public com.mojang.serialization.Codec<GustParticleData> getCodec(final ParticleType<GustParticleData> type) { return CODEC.codec(); }
+
+    
+    @Override
+    public ParticleOptions.Deserializer<GustParticleData> getDeserializer() {
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public GustParticleData fromCommand(final ParticleType<GustParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return new GustParticleData();
+            }
+
+            @Override
+            public GustParticleData fromNetwork(final ParticleType<GustParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return new GustParticleData(new Quaternionf(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat()));
+            }
+        };
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, GustParticleData> getStreamCodec() {
-        return STREAM_CODEC;
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
+        buffer.writeFloat(this.orientation.x);
+        buffer.writeFloat(this.orientation.y);
+        buffer.writeFloat(this.orientation.z);
+        buffer.writeFloat(this.orientation.w);
     }
+
+    @Override
+    public String writeToString() {
+        return this.getType().toString();
+    }
+
 
     @Override
     public ParticleType<?> getType() {

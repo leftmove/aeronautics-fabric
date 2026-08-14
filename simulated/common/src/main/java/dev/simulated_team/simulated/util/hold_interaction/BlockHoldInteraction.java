@@ -58,7 +58,7 @@ public abstract class BlockHoldInteraction implements InteractCallback {
     public void renderOverlay(final GuiGraphics graphics, final int width1, final int height1, final boolean hideGui) {}
 
     public static double getInteractionRange(final Player player) {
-        return player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE).getValue();
+        return player.getBlockReach();
     }
 
     public static boolean inInteractionRange(final Player player, final Position target, final double reachBuffer) {

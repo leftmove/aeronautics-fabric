@@ -16,10 +16,8 @@ import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -42,8 +40,6 @@ import java.util.List;
  * Handles item binding. methods, ticks, etc called from interaction handler.
  */
 public class LinkedTypewriterItemBindHandler {
-
-    public static final LayeredDraw.Layer OVERLAY = LinkedTypewriterItemBindHandler::renderOverlay;
 
     private static BlockPos clickedPos;
     private static final List<AABB> outlines = new ArrayList<>();
@@ -118,7 +114,7 @@ public class LinkedTypewriterItemBindHandler {
         reset();
     }
 
-    public static void renderOverlay(final GuiGraphics guiGraphics, final DeltaTracker deltaTracker) {
+    public static void renderOverlay(final GuiGraphics guiGraphics, final float partialTicks) {
         if (LinkedTypewriterInteractionHandler.getMode() != LinkedTypewriterInteractionHandler.Mode.BINDING_FROM_ITEM) {
             return;
         }
@@ -169,7 +165,7 @@ public class LinkedTypewriterItemBindHandler {
 
     private static InteractionHand getHand() {
         final LocalPlayer player = Minecraft.getInstance().player;
-        final Item item = SimBlocks.LINKED_TYPEWRITER.asItem();
+        final Item item = SimBlocks.LINKED_TYPEWRITER.get().asItem();
         if (player.getMainHandItem().is(item)) {
             return InteractionHand.MAIN_HAND;
         } else if (player.getOffhandItem().is(item)) {

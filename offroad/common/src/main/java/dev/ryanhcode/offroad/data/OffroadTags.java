@@ -27,7 +27,7 @@ public class OffroadTags {
         }
 
         private static TagKey<Block> create(final String namespace, final String path) {
-            return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(namespace, path));
+            return TagKey.create(Registries.BLOCK, new ResourceLocation(namespace, path));
         }
 
         protected static void addGenerators() {
@@ -37,7 +37,7 @@ public class OffroadTags {
         private static void genBlockTags(final RegistrateTagsProvider<Block> provIn) {
             final TagGen.CreateTagsProvider<Block> prov = new TagGen.CreateTagsProvider<>(provIn, Block::builtInRegistryHolder);
             prov.tag(BOREHEAD_EFFECTIVE)
-                    .addTag(AllTags.commonBlockTag("ores"));
+                    .addTag(AllTags.forgeBlockTag("ores"));
             prov.tag(BOREHEAD_SUPER_EFFECTIVE)
                     .add(net.minecraft.world.level.block.Blocks.ANCIENT_DEBRIS);
         }

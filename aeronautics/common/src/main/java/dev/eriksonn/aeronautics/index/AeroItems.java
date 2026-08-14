@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class AeroItems {
 	private static final SimulatedRegistrate REGISTRATE = Aeronautics.getRegistrate();
@@ -34,18 +35,12 @@ public class AeroItems {
 
 	public static ItemEntry<Item> MUSIC_DISC_CLOUD_SKIPPER =
 			REGISTRATE.item("music_disc_cloud_skipper", Item::new)
-					.properties(p -> p
-							.stacksTo(1)
-							.rarity(Rarity.RARE)
-							.jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG, Aeronautics.path("cloud_skipper")))
-							.component(AeroDataComponents.LEVITATING, Levitating.DEFAULT)
-					)
+					.properties(p -> ItemComponents.with(p.stacksTo(1).rarity(Rarity.RARE), AeroDataComponents.LEVITATING, Levitating.DEFAULT))
 					.tag(AeroTags.ItemTags.MUSIC_DISCS)
 					.lang("Music Disc")
 					.register();
 
-	public static ItemEntry<Item> ENDSTONE_POWDER = ingredient("end_stone_powder", p -> p
-			.component(AeroDataComponents.LEVITATING, Levitating.END_STONE));
+	public static ItemEntry<Item> ENDSTONE_POWDER = ingredient("end_stone_powder", p -> ItemComponents.with(p, AeroDataComponents.LEVITATING, Levitating.END_STONE));
 
 	private static ItemEntry<Item> ingredient(final String name, NonNullUnaryOperator<Item.Properties> poperator) {
 		return REGISTRATE.item(name, Item::new)

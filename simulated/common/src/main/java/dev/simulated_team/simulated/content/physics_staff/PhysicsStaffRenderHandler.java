@@ -17,7 +17,6 @@ import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -32,7 +31,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4fc;
 import org.joml.Vector3dc;
 
 import java.util.List;
@@ -46,7 +44,7 @@ public class PhysicsStaffRenderHandler {
     /**
      * Renders the selection / hovering box for the staff
      */
-    public static void renderSelectionBox(final VeilRenderLevelStageEvent.Stage stage, final LevelRenderer renderer, final MultiBufferSource.BufferSource bufferSource, final MatrixStack ps, final Matrix4fc frustrumMat, final Matrix4fc projectionMat, final int renderTick, final DeltaTracker tracker, final Camera camera, final Frustum frustrum) {
+    public static void renderSelectionBox(final VeilRenderLevelStageEvent.Stage stage, final LevelRenderer renderer, final MultiBufferSource.BufferSource bufferSource, final MatrixStack ps, final org.joml.Matrix4f projectionMat, final int renderTick, final float partialTicks, final Camera camera, final Frustum frustrum) {
         if (stage != VeilRenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
 
         if (Minecraft.getInstance().options.hideGui) {
@@ -54,14 +52,14 @@ public class PhysicsStaffRenderHandler {
         }
 
         ps.matrixPush();
-        SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER.onRender(ps.toPoseStack());
+        SimulatedClient.PHYSICS_STAFF_CLIENT_HANDLER.onRender((PoseStack) ps);
         ps.matrixPop();
 
         final Minecraft minecraft = Minecraft.getInstance();
         final LocalPlayer player = minecraft.player;
 
-        if (!player.getItemInHand(InteractionHand.MAIN_HAND).is(SimItems.PHYSICS_STAFF) &&
-                !player.getItemInHand(InteractionHand.OFF_HAND).is(SimItems.PHYSICS_STAFF)) {
+        if (!player.getItemInHand(InteractionHand.MAIN_HAND).is(SimItems.PHYSICS_STAFF.get()) &&
+                !player.getItemInHand(InteractionHand.OFF_HAND).is(SimItems.PHYSICS_STAFF.get())) {
             return;
         }
 
@@ -76,7 +74,7 @@ public class PhysicsStaffRenderHandler {
             final Color color = new Color(191.0f / 255.0f, 191.0f / 255.0f, 191.0f / 255.0f, 1.0f);
 
             Outliner.getInstance().showCluster("physicsStaffSelection", List.of(hoverBlockPos))
-                    .colored(color.rgb())
+                    .colored(color.getRGB())
                     .disableLineNormals()
                     .lineWidth(1 / 32f)
                     .withFaceTexture(AllSpecialTextures.CHECKERED);
@@ -88,7 +86,7 @@ public class PhysicsStaffRenderHandler {
      */
     private static void updateHoverPos(final Minecraft minecraft, final LocalPlayer player) {
         final ClientLevel level = minecraft.level;
-        final float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+        final float partialTicks = Minecraft.getInstance().getFrameTime();
 
         hoverBlockPos = null;
 
@@ -141,10 +139,10 @@ public class PhysicsStaffRenderHandler {
 
             final PoseStack.Pose pose = ps.pose();
             final int color = 0xffffffff;
-            buffer.addVertex(pose, 0.0f - 0.5f, 0.0f - 0.5f, 0.0f).setColor(color).setUv(0.0f, 1.0f).setLight(LightTexture.FULL_BRIGHT);
-            buffer.addVertex(pose, 0.0f - 0.5f, 1.0f - 0.5f, 0.0f).setColor(color).setUv(0.0f, 0.0f).setLight(LightTexture.FULL_BRIGHT);
-            buffer.addVertex(pose, 1.0f - 0.5f, 1.0f - 0.5f, 0.0f).setColor(color).setUv(1.0f, 0.0f).setLight(LightTexture.FULL_BRIGHT);
-            buffer.addVertex(pose, 1.0f - 0.5f, 0.0f - 0.5f, 0.0f).setColor(color).setUv(1.0f, 1.0f).setLight(LightTexture.FULL_BRIGHT);
+            buffer.vertex(pose.pose(), 0.0f - 0.5f, 0.0f - 0.5f, 0.0f).color(color).uv(0.0f, 1.0f).uv2(LightTexture.FULL_BRIGHT).endVertex();
+            buffer.vertex(pose.pose(), 0.0f - 0.5f, 1.0f - 0.5f, 0.0f).color(color).uv(0.0f, 0.0f).uv2(LightTexture.FULL_BRIGHT).endVertex();
+            buffer.vertex(pose.pose(), 1.0f - 0.5f, 1.0f - 0.5f, 0.0f).color(color).uv(1.0f, 0.0f).uv2(LightTexture.FULL_BRIGHT).endVertex();
+            buffer.vertex(pose.pose(), 1.0f - 0.5f, 0.0f - 0.5f, 0.0f).color(color).uv(1.0f, 1.0f).uv2(LightTexture.FULL_BRIGHT).endVertex();
 
             ps.matrixPop();
         }

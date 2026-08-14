@@ -9,11 +9,12 @@ import dev.simulated_team.simulated.util.SimCodecUtil;
 import foundry.veil.api.network.handler.PacketContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.codec.StreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import foundry.veil.api.network.VeilPacketManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +30,7 @@ public class PhysicsStaffActionPacket implements CustomPacketPayload {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PhysicsStaffActionPacket> CODEC = StreamCodec.composite(
             PhysicsStaffAction.STREAM_CODEC, packet -> packet.action,
-            UUIDUtil.STREAM_CODEC, packet -> packet.subLevel,
+            StreamCodecs.UUID, packet -> packet.subLevel,
             SimCodecUtil.STREAM_VECTOR3D, packet -> packet.location,
             PhysicsStaffActionPacket::new
     );
@@ -53,8 +54,8 @@ public class PhysicsStaffActionPacket implements CustomPacketPayload {
         final ServerLevel level = (ServerLevel) context.level();
         final Player player = context.player();
 
-        if (!player.getMainHandItem().is(SimItems.PHYSICS_STAFF) &&
-                !player.getOffhandItem().is(SimItems.PHYSICS_STAFF)) {
+        if (!player.getMainHandItem().is(SimItems.PHYSICS_STAFF.get()) &&
+                !player.getOffhandItem().is(SimItems.PHYSICS_STAFF.get())) {
             context.disconnect(Component.literal("Invalid packet"));
             return;
         }
@@ -72,13 +73,13 @@ public class PhysicsStaffActionPacket implements CustomPacketPayload {
             final Vector3d beamEnd = new Vector3d(this.location);
 
             final ChunkPos chunk = new ChunkPos(BlockPos.containing(this.location.x(), this.location.y(), this.location.z()));
-            final ClientboundCustomPayloadPacket beamPacket = new ClientboundCustomPayloadPacket(new PhysicsStaffBeamPacket(player.getUUID(), beamStart, beamEnd));
+            final PhysicsStaffBeamPacket beamPacket = new PhysicsStaffBeamPacket(player.getUUID(), beamStart, beamEnd);
 
             for (final ServerPlayer otherPlayer : level.getChunkSource().chunkMap.getPlayers(chunk, false)) {
                 if (otherPlayer == player) {
                     continue;
                 }
-                otherPlayer.connection.send(beamPacket);
+                VeilPacketManager.dispatch(otherPlayer, beamPacket);
             }
         }
     }

@@ -2,11 +2,14 @@
   "required": true,
   "minVersion": "0.8",
   "package": "dev.eriksonn.aeronautics.neoforge.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlockRenderDispatcherMixin",
+    "self_mixins.GustEntityMixin"
   ],
   "client": [
-    "BlockRenderDispatcherMixin"
+    "BlockRenderDispatcherMixin",
+    "ChunkRenderTypeSetAccessor"
   ],
   "server": [],
   "injectors": {

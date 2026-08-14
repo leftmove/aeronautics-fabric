@@ -43,9 +43,9 @@ public class MagnetFieldParticle2 extends SimpleAnimatedParticle {
         this.selectSprite(0);
         this.setAlpha(0.4f);
         if(negative)
-            this.setColor(0.7f,0.7f,1);
+            this.setColor(0.7f,0.7f,1.0f);
         else
-            this.setColor(1,0.7f,0.7f);
+            this.setColor(1.0f,0.7f,0.7f);
     }
 
     public ParticleRenderType getRenderType() {
@@ -60,22 +60,9 @@ public class MagnetFieldParticle2 extends SimpleAnimatedParticle {
     @Override
     public void render(final VertexConsumer buffer, final Camera renderInfo, final float partialTicks) {
         final Quaternionf quaternionf = new Quaternionf();
-        this.getFacingCameraMode().setRotation(quaternionf, renderInfo, partialTicks);
         if (this.roll != 0.0F) {
             quaternionf.rotateZ(Mth.lerp(partialTicks, this.oRoll, this.roll));
         }
-        final Vector3f v = new Vector3f(1,1,1);
-        float t = (Minecraft.getInstance().level.getGameTime()%1000)+partialTicks;
-        t*=0.2;
-
-        final Vector3f v2 = new Vector3f();
-
-
-        //quaternionf.rotateZ((float)(Math.PI/2.0)+t);
-
-
-        //quaternionf.set(1,1,-1,1);
-        //quaternionf.set(new Quaternionf().slerp(quaternionf,partialTicks));
 
         final Vec3 vec3 = renderInfo.getPosition();
         final float x = (float)(this.x - vec3.x());
@@ -95,6 +82,26 @@ public class MagnetFieldParticle2 extends SimpleAnimatedParticle {
         quaternionf.rotateX((float)(Math.PI/2.0));
 
         this.renderRotatedQuad(buffer, quaternionf, x+offsetX, y+offsetY, z+offsetZ, partialTicks);
+    }
+
+    private void renderRotatedQuad(final VertexConsumer buffer, final Quaternionf quaternionf, final float x, final float y, final float z, final float partialTicks) {
+        final Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
+        final float size = this.getQuadSize(partialTicks);
+        for (int i = 0; i < 4; ++i) {
+            final Vector3f vector3f = avector3f[i];
+            vector3f.rotate(quaternionf);
+            vector3f.mul(size);
+            vector3f.add(x, y, z);
+        }
+        final float u0 = this.getU0();
+        final float u1 = this.getU1();
+        final float v0 = this.getV0();
+        final float v1 = this.getV1();
+        final int light = this.getLightColor(partialTicks);
+        buffer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(u1, v1).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(light).endVertex();
+        buffer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(u1, v0).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(light).endVertex();
+        buffer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(u0, v0).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(light).endVertex();
+        buffer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(u0, v1).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(light).endVertex();
     }
 
     @Override

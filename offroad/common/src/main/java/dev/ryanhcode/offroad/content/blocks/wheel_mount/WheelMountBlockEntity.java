@@ -62,6 +62,7 @@ import org.joml.Vector3dc;
 
 import java.util.Collection;
 import java.util.List;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEntitySubLevelActor, Clearable, ClipboardCloneable {
     private static final MutableComponent SCROLL_OPTION_TITLE = OffroadLang.translate("scroll_option.suspension_strength").component();
@@ -134,7 +135,7 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
     @Override
     public void sable$physicsTick(final ServerSubLevel subLevel, final RigidBodyHandle handle, final double timeStep) {
         final ItemStack item = this.getHeldItem();
-        final TireLike tire = item.get(OffroadDataComponents.TIRE);
+        final TireLike tire = ItemComponents.get(item, OffroadDataComponents.TIRE);
         final BlockPos blockPos = this.getBlockPos();
 
         if (tire == null) {
@@ -241,7 +242,7 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
         super.tick();
 
         final ItemStack item = this.getHeldItem();
-        final TireLike tire = item.get(OffroadDataComponents.TIRE);
+        final TireLike tire = ItemComponents.get(item, OffroadDataComponents.TIRE);
 
         this.lastChasingYaw = this.chasingYaw;
         this.chasingYaw = Mth.lerp(0.4, this.chasingYaw, this.computeYaw());
@@ -334,12 +335,12 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
     }
 
     @Override
-    public boolean writeToClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Direction side) {
+    public boolean writeToClipboard(final CompoundTag tag, final Direction side) {
         return false;
     }
 
     @Override
-    public boolean readFromClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
+    public boolean readFromClipboard(final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
         return false;
     }
 
@@ -356,7 +357,7 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
         for (int i = -1; i <= 1; i++) {
             final Vec3 localPosO = wheelPosCenter.add(JOMLConversion.toMojang(normalD).scale(i));
 
-            final ClipContext clipContext = new ClipContext(localPosO, localPosO.subtract(0.0, 5.0, 0.0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty());
+            final ClipContext clipContext = new ClipContext(localPosO, localPosO.subtract(0.0, 5.0, 0.0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, net.minecraft.world.entity.EntityType.PLAYER.create(null));
             ((ClipContextExtension) clipContext).sable$setIgnoredSubLevel(Sable.HELPER.getContaining(this));
             final BlockHitResult clipResult = this.level.clip(clipContext);
 
@@ -464,8 +465,8 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        tag.put("CurrentStack", this.getHeldItem().saveOptional(registries));
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
+        tag.put("CurrentStack", this.getHeldItem().save(new CompoundTag()));
 
         if (clientPacket) {
             tag.putInt("SteeringSignalStrength", this.lastServerSteeringSignal);
@@ -473,12 +474,12 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
             tag.putInt("SteeringSignalStrengthRight", this.lastServerSteeringSignalRight);
         }
 
-        super.write(tag, registries, clientPacket);
+        super.write(tag, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        final ItemStack stack = ItemStack.parseOptional(registries, tag.getCompound("CurrentStack"));
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
+        final ItemStack stack = ItemStack.of(tag.getCompound("CurrentStack"));
 
         this.inventory.suppressUpdate = true;
         this.inventory.slot.setStack(stack);
@@ -493,7 +494,7 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
             this.onStackChanged();
         }
 
-        super.read(tag, registries, clientPacket);
+        super.read(tag, clientPacket);
     }
 
     @Override
@@ -512,8 +513,8 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
     @Override
     protected AABB createRenderBoundingBox() {
         AABB aabb = new AABB(this.getBlockPos());
-        if(this.getHeldItem() != null && this.getHeldItem().has(OffroadDataComponents.TIRE)) {
-            final TireLike tire = this.getHeldItem().getComponents().get(OffroadDataComponents.TIRE);
+        if(this.getHeldItem() != null && ItemComponents.has(this.getHeldItem(), OffroadDataComponents.TIRE)) {
+            final TireLike tire = ItemComponents.get(this.getHeldItem(), OffroadDataComponents.TIRE);
             aabb = aabb.inflate(tire.radius() + 1);
         }
         return aabb;

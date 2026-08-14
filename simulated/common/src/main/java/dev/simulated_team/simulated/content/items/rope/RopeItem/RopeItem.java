@@ -14,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class RopeItem extends Item {
 
@@ -62,17 +63,17 @@ public class RopeItem extends Item {
         final boolean validLocation = isValidRopeAttachment(level, clickedPos);
 
         if (player != null && player.isShiftKeyDown()) {
-            heldStack.remove(SimDataComponents.ROPE_FIRST_CONNECTION);
+            ItemComponents.remove(heldStack, SimDataComponents.ROPE_FIRST_CONNECTION);
             return InteractionResult.SUCCESS;
         }
 
         if (validLocation) {
-            if (heldStack.has(SimDataComponents.ROPE_FIRST_CONNECTION)) {
+            if (ItemComponents.has(heldStack, SimDataComponents.ROPE_FIRST_CONNECTION)) {
 
                 if (!level.isClientSide) {
-                    if (!this.attachRope(level, heldStack.get(SimDataComponents.ROPE_FIRST_CONNECTION), clickedPos, !player.hasInfiniteMaterials())) {
+                    if (!this.attachRope(level, ItemComponents.get(heldStack, SimDataComponents.ROPE_FIRST_CONNECTION), clickedPos, !player.getAbilities().instabuild)) {
                         // failure to connect
-                        heldStack.remove(SimDataComponents.ROPE_FIRST_CONNECTION);
+                        ItemComponents.remove(heldStack, SimDataComponents.ROPE_FIRST_CONNECTION);
                         return InteractionResult.SUCCESS;
                     } else {
                         // we attached the rope!
@@ -80,16 +81,16 @@ public class RopeItem extends Item {
                     }
                 }
 
-                heldStack.remove(SimDataComponents.ROPE_FIRST_CONNECTION);
+                ItemComponents.remove(heldStack, SimDataComponents.ROPE_FIRST_CONNECTION);
 
-                if (!player.hasInfiniteMaterials())
+                if (!player.getAbilities().instabuild)
                     context.getItemInHand()
                             .shrink(1);
 
                 return InteractionResult.SUCCESS;
             }
 
-            heldStack.set(SimDataComponents.ROPE_FIRST_CONNECTION, clickedPos);
+            ItemComponents.set(heldStack, SimDataComponents.ROPE_FIRST_CONNECTION, clickedPos);
             return InteractionResult.SUCCESS;
         }
 

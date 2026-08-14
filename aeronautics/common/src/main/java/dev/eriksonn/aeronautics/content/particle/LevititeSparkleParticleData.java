@@ -42,14 +42,34 @@ public class LevititeSparkleParticleData implements ParticleOptions, ICustomPart
     }
 
     @Override
-    public MapCodec<LevititeSparkleParticleData> getCodec(final ParticleType<LevititeSparkleParticleData> type) {
-        return CODEC;
+    public com.mojang.serialization.Codec<LevititeSparkleParticleData> getCodec(final ParticleType<LevititeSparkleParticleData> type) { return CODEC.codec(); }
+
+    
+    @Override
+    public ParticleOptions.Deserializer<LevititeSparkleParticleData> getDeserializer() {
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public LevititeSparkleParticleData fromCommand(final ParticleType<LevititeSparkleParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return new LevititeSparkleParticleData();
+            }
+
+            @Override
+            public LevititeSparkleParticleData fromNetwork(final ParticleType<LevititeSparkleParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return new LevititeSparkleParticleData(buf.readInt());
+            }
+        };
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, LevititeSparkleParticleData> getStreamCodec() {
-        return STREAM_CODEC;
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
+        buffer.writeInt(this.color);
     }
+
+    @Override
+    public String writeToString() {
+        return this.getType().toString();
+    }
+
 
     @Override
     public ParticleType<?> getType() {

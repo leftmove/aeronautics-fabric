@@ -229,7 +229,7 @@ public class BoreheadBearingScenes {
 
         scene.idle(10);
 
-        final Item[] collectedItems = {Items.COBBLESTONE, Items.COBBLESTONE, AllItems.RAW_ZINC.asItem(), Items.RAW_GOLD, Items.DIAMOND};
+        final Item[] collectedItems = {Items.COBBLESTONE, Items.COBBLESTONE, AllItems.RAW_ZINC.get().asItem(), Items.RAW_GOLD, Items.DIAMOND};
 
         spinRockCutters(scene, util, util.grid().at(1, 2, 2), util.grid().at(3, 2, 2), 15, 1000);
         world.modifyBlockEntity(boreheadBearing, BoreheadBearingBlockEntity.class, be -> {

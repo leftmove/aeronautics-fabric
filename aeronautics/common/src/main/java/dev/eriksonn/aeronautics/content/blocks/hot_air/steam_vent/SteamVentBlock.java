@@ -14,7 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
+import net.minecraft.world.InteractionResult;
 
 public class SteamVentBlock extends Block implements IBE<SteamVentBlockEntity>, SimpleWaterloggedBlock, IWrenchable {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -59,25 +60,19 @@ public class SteamVentBlock extends Block implements IBE<SteamVentBlockEntity>, 
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(final ItemStack itemStack,
-                                                       final @NotNull BlockState blockState,
-                                                       final @NotNull Level level,
-                                                       final @NotNull BlockPos blockPos,
-                                                       final @NotNull Player player,
-                                                       final @NotNull InteractionHand interactionHand,
-                                                       final @NotNull BlockHitResult blockHitResult) {
-        final Variant conversion = Variant.getConversionFromItem(itemStack.getItem());
+    public @NotNull InteractionResult use(final @NotNull BlockState blockState, final @NotNull Level level, final @NotNull BlockPos blockPos, final @NotNull Player player, final @NotNull InteractionHand interactionHand, final @NotNull BlockHitResult blockHitResult) {
+        final Variant conversion = Variant.getConversionFromItem(player.getItemInHand(interactionHand).getItem());
 
         if (conversion != null) {
             final Variant current = blockState.getValue(VARIANT);
             if (conversion != current) {
                 level.setBlockAndUpdate(blockPos, blockState.setValue(VARIANT, conversion));
                 level.playLocalSound(blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1, 1, false);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override

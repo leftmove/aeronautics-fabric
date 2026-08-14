@@ -24,9 +24,9 @@ public class MagnetFieldParticle extends SimpleAnimatedParticle {
         this.selectSprite(0);
         this.setAlpha(0.4f);
         if(negative)
-            this.setColor(0.7f,0.7f,1);
+            this.setColor(0.7f,0.7f,1.0f);
         else
-            this.setColor(1,0.7f,0.7f);
+            this.setColor(1.0f,0.7f,0.7f);
     }
 
     public ParticleRenderType getRenderType() {

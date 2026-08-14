@@ -249,8 +249,8 @@ public class NavTableBlockEntity extends SmartBlockEntity implements Clearable {
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        tag.put("CurrentStack", this.getHeldItem().saveOptional(registries));
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
+        tag.put("CurrentStack", this.getHeldItem().save(new CompoundTag()));
 
         if (this.currentTarget != null) {
             this.writeCurrentTarget(tag);
@@ -258,12 +258,12 @@ public class NavTableBlockEntity extends SmartBlockEntity implements Clearable {
 
         tag.putFloat("RelativeAngle", this.relativeAngle);
 
-        super.write(tag, registries, clientPacket);
+        super.write(tag, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        final ItemStack stack = ItemStack.parseOptional(registries, tag.getCompound("CurrentStack"));
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
+        final ItemStack stack = ItemStack.of(tag.getCompound("CurrentStack"));
         this.inventory.slot.setStack(stack);
 
         if (tag.contains("CurrentTarget")) {
@@ -278,7 +278,7 @@ public class NavTableBlockEntity extends SmartBlockEntity implements Clearable {
             this.lerpedAngleDegrees.chase(this.relativeAngle, 0.8f, LerpedFloat.Chaser.EXP);
         }
 
-        super.read(tag, registries, clientPacket);
+        super.read(tag, clientPacket);
     }
 
     private void writeCurrentTarget(final CompoundTag tag) {

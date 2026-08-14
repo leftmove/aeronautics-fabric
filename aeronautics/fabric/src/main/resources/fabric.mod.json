@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "license": "${license}",
+  "icon": "${mod_id}.png",
+  "environment": "*",
+  "accessWidener": "aeronautics.accesswidener",
+  "entrypoints": {
+    "main": [
+      "dev.eriksonn.aeronautics.fabric.AeronauticsFabric"
+    ],
+    "client": [
+      "dev.eriksonn.aeronautics.fabric.AeronauticsFabricClient"
+    ],
+    "modmenu": [
+      "dev.eriksonn.aeronautics.fabric.AeronauticsModMenu"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}-fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}",
+    "simulated": "*",
+    "sable": "*",
+    "create": ">=${create_mod_version}"
+  }
+}

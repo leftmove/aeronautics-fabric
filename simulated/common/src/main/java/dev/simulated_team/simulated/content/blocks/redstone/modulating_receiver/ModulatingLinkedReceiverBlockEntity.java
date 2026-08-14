@@ -88,22 +88,22 @@ public class ModulatingLinkedReceiverBlockEntity extends AbstractLinkedReceiverB
         if (this.minRange == this.maxRange) {
             return new Tuple<>(transmittedStrength, distance);
         } else {
-            final double strengthScalar = Math.clamp((distance - this.maxRange) / (this.minRange - this.maxRange), 0, 1);
+            final double strengthScalar = net.minecraft.util.Mth.clamp((distance - this.maxRange) / (this.minRange - this.maxRange), 0, 1);
             return new Tuple<>((int) Math.ceil(strengthScalar * transmittedStrength), distance);
         }
     }
 
     @Override
-    public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    public void write(final CompoundTag compound, final boolean clientPacket) {
         compound.putInt("MinRange", this.minRange);
         compound.putInt("MaxRange", this.maxRange);
         compound.putDouble("DistanceToClosest", this.distanceToClosest);
 
-        super.write(compound, registries, clientPacket);
+        super.write(compound, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
         this.distanceToClosest = compound.getDouble("DistanceToClosest");
 
         if (!clientPacket ||
@@ -113,7 +113,7 @@ public class ModulatingLinkedReceiverBlockEntity extends AbstractLinkedReceiverB
             this.maxRange = compound.getInt("MaxRange");
         }
 
-        super.read(compound, registries, clientPacket);
+        super.read(compound, clientPacket);
     }
 
     @Override
@@ -122,14 +122,14 @@ public class ModulatingLinkedReceiverBlockEntity extends AbstractLinkedReceiverB
     }
 
     @Override
-    public boolean writeToClipboard(final HolderLookup.@NotNull Provider provider, final CompoundTag tag, final Direction direction) {
+    public boolean writeToClipboard(final CompoundTag tag, final Direction direction) {
         tag.putInt("minRange", this.minRange);
         tag.putInt("maxRange", this.maxRange);
         return true;
     }
 
     @Override
-    public boolean readFromClipboard(final HolderLookup.@NotNull Provider provider, final CompoundTag tag, final Player player, final Direction direction, final boolean simulate) {
+    public boolean readFromClipboard(final CompoundTag tag, final Player player, final Direction direction, final boolean simulate) {
         if (!tag.contains("minRange"))
             return false;
         if (simulate)

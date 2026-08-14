@@ -9,6 +9,7 @@ import dev.simulated_team.simulated.util.SimCodecUtil;
 import foundry.veil.api.network.handler.PacketContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.codec.StreamCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
@@ -19,7 +20,7 @@ import java.util.UUID;
 public class PhysicsStaffBeamPacket implements CustomPacketPayload {
 
     public static final StreamCodec<ByteBuf, PhysicsStaffBeamPacket> CODEC = StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC, packet -> packet.uuid,
+            StreamCodecs.UUID, packet -> packet.uuid,
             SimCodecUtil.STREAM_VECTOR3D, packet -> packet.start,
             SimCodecUtil.STREAM_VECTOR3D, packet -> packet.end,
             PhysicsStaffBeamPacket::new

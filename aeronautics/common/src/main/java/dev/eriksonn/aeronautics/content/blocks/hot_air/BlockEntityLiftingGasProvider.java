@@ -77,7 +77,7 @@ public interface BlockEntityLiftingGasProvider {
         final BlockHitResult clip = level.clip(new ClipContext(rayStart, rayEnd,
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
-                CollisionContext.empty()
+                net.minecraft.world.entity.EntityType.PLAYER.create(null)
         ));
 
         final BlockPos hitBlockPos = clip.getBlockPos();

@@ -105,7 +105,7 @@ public class SpringBlockEntity extends SmartBlockEntity implements BlockEntitySu
         if (delta < 0 && this.desiredLength <= 1) {
             return "min_length";
         }
-        double newDesiredLength = Math.clamp(this.desiredLength + delta, 1, SpringItemHandler.MAX_LENGTH);
+        double newDesiredLength = net.minecraft.util.Mth.clamp(this.desiredLength + delta, 1, SpringItemHandler.MAX_LENGTH);
         newDesiredLength = Math.round(newDesiredLength / 0.25) * 0.25;
 
         final double currentLength = Sable.HELPER.distanceSquaredWithSubLevels(level, this.worldPosition.getCenter(), this.partnerPos.getCenter()) + 1;
@@ -379,8 +379,8 @@ public class SpringBlockEntity extends SmartBlockEntity implements BlockEntitySu
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
+        super.write(tag, clientPacket);
 
         tag.putBoolean("Controller", this.isController);
         tag.putDouble("DesiredLength", this.desiredLength);
@@ -442,8 +442,8 @@ public class SpringBlockEntity extends SmartBlockEntity implements BlockEntitySu
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
+        super.read(tag, clientPacket);
 
         this.isController = tag.getBoolean("Controller");
         this.desiredLength = tag.getDouble("DesiredLength");

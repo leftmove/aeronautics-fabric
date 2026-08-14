@@ -123,15 +123,15 @@ public class AltitudeSensorBlockEntity extends SmartBlockEntity implements IHave
 	}
 
 	@Override
-	protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-		super.read(tag, registries, clientPacket);
+	protected void read(final CompoundTag tag, final boolean clientPacket) {
+		super.read(tag, clientPacket);
 		this.highSignal = tag.getFloat("high_signal");
 		this.lowSignal = tag.getFloat("low_signal");
 	}
 
 	@Override
-	protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-		super.write(tag, registries, clientPacket);
+	protected void write(final CompoundTag tag, final boolean clientPacket) {
+		super.write(tag, clientPacket);
 		tag.putFloat("high_signal", this.highSignal);
 		tag.putFloat("low_signal", this.lowSignal);
 	}
@@ -170,14 +170,14 @@ public class AltitudeSensorBlockEntity extends SmartBlockEntity implements IHave
 	}
 
 	@Override
-	public boolean writeToClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Direction side) {
+	public boolean writeToClipboard(final CompoundTag tag, final Direction side) {
 		tag.putFloat("high_signal", this.highSignal);
 		tag.putFloat("low_signal", this.lowSignal);
 		return true;
 	}
 
 	@Override
-	public boolean readFromClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
+	public boolean readFromClipboard(final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
 		if(simulate) {
 			return true;
 		}

@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2d;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class WheelMountRenderer extends KineticBlockEntityRenderer<WheelMountBlockEntity> {
     public WheelMountRenderer(final BlockEntityRendererProvider.Context context) {
@@ -114,7 +115,7 @@ public class WheelMountRenderer extends KineticBlockEntityRenderer<WheelMountBlo
         ms.mulPose(Axis.ZP.rotation((float) signMultiplier));
 
         final ItemStack itemStack = be.getHeldItem();
-        final TireLike tireLike = itemStack.get(OffroadDataComponents.TIRE);
+        final TireLike tireLike = ItemComponents.get(itemStack, OffroadDataComponents.TIRE);
         if (tireLike != null) {
             final Vec3 rotation = tireLike.rotation();
             ms.mulPose(Axis.XP.rotation((float) Math.toRadians(rotation.x)));

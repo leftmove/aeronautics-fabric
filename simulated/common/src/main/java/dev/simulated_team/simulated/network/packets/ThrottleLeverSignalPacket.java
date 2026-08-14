@@ -12,11 +12,12 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record ThrottleLeverSignalPacket(BlockPos pos, int signal) implements CustomPacketPayload {
     public static final Type<ThrottleLeverSignalPacket> TYPE = new Type<>(Simulated.path("throttle_lever_signal"));
     public static final StreamCodec<ByteBuf, ThrottleLeverSignalPacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, ThrottleLeverSignalPacket::pos,
+            StreamCodecs.BLOCK_POS, ThrottleLeverSignalPacket::pos,
             ByteBufCodecs.INT, ThrottleLeverSignalPacket::signal,
             ThrottleLeverSignalPacket::new
     );

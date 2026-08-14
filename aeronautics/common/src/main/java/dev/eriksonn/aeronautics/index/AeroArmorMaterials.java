@@ -1,32 +1,55 @@
 package dev.eriksonn.aeronautics.index;
 
 import dev.eriksonn.aeronautics.Aeronautics;
-import foundry.veil.platform.registry.RegistrationProvider;
-import foundry.veil.platform.registry.RegistryObject;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
-import java.util.List;
-
 public class AeroArmorMaterials {
-	private static final RegistrationProvider<ArmorMaterial> REGISTRY = RegistrationProvider.get(Registries.ARMOR_MATERIAL, Aeronautics.MOD_ID);
+	public static final ArmorMaterial AVIATORS_GOGGLES = new ArmorMaterial() {
+		@Override
+		public int getDurabilityForType(final ArmorItem.Type type) {
+			return 55;
+		}
 
-	public static final RegistryObject<ArmorMaterial> AVIATORS_GOGGLES = REGISTRY.register("aviators_goggles", () -> new ArmorMaterial(
-			new Object2ObjectOpenHashMap<>() {{
-				this.put(ArmorItem.Type.HELMET, 1);
-			}},
-			15,
-			SoundEvents.ARMOR_EQUIP_LEATHER,
-			() -> Ingredient.of(Items.LEATHER),
-			List.of(new ArmorMaterial.Layer(Aeronautics.path("aviators_goggles"))),
-			0.0f,
-			0.0f
-	));
+		@Override
+		public int getDefenseForType(final ArmorItem.Type type) {
+			return type == ArmorItem.Type.HELMET ? 1 : 0;
+		}
+
+		@Override
+		public int getEnchantmentValue() {
+			return 15;
+		}
+
+		@Override
+		public SoundEvent getEquipSound() {
+			return SoundEvents.ARMOR_EQUIP_LEATHER;
+		}
+
+		@Override
+		public Ingredient getRepairIngredient() {
+			return Ingredient.of(Items.LEATHER);
+		}
+
+		@Override
+		public String getName() {
+			return Aeronautics.MOD_ID + ":aviators_goggles";
+		}
+
+		@Override
+		public float getToughness() {
+			return 0.0f;
+		}
+
+		@Override
+		public float getKnockbackResistance() {
+			return 0.0f;
+		}
+	};
 
 	public static void init() {}
 }

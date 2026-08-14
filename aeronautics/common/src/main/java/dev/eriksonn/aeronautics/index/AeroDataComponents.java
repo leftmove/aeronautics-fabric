@@ -10,7 +10,7 @@ import net.minecraft.core.registries.Registries;
 import java.util.function.UnaryOperator;
 
 public class AeroDataComponents {
-	private static final RegistrationProvider<DataComponentType<?>> REGISTRY = RegistrationProvider.get(Registries.DATA_COMPONENT_TYPE, Aeronautics.MOD_ID);
+	private static final RegistrationProvider<DataComponentType<?>> REGISTRY = RegistrationProvider.get(DataComponentType.REGISTRY_KEY, Aeronautics.MOD_ID);
 
 	public static final DataComponentType<Levitating> LEVITATING = create("levitating",
 			builder -> builder.persistent(Levitating.CODEC));

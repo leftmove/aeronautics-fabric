@@ -38,6 +38,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import dev.simulated_team.simulated.compat.Mc1201;
 
 public class HotAirBurnerBlockEntity extends SmartBlockEntity
         implements BlockEntityLiftingGasProvider, IHaveGoggleInformation, IHaveHoveringInformation {
@@ -134,7 +135,7 @@ public class HotAirBurnerBlockEntity extends SmartBlockEntity
 
     @Override
     public AABB getRenderBoundingBox() {
-        return AABB.encapsulatingFullBlocks(this.getBlockPos(), this.getBlockPos().above());
+        return Mc1201.encapsulatingFullBlocks(this.getBlockPos(), this.getBlockPos().above());
     }
 
     public void tick() {
@@ -214,7 +215,7 @@ public class HotAirBurnerBlockEntity extends SmartBlockEntity
     }
 
     @Override
-    public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    public void write(final CompoundTag compound, final boolean clientPacket) {
         compound.putBoolean("IsPowered", this.powered);
         compound.putInt("SignalStrength", this.signalStrength);
 
@@ -222,11 +223,11 @@ public class HotAirBurnerBlockEntity extends SmartBlockEntity
             ClientBalloonInfo.writeToNBT(compound, (ServerBalloon) this.getBalloon());
         }
 
-        super.write(compound, registries, clientPacket);
+        super.write(compound, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
         this.powered = tag.getBoolean("IsPowered");
         this.signalStrength = tag.getInt("SignalStrength");
 
@@ -235,7 +236,7 @@ public class HotAirBurnerBlockEntity extends SmartBlockEntity
             this.clientBalloonInfo = ClientBalloonInfo.readFromNBT(tag);
         }
 
-        super.read(tag, registries, clientPacket);
+        super.read(tag, clientPacket);
     }
 
     @Override

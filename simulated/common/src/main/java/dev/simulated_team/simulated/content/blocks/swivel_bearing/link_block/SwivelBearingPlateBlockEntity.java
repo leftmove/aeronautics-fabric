@@ -51,7 +51,7 @@ public class SwivelBearingPlateBlockEntity extends KineticBlockEntity implements
     }
 
     private void destroyBearing() {
-        if (this.parent != null && this.getLevel().getBlockState(this.parent).is(SimBlocks.SWIVEL_BEARING)) {
+        if (this.parent != null && this.getLevel().getBlockState(this.parent).is(SimBlocks.SWIVEL_BEARING.get())) {
             this.getLevel().destroyBlock(this.parent, false);
         }
     }
@@ -88,8 +88,8 @@ public class SwivelBearingPlateBlockEntity extends KineticBlockEntity implements
     }
 
     @Override
-    protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(final CompoundTag compound, final boolean clientPacket) {
+        super.write(compound, clientPacket);
 
         if (this.parent != null) {
             compound.put("ParentPos", NbtUtils.writeBlockPos(this.parent));
@@ -101,16 +101,16 @@ public class SwivelBearingPlateBlockEntity extends KineticBlockEntity implements
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
+        super.read(compound, clientPacket);
 
         if (compound.contains("parent")) {
-            this.parent = NbtUtils.readBlockPos(compound, "parent").get();
+            this.parent = NbtUtils.readBlockPos(compound.getCompound("parent"));
         }
 
 
         if (compound.contains("ParentPos")) {
-            this.parent = NbtUtils.readBlockPos(compound, "ParentPos").get();
+            this.parent = NbtUtils.readBlockPos(compound.getCompound("ParentPos"));
         }
 
         if (compound.contains("ParentSubLevelId")) {

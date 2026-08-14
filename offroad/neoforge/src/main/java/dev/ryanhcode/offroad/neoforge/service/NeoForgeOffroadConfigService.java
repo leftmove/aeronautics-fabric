@@ -6,12 +6,11 @@ import dev.ryanhcode.offroad.config.client.OffroadClientConfig;
 import dev.ryanhcode.offroad.config.server.OffroadServer;
 import dev.ryanhcode.offroad.config.OffroadConfig;
 import net.createmod.catnip.config.ConfigBase;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.EnumMap;
@@ -37,7 +36,7 @@ public class NeoForgeOffroadConfigService implements OffroadConfig {
 	}
 
 	private static <T extends ConfigBase> T register(final Supplier<T> factory, final ModConfig.Type side) {
-		final Pair<T, ModConfigSpec> specPair = (new ModConfigSpec.Builder()).configure((builder) -> {
+		final Pair<T, ForgeConfigSpec> specPair = (new ForgeConfigSpec.Builder()).configure((builder) -> {
 			final T config = factory.get();
 			config.registerAll(builder);
 			return config;
@@ -49,12 +48,12 @@ public class NeoForgeOffroadConfigService implements OffroadConfig {
 		return config;
 	}
 
-	public static void register(final ModContainer container) {
+	public static void register() {
 		server = register(OffroadServer::new, ModConfig.Type.SERVER);
 		client = register(OffroadClientConfig::new, ModConfig.Type.CLIENT);
 
 		for (final Map.Entry<ModConfig.Type, ConfigBase> typeConfigBaseEntry : CONFIGS.entrySet()) {
-			container.registerConfig(typeConfigBaseEntry.getKey(), typeConfigBaseEntry.getValue().specification);
+			net.minecraftforge.fml.ModLoadingContext.get().registerConfig(typeConfigBaseEntry.getKey(), typeConfigBaseEntry.getValue().specification);
 		}
 
 		CStress stress = server.kinetics.stressValues;

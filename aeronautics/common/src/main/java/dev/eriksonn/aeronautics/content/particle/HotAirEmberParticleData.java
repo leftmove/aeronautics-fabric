@@ -43,12 +43,32 @@ public class HotAirEmberParticleData implements ParticleOptions, ICustomParticle
     }
 
     @Override
-    public MapCodec<HotAirEmberParticleData> getCodec(final ParticleType<HotAirEmberParticleData> particleType) {
-        return CODEC;
+    public com.mojang.serialization.Codec<HotAirEmberParticleData> getCodec(final ParticleType<HotAirEmberParticleData> particleType) { return CODEC.codec(); }
+
+    
+    @Override
+    public ParticleOptions.Deserializer<HotAirEmberParticleData> getDeserializer() {
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public HotAirEmberParticleData fromCommand(final ParticleType<HotAirEmberParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return new HotAirEmberParticleData();
+            }
+
+            @Override
+            public HotAirEmberParticleData fromNetwork(final ParticleType<HotAirEmberParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return new HotAirEmberParticleData(buf.readBoolean());
+            }
+        };
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, HotAirEmberParticleData> getStreamCodec() {
-        return STREAM_CODEC;
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
+        buffer.writeBoolean(this.isSoul);
     }
+
+    @Override
+    public String writeToString() {
+        return this.getType().toString();
+    }
+
 }

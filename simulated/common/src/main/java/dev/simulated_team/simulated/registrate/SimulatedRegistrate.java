@@ -3,7 +3,7 @@ package dev.simulated_team.simulated.registrate;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.tterrag.registrate.builders.Builder;
+import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
@@ -14,13 +14,10 @@ import dev.simulated_team.simulated.index.SimRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,7 +49,7 @@ public class SimulatedRegistrate extends CreateRegistrate {
     public <T> Codec<T> byNameCodecExpanded(final ResourceKey<? extends Registry<T>> key) {
         return ResourceLocation.CODEC.flatXmap((resourceLoc) -> {
             T gatheredEntry = null;
-            for (final RegistryEntry<T, T> entry : this.getAll(key)) {
+            for (final RegistryEntry<T> entry : this.getAll(key)) {
                 if (entry.getId().equals(resourceLoc)) {
                     gatheredEntry = entry.get();
                     break;
@@ -66,7 +63,7 @@ public class SimulatedRegistrate extends CreateRegistrate {
             }
         }, (T) -> {
             ResourceLocation id = null;
-            for (final RegistryEntry<T, T> entry : this.getAll(key)) {
+            for (final RegistryEntry<T> entry : this.getAll(key)) {
                 if (entry.is(T)) {
                     id = entry.getId();
                     break;
@@ -86,16 +83,12 @@ public class SimulatedRegistrate extends CreateRegistrate {
     }
 
     @Override
-    protected <R, T extends R> @NotNull RegistryEntry<R, T> accept(final String name, final ResourceKey<? extends Registry<R>> type, final Builder<R, T, ?, ?> builder, final NonNullSupplier<? extends T> creator, final NonNullFunction<DeferredHolder<R, T>, ? extends RegistryEntry<R, T>> entryFactory) {
-        final RegistryEntry<R, T> entry = super.accept(name, type, builder, creator, entryFactory);
-
-        if (type.equals(Registries.ITEM)) {
-            final RegistryEntry<Item, ? extends Item> itemEntry = (RegistryEntry<Item, ? extends Item>) entry;
-            TAB_ITEMS.add(itemEntry::get);
-            ITEM_TO_SECTION.put(entry.getId(), this.currentSection);
-        }
-
-        return entry;
+    public <T extends Item, P> ItemBuilder<T, P> item(final P parent, final String name, final NonNullFunction<Item.Properties, T> factory) {
+        final ResourceLocation section = this.currentSection;
+        return super.item(parent, name, factory).onRegister(item -> {
+            TAB_ITEMS.add(() -> item);
+            ITEM_TO_SECTION.put(BuiltInRegistries.ITEM.getKey(item), section);
+        });
     }
 
     public void addExtraItem(final ResourceLocation item) {
@@ -103,17 +96,17 @@ public class SimulatedRegistrate extends CreateRegistrate {
         ITEM_TO_SECTION.put(item, this.currentSection);
     }
 
-    public <T extends NavigationTarget> RegistryEntry<NavigationTarget, T> navTarget(final String name, final NonNullSupplier<T> navTableItem, Supplier<ItemLike> itemSupplier) {
-        RegistryEntry<NavigationTarget, T> entry = this.simple(this.self(), name, SimRegistries.Keys.NAVIGATION_TARGET, navTableItem);
+    public <T extends NavigationTarget> RegistryEntry<T> navTarget(final String name, final NonNullSupplier<T> navTableItem, Supplier<ItemLike> itemSupplier) {
+        RegistryEntry<T> entry = this.simple(this.self(), name, SimRegistries.Keys.NAVIGATION_TARGET, navTableItem);
         NAVIGATION_TARGET_ITEMS.put(entry.getId(), itemSupplier);
         return entry;
     }
 
-    public <T extends NavigationTarget> RegistryEntry<NavigationTarget, T> navTarget(final String name, final NonNullSupplier<T> navTableItem, ItemLike item) {
+    public <T extends NavigationTarget> RegistryEntry<T> navTarget(final String name, final NonNullSupplier<T> navTableItem, ItemLike item) {
         return navTarget(name, navTableItem, () -> item);
     }
 
-    public <T extends BlockPropertiesTooltip.Entry> RegistryEntry<BlockPropertiesTooltip.Entry, T>
+    public <T extends BlockPropertiesTooltip.Entry> RegistryEntry<T>
             propertyTooltip(final String name, final NonNullSupplier<T> tooltipFunction) {
         return this.simple(this.self(), name, SimRegistries.Keys.PROPERTY_TOOLTIP, tooltipFunction);
     }

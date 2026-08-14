@@ -133,16 +133,16 @@ public class TorsionSpringBlockEntity extends KineticBlockEntity implements Extr
     }
 
     @Override
-    protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(final CompoundTag compound, final boolean clientPacket) {
+        super.write(compound, clientPacket);
 
         if (this.sequencedAngleLimit >= 0)
             compound.putDouble("SequencedAngleLimit", this.sequencedAngleLimit);
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
+        super.read(compound, clientPacket);
         this.sequencedAngleLimit = compound.contains("SequencedAngleLimit") ? compound.getDouble("SequencedAngleLimit") : -1;
     }
 
@@ -351,8 +351,8 @@ public class TorsionSpringBlockEntity extends KineticBlockEntity implements Extr
         }
 
         @Override
-        protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-            super.write(compound, registries, clientPacket);
+        protected void write(final CompoundTag compound, final boolean clientPacket) {
+            super.write(compound, clientPacket);
             compound.putDouble("OldAngle", this.oldAngle);
             compound.putDouble("Angle", this.angle);
             compound.putDouble("TargetAngle", this.targetAngle);
@@ -368,8 +368,8 @@ public class TorsionSpringBlockEntity extends KineticBlockEntity implements Extr
         }
 
         @Override
-        protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-            super.read(compound, registries, clientPacket);
+        protected void read(final CompoundTag compound, final boolean clientPacket) {
+            super.read(compound, clientPacket);
             this.oldAngle = compound.getDouble("OldAngle");
             this.angle = compound.getDouble("Angle");
             this.targetAngle = compound.getDouble("TargetAngle");

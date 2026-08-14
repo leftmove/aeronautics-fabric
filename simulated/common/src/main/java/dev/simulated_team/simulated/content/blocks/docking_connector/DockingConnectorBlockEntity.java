@@ -436,7 +436,7 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
         tag.putBoolean("IsPowered", this.powered);
         tag.putFloat("Extension", this.extension.getValue());
         tag.putFloat("Target", this.extension.getChaseTarget());
@@ -450,14 +450,14 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
             tag.putUUID("OtherConnectorSubLevelId", this.otherConnectorSubLevelId);
         }
 
-        tag.put("Inventory", this.inventory.write(registries));
+        tag.put("Inventory", this.inventory.write());
         tag.put("Tank", this.tank.write());
         tag.put("Battery", this.battery.write());
-        super.write(tag, registries, clientPacket);
+        super.write(tag, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
         this.powered = tag.getBoolean("IsPowered");
         this.extension.setValue(tag.getFloat("Extension"));
         this.extension.updateChaseTarget(tag.getFloat("Target"));
@@ -468,7 +468,7 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
         this.feet.setValue(this.feet.getValue());
 
         if (tag.contains("OtherConnector")) {
-            this.otherConnectorPosition = NbtUtils.readBlockPos(tag, "OtherConnector").orElse(null);
+            this.otherConnectorPosition = (tag.contains("OtherConnector") ? NbtUtils.readBlockPos(tag.getCompound("OtherConnector")) : null);
         } else {
             this.otherConnectorPosition = null;
         }
@@ -477,10 +477,10 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
             this.otherConnectorSubLevelId = tag.getUUID("OtherConnectorSubLevelId");
         }
 
-        this.inventory.read(registries, tag.getCompound("Inventory"));
+        this.inventory.read(tag.getCompound("Inventory"));
         this.tank.read(tag.getCompound("Tank"));
         this.battery.read(tag.getCompound("Battery"));
-        super.read(tag, registries, clientPacket);
+        super.read(tag, clientPacket);
     }
 
     @Override
@@ -534,7 +534,7 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
     }
 
     public AABB getBoundingBox(final BlockState state) {
-        return Shulker.getProgressAabb(1, state.getValue(ShulkerBoxBlock.FACING), this.getExtensionDistance(1.0F));
+        return Shulker.getProgressAabb(state.getValue(ShulkerBoxBlock.FACING), this.getExtensionDistance(1.0F)).move(this.getBlockPos());
     }
 
     @Override

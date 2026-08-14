@@ -328,7 +328,7 @@ public class PortableEngineBlockEntity extends GeneratingKineticBlockEntity impl
         final List<Player> players = this.level.getEntitiesOfClass(Player.class, new AABB(pos).inflate(7.0));
 
         for (final Player player : players) {
-            if (Sable.HELPER.distanceSquaredWithSubLevels(this.level, player.getEyePosition(), center) < Mth.square(player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 0.7)) {
+            if (Sable.HELPER.distanceSquaredWithSubLevels(this.level, player.getEyePosition(), center) < Mth.square(player.getBlockReach() + 0.7)) {
                 openHatch = this.canOpenHatch(player);
 
                 if (openHatch) break;
@@ -343,7 +343,7 @@ public class PortableEngineBlockEntity extends GeneratingKineticBlockEntity impl
             dir = -dir * 5;
         }
         this.lastHatchOpenTime = this.hatchOpenTime;
-        this.hatchOpenTime = Math.clamp(this.hatchOpenTime + dir * speed, 0, 10);
+        this.hatchOpenTime = net.minecraft.util.Mth.clamp(this.hatchOpenTime + dir * speed, 0, 10);
     }
 
     private boolean canOpenHatch(final Player player) {
@@ -401,22 +401,22 @@ public class PortableEngineBlockEntity extends GeneratingKineticBlockEntity impl
         }
     }
 
-    public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    public void write(final CompoundTag compound, final boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putBoolean("SuperHeated", this.superHeated);
         compound.putFloat("GeneratedSpeed", this.generatedSpeed);
         compound.putBoolean("EatingCake", this.eatingCake);
 
-        compound.put("Inventory", this.inventory.write(registries));
+        compound.put("Inventory", this.inventory.write());
 
         compound.putInt("BurnTime", this.burnTime);
     }
 
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
+        super.read(compound, clientPacket);
         this.superHeated = compound.getBoolean("SuperHeated");
 
-        this.inventory.read(registries, compound.getCompound("Inventory"));
+        this.inventory.read(compound.getCompound("Inventory"));
 
         this.burnTime = compound.getInt("BurnTime");
         this.generatedSpeed = compound.getFloat("GeneratedSpeed");

@@ -14,6 +14,9 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
 
 public final class SimRenderTypes extends RenderType {
+    public static final ShaderStateShard CUTOUT_SHADER = RENDERTYPE_CUTOUT_SHADER;
+    public static final TextureStateShard BLOCK_SHEET_MIPPED_STATE = BLOCK_SHEET_MIPPED;
+    public static final LightmapStateShard LIGHTMAP_STATE = LIGHTMAP;
 
     private static final RenderType STAFF_OVERLAY = create(
             Simulated.MOD_ID + ":staff_overlay/staff_overlay",
@@ -57,14 +60,7 @@ public final class SimRenderTypes extends RenderType {
                     .setShaderState(VeilRenderBridge.shaderState(Simulated.path("laser_pointer/lens")))
                     .createCompositeState(true));
 
-    private static final VertexFormat SPRING_FORMAT = VertexFormat.builder()
-            .add("Position", VertexFormatElement.POSITION)
-            .add("Stress", VertexFormatElement.COLOR)
-            .add("UV0", VertexFormatElement.UV0)
-            .add("UV2", VertexFormatElement.UV2)
-            .add("Normal", VertexFormatElement.NORMAL)
-            .padding(1)
-            .build();
+    private static final VertexFormat SPRING_FORMAT = DefaultVertexFormat.NEW_ENTITY;
 
     private static final RenderType LOCK = create(
             Simulated.MOD_ID + ":lock",

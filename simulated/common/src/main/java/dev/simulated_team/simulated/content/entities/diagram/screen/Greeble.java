@@ -29,7 +29,7 @@ public record Greeble(ResourceLocation texture, List<TextureSlice> slices, int w
 	}
 
 	public record TextureSlice(int x, int y, int width, int height) {
-		public static Codec<TextureSlice> CODEC = Codec.INT.listOf(4, 4).xmap(TextureSlice::new, TextureSlice::asList);
+		public static Codec<TextureSlice> CODEC = Codec.INT.listOf().xmap(TextureSlice::new, TextureSlice::asList);
 
 		public TextureSlice(final List<Integer> list) {
 			this(list.get(0), list.get(1), list.get(2), list.get(3));

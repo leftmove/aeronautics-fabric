@@ -1,0 +1,110 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.fabricmc.fabric-loom-remap'
+}
+
+import org.gradle.api.attributes.java.TargetJvmVersion
+
+repositories {
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org/'
+    }
+}
+
+def generatedResources = project.parent.project('common').file('src/generated/resources')
+def commonResourcesDir = project.parent.project('common').file('src/main/resources')
+
+sourceSets.main.resources {
+    srcDir commonResourcesDir
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    include(modApi("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}"))
+
+    modImplementation("com.simibubi.create:create-fabric:${create_fabric_version}") {
+        exclude group: "dev.engine-room.flywheel", module: "flywheel-fabric-api-1.20.1"
+    }
+
+    modImplementation("foundry.veil:Veil-fabric-${minecraft_version}:${veil_version}") {
+        exclude group: "maven.modrinth"
+    }
+
+    compileOnly 'org.jspecify:jspecify:1.0.0'
+    compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
+    compileOnly("dev.ryanhcode.sable:sable-neoforge-1.21.1:${sable_version}") {
+        transitive = false
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+        }
+    }
+    compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:${sable_companion_version}") {
+        transitive = false
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+        }
+    }
+
+    include(modImplementation("teamreborn:energy:${team_reborn_energy_version}") {
+        transitive = false
+    })
+
+    modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    modCompileOnly("com.terraformersmc:modmenu:${modmenu_version}")
+
+    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-common-api:$computercraft_tweaked_version")
+    modCompileOnly("cc.tweaked:cc-tweaked-$minecraft_version-fabric-api:$computercraft_tweaked_version")
+
+    compileOnly("maven.modrinth:iris:${iris_fabric_version}")
+    compileOnly("maven.modrinth:sodium:${sodium_fabric_version}")
+}
+
+loom {
+    def aw = project.parent.project('common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+
+    runs {
+        client {
+            client()
+            setConfigName("${mod_name} Fabric Client")
+            ideConfigGenerated(true)
+            runDir("runs/client")
+        }
+        server {
+            server()
+            setConfigName("${mod_name} Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/server")
+        }
+    }
+}
+
+tasks.named('compileJava', JavaCompile) {
+    exclude '**/SteeringWheelGenerator.java'
+    exclude '**/DirectionalGearshiftGenerator.java'
+    exclude '**/RedstoneAccumulatorBlockStateGen.java'
+}
+
+if (generatedResources.exists()) {
+    sourceSets.main.resources {
+        srcDir generatedResources.absolutePath
+    }
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude 'META-INF/accesstransformer.cfg'
+    exclude 'META-INF/mods.toml'
+    exclude 'META-INF/neoforge.mods.toml'
+}

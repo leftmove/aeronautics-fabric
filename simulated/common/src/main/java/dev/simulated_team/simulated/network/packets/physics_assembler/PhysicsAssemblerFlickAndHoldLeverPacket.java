@@ -10,12 +10,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record PhysicsAssemblerFlickAndHoldLeverPacket(BlockPos pos, boolean flicked) implements CustomPacketPayload {
 
     public static Type<PhysicsAssemblerFlickAndHoldLeverPacket> TYPE = new Type<>(Simulated.path("flick_assembler_lever"));
     public static StreamCodec<ByteBuf, PhysicsAssemblerFlickAndHoldLeverPacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,
+            StreamCodecs.BLOCK_POS,
             PhysicsAssemblerFlickAndHoldLeverPacket::pos,
             ByteBufCodecs.BOOL,
             PhysicsAssemblerFlickAndHoldLeverPacket::flicked,

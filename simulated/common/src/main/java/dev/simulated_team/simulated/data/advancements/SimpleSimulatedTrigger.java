@@ -1,10 +1,7 @@
 package dev.simulated_team.simulated.data.advancements;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.advancements.critereon.CriterionValidator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -24,8 +21,8 @@ public class SimpleSimulatedTrigger extends SimulatedCriterionTriggerBase<Simula
     }
 
     @Override
-    public @NotNull Codec<SimulatedCriterionTriggerBase.Instance> codec() {
-        return ResourceLocation.CODEC.xmap(Instance::new, SimulatedCriterionTriggerBase.Instance::getId);
+    protected Instance createDefaultInstance() {
+        return this.instance();
     }
 
     public static class Instance extends SimulatedCriterionTriggerBase.Instance {
@@ -35,11 +32,8 @@ public class SimpleSimulatedTrigger extends SimulatedCriterionTriggerBase<Simula
         }
 
         @Override
-        protected boolean test(@Nullable final List<Supplier<Object>> suppliers) {
+        public boolean test(@Nullable final List<Supplier<Object>> suppliers) {
             return true;
         }
-
-        @Override
-        public void validate(@NotNull final CriterionValidator criterionValidator) {}
     }
 }

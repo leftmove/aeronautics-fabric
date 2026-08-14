@@ -47,7 +47,8 @@ public class AugerIndicatorParticle extends SimpleAnimatedParticle {
         this.quadSize *= 0.75F;
         this.lifetime = lifeSpan + this.random.nextInt(32);
         this.setFadeColor(color);
-        this.setColor(Color.mixColors(color, 0xFFFFFF, .5f));
+        final int mixed = Color.mixColors(color, 0xFFFFFF, .5f);
+        this.setColor(((mixed >> 16) & 0xFF) / 255f, ((mixed >> 8) & 0xFF) / 255f, (mixed & 0xFF) / 255f);
         this.setSpriteFromAge(sprite);
         this.radius1 = radius1;
         this.radius = radius1;

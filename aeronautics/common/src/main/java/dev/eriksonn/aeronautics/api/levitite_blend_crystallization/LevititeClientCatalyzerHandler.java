@@ -25,7 +25,7 @@ public class LevititeClientCatalyzerHandler implements InteractCallback {
     @NotNull
     private static ClipContext gatherContext(final Player player) {
         final Vec3 origin = player.getEyePosition();
-        final Vec3 target = getTraceTarget(player, player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), origin);
+        final Vec3 target = getTraceTarget(player, player.getBlockReach(), origin);
         return new ClipContext(
                 origin,
                 target,

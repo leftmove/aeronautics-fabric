@@ -12,12 +12,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record PhysicsAssemblerFailedPacket(BlockPos pos) implements CustomPacketPayload {
 
     public static Type<PhysicsAssemblerFailedPacket> TYPE = new Type<>(Simulated.path("assembler_failed"));
     public static StreamCodec<ByteBuf, PhysicsAssemblerFailedPacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,
+            StreamCodecs.BLOCK_POS,
             PhysicsAssemblerFailedPacket::pos,
             PhysicsAssemblerFailedPacket::new
     );

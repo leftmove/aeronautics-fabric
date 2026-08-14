@@ -6,7 +6,6 @@ import com.mojang.serialization.DataResult;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.balloon.Balloon;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.balloon.ServerBalloon;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -23,21 +22,22 @@ public class BalloonLevelSavedData extends SavedData {
 
     private Level level;
 
-    private static BalloonLevelSavedData create(final ServerLevel level, final CompoundTag tag, final HolderLookup.Provider registries) {
+    private static BalloonLevelSavedData create(final ServerLevel level, final CompoundTag tag) {
         final BalloonLevelSavedData sd = new BalloonLevelSavedData();
 
         if (tag.contains(ID)) {
             final DataResult<Pair<List<SavedBalloon>, Tag>> result = CODEC.decode(NbtOps.INSTANCE, tag.getList(ID, Tag.TAG_COMPOUND));
 
             final BalloonMap map = BalloonMap.MAP.get(level);
-            result.ifSuccess(x -> map.getUnloadedBalloons().addAll(x.getFirst()));
+            result.result().ifPresent(x -> map.getUnloadedBalloons().addAll(x.getFirst()));
         }
         return sd;
     }
 
     public static BalloonLevelSavedData get(final ServerLevel level) {
         final BalloonLevelSavedData data = level.getChunkSource().getDataStorage().computeIfAbsent(
-                new Factory<>(BalloonLevelSavedData::new, (nbt, lookup) -> create(level, nbt, lookup), null),
+                tag -> create(level, tag),
+                BalloonLevelSavedData::new,
                 BalloonLevelSavedData.ID);
         data.level = level;
 
@@ -45,7 +45,7 @@ public class BalloonLevelSavedData extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(final CompoundTag tag, final HolderLookup.@NotNull Provider provider) {
+    public @NotNull CompoundTag save(final CompoundTag tag) {
         final BalloonMap map = BalloonMap.MAP.get(this.level);
         final ObjectArrayList<SavedBalloon> list = new ObjectArrayList<>(map.getUnloadedBalloons());
 
@@ -54,7 +54,7 @@ public class BalloonLevelSavedData extends SavedData {
         }
 
         final DataResult<Tag> result = CODEC.encodeStart(NbtOps.INSTANCE, list);
-        result.ifSuccess(data -> tag.put(ID, data));
+        result.result().ifPresent(data -> tag.put(ID, data));
 
         return tag;
     }

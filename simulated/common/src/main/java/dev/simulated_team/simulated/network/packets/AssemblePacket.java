@@ -10,12 +10,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record AssemblePacket(BlockPos pos) implements CustomPacketPayload {
     public static final Type<AssemblePacket> TYPE = new Type<>(Simulated.path("assemble"));
 
     public static final StreamCodec<ByteBuf, AssemblePacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, packet -> packet.pos,
+            StreamCodecs.BLOCK_POS, packet -> packet.pos,
             AssemblePacket::new);
 
     @Override

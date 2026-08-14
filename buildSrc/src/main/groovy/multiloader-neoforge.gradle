@@ -1,0 +1,37 @@
+import org.gradle.api.attributes.java.TargetJvmVersion
+
+dependencies {
+    compileOnly 'org.jspecify:jspecify:1.0.0'
+    compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
+    compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:${sable_companion_version}") {
+        transitive = false
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+        }
+    }
+
+    modApi("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+
+    modApi("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    modApi("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
+    modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}")
+    modImplementation("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+    compileOnly("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    modImplementation("foundry.veil:Veil-forge-${minecraft_version}:${project.veil_version}") {
+        exclude group: "maven.modrinth"
+    }
+
+    compileOnly("dev.ryanhcode.sable:sable-neoforge-1.21.1:${sable_version}") {
+        transitive = false
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+        }
+    }
+
+    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$computercraft_tweaked_version")
+    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$computercraft_tweaked_version")
+
+    compileOnly("maven.modrinth:iris:$iris_version")
+    compileOnly("maven.modrinth:sodium:$rootProject.sodium_version")
+}

@@ -335,7 +335,7 @@ public class ServerBalloon extends Balloon {
     @Override
     public boolean shouldSpawnGust(final BlockPos pos) {
         final float percentHeight = (pos.getY() + 0.5f - this.bounds.minY) / this.getHeight();
-        return percentHeight > 1.0 - Math.clamp(this.totalFilledVolume / this.getCapacity(), 0, 1);
+        return percentHeight > 1.0 - net.minecraft.util.Mth.clamp(this.totalFilledVolume / this.getCapacity(), 0, 1);
     }
 
     @Override

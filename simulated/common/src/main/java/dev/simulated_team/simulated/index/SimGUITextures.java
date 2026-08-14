@@ -109,7 +109,7 @@ public enum SimGUITextures implements ScreenElement {
     }
 
     SimGUITextures(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
-        final ResourceLocation loc = ResourceLocation.tryBuild(namespace, "textures/gui/" + location + ".png");
+        final ResourceLocation loc = new ResourceLocation(namespace, "textures/gui/" + location + ".png");
         assert loc != null; //location should never be null here, if it is, we messed up
 
         this.location = loc;

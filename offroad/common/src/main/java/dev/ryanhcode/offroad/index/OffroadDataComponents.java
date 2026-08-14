@@ -9,7 +9,7 @@ import net.minecraft.core.registries.Registries;
 import java.util.function.UnaryOperator;
 
 public class OffroadDataComponents {
-	private static final RegistrationProvider<DataComponentType<?>> REGISTRY = RegistrationProvider.get(Registries.DATA_COMPONENT_TYPE, Offroad.MOD_ID);
+	private static final RegistrationProvider<DataComponentType<?>> REGISTRY = RegistrationProvider.get(DataComponentType.REGISTRY_KEY, Offroad.MOD_ID);
 
 	public static final DataComponentType<TireLike> TIRE = create("tire",
 			builder -> builder.persistent(TireLike.CODEC));

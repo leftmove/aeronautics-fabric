@@ -1,6 +1,7 @@
 plugins {
+    id 'net.neoforged.moddev.legacyforge'
     id 'multiloader-loader'
-    id 'net.neoforged.moddev'
+    id 'multiloader-neoforge'
 }
 
 evaluationDependsOn(':simulated:neoforge')
@@ -8,11 +9,10 @@ evaluationDependsOn(':simulated:neoforge')
 def generatedResources = project(":aeronautics:common").file("src/generated/resources")
 def commonResources = project(":aeronautics:common").file("src/main/resources")
 
-neoForge {
-    version = neoforge_version
+legacyForge {
+    version = forge_full_version
 
     def at = project(':aeronautics:common').file('src/main/resources/META-INF/accesstransformer.cfg')
-
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
@@ -24,8 +24,7 @@ neoForge {
 
     runs {
         configureEach {
-            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
-            ideName = "Aero NeoForge ${it.name.capitalize()} (${project.path})"
+            ideName = "Aero Forge ${it.name.capitalize()} (${project.path})"
         }
 
         data {

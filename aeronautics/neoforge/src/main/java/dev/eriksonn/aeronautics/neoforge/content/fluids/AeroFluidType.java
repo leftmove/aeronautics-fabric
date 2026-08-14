@@ -8,11 +8,12 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.neoforged.neoforge.fluids.FluidType;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class AeroFluidType extends FluidType implements IClientFluidTypeExtensions {
@@ -25,6 +26,11 @@ public abstract class AeroFluidType extends FluidType implements IClientFluidTyp
 		super(properties);
 		this.stillTexture = stillTexture;
 		this.flowingTexture = flowingTexture;
+	}
+
+	@Override
+	public void initializeClient(final Consumer<IClientFluidTypeExtensions> consumer) {
+		consumer.accept(this);
 	}
 
 	public static FluidBuilder.FluidTypeFactory create(int fogColor, Supplier<Float> fogDistance, Factory factory) {

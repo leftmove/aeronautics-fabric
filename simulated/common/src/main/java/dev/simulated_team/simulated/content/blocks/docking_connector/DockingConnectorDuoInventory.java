@@ -86,12 +86,12 @@ public class DockingConnectorDuoInventory implements AbstractContainer {
     }
 
     @Override
-    public CompoundTag write(final HolderLookup.Provider provider) {
+    public CompoundTag write() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void read(final HolderLookup.Provider provider, final CompoundTag nbt) {
+    public void read(final CompoundTag nbt) {
         throw new NotImplementedException();
     }
 

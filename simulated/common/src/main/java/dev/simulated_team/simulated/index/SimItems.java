@@ -2,6 +2,7 @@ package dev.simulated_team.simulated.index;
 
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import com.tterrag.registrate.builders.ItemBuilder;
@@ -24,7 +25,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
-import net.neoforged.neoforge.common.Tags;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class SimItems {
     public static final SimulatedRegistrate REGISTRATE = Simulated.getRegistrate();
@@ -40,7 +41,7 @@ public class SimItems {
 
     public static final ItemEntry<SpringItem> SPRING =
             REGISTRATE.item("spring", SpringItem::new)
-                    .properties(p -> p.component(SimDataComponents.BOUNCINESS, 1f))
+                    .properties(p -> ItemComponents.with(p, SimDataComponents.BOUNCINESS, 1f))
                     .recipe((ctx, prov) ->
                             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get(), 2)
                                     .pattern("S")
@@ -59,9 +60,9 @@ public class SimItems {
                     .pattern(" S ")
                     .pattern("NSN")
                     .pattern(" S ")
-                    .define('S', Tags.Items.STRINGS)
-                    .define('N', Tags.Items.NUGGETS_IRON)
-                    .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(Tags.Items.STRINGS))
+                    .define('S', AllTags.forgeItemTag("strings"))
+                    .define('N', AllTags.forgeItemTag("nuggets/iron"))
+                    .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.forgeItemTag("strings")))
                     .save(prov))
             .register();
 
@@ -79,13 +80,12 @@ public class SimItems {
                     .transform(CreativeTabItemTransforms.VisibilityType.INVISIBLE.applyItem())
                     .register();
 
-    static { REGISTRATE.addExtraItem(ResourceLocation.withDefaultNamespace("slime_ball")); }
+    static { REGISTRATE.addExtraItem(new ResourceLocation("slime_ball")); }
 
     public static final ItemEntry<HoneyGlueItem> HONEY_GLUE =
             REGISTRATE.item("honey_glue", HoneyGlueItem::new)
                     .properties(p -> p.stacksTo(1)
                             .durability(100))
-                    .tag(ItemTags.DURABILITY_ENCHANTABLE)
                     .register();
 
     public static final ItemEntry<PhysicsStaffItem> PHYSICS_STAFF =
@@ -98,7 +98,6 @@ public class SimItems {
             REGISTRATE.item("plunger_launcher", PlungerLauncherItem::new)
                     .properties(p -> p.stacksTo(1).durability(200))
                     .model(AssetLookup.itemModelWithPartials())
-                    .tag(Tags.Items.ENCHANTABLES, ItemTags.DURABILITY_ENCHANTABLE)
                     .register();
 
     private static ItemEntry<Item> ingredient(final String name) {

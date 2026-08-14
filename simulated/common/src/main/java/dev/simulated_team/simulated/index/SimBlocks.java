@@ -27,7 +27,6 @@ import dev.simulated_team.simulated.content.blocks.analog_transmission.AnalogTra
 import dev.simulated_team.simulated.content.blocks.auger_shaft.AugerCogBlock;
 import dev.simulated_team.simulated.content.blocks.auger_shaft.AugerShaftBlock;
 import dev.simulated_team.simulated.content.blocks.directional_gearshift.DirectionalGearshiftBlock;
-import dev.simulated_team.simulated.content.blocks.directional_gearshift.DirectionalGearshiftGenerator;
 import dev.simulated_team.simulated.content.blocks.docking_connector.DockingConnectorBlock;
 import dev.simulated_team.simulated.content.blocks.docking_connector.PairedDockingConnectorBlock;
 import dev.simulated_team.simulated.content.blocks.gimbal_sensor.GimbalSensorBlock;
@@ -46,7 +45,6 @@ import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.Li
 import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.LinkedTypewriterItem;
 import dev.simulated_team.simulated.content.blocks.redstone.modulating_receiver.ModulatingLinkedReceiverBlock;
 import dev.simulated_team.simulated.content.blocks.redstone.redstone_accumulator.RedstoneAccumulatorBlock;
-import dev.simulated_team.simulated.content.blocks.redstone.redstone_accumulator.RedstoneAccumulatorBlockStateGen;
 import dev.simulated_team.simulated.content.blocks.redstone.redstone_inductor.RedstoneInductorBlock;
 import dev.simulated_team.simulated.content.blocks.redstone_magnet.RedstoneMagnetBlock;
 import dev.simulated_team.simulated.content.blocks.rope.rope_connector.RopeConnectorBlock;
@@ -54,7 +52,6 @@ import dev.simulated_team.simulated.content.blocks.rope.rope_winch.RopeWinchBloc
 import dev.simulated_team.simulated.content.blocks.spring.SpringBlock;
 import dev.simulated_team.simulated.content.blocks.steering_wheel.SteeringWheelBlock;
 import dev.simulated_team.simulated.content.blocks.steering_wheel.SteeringWheelBlockEntity;
-import dev.simulated_team.simulated.content.blocks.steering_wheel.SteeringWheelGenerator;
 import dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlock;
 import dev.simulated_team.simulated.content.blocks.swivel_bearing.link_block.SwivelBearingPlateBlock;
 import dev.simulated_team.simulated.content.blocks.symmetric_sail.SymmetricSailBlock;
@@ -65,6 +62,7 @@ import dev.simulated_team.simulated.data.SimBlockStateGen;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import dev.simulated_team.simulated.registrate.simulated_tab.CreativeTabItemTransforms;
 import dev.simulated_team.simulated.service.SimBlockStateService;
+import dev.simulated_team.simulated.service.SimLootService;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -88,7 +86,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
@@ -150,7 +147,7 @@ public class SimBlocks {
                     .initialProperties(SharedProperties::netheriteMetal)
                     .properties(properties -> properties
                             .destroyTime(5f))
-                    .loot((p, b) -> p.dropOther(b, SWIVEL_BEARING.get()))
+                    .loot((p, b) -> SimLootService.INSTANCE.add(p, b, p.createSingleItemTable(SWIVEL_BEARING.get())))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .register();
 
@@ -260,7 +257,7 @@ public class SimBlocks {
                         .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.ANDESITE_CASING))
                         .save(p);
             })
-            .blockstate(DirectionalGearshiftGenerator::generate)
+            .blockstate((ctx, prov) -> SimBlockStateService.INSTANCE.directionalGearshift(ctx, prov))
             .item()
             .transform(customItemModel())
             .register();
@@ -536,7 +533,7 @@ public class SimBlocks {
                             .pattern(" A ")
                             .pattern(" C ")
                             .pattern(" B ")
-                            .define('A', Tags.Items.GEMS_AMETHYST)
+                            .define('A', AllTags.forgeItemTag("gems/amethyst"))
                             .define('B', AllBlocks.BRASS_CASING)
                             .define('C', AllItems.ELECTRON_TUBE)
                             .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.BRASS_CASING))
@@ -606,7 +603,7 @@ public class SimBlocks {
                     .properties(p -> p.mapColor(MapColor.PODZOL))
                     .addLayer(() -> RenderType::cutoutMipped)
                     .transform(axeOrPickaxe())
-                    .blockstate(new SteeringWheelGenerator()::generate)
+                    .blockstate((c, p) -> SimBlockStateService.INSTANCE.steeringWheel(c, p))
                     .onRegister(ItemUseOverrides::addBlock)
                     .transform(SimStress.setCapacity(16.0))
                     .onRegister(BlockStressValues.setGeneratorSpeed(SteeringWheelBlockEntity.RPM))
@@ -701,7 +698,7 @@ public class SimBlocks {
     public static final BlockEntry<RedstoneAccumulatorBlock> REDSTONE_ACCUMULATOR =
             REGISTRATE.block("redstone_accumulator", RedstoneAccumulatorBlock::new)
                     .initialProperties(() -> Blocks.REPEATER)
-                    .blockstate(RedstoneAccumulatorBlockStateGen.generate())
+                    .blockstate((ctx, prov) -> SimBlockStateService.INSTANCE.redstoneAccumulator(ctx, prov))
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag, SimTags.Blocks.DIODE)
                     .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC, c.get(), 1)
                             .pattern(" Q ")
@@ -822,7 +819,7 @@ public class SimBlocks {
                             .texture("1", p.modLoc("block/symmetric_sail/side_" + colorName))
                             .texture("particle", Create.asResource("block/sail/canvas_" + colorName))))
                     .tag(BlockTags.MINEABLE_WITH_AXE, AllTags.AllBlockTags.WINDMILL_SAILS.tag, SimTags.Blocks.SYMMETRIC_SAILS)
-                    .loot((p, b) -> p.dropOther(b, WHITE_SYMMETRIC_SAIL.asItem()))
+                    .loot((p, b) -> SimLootService.INSTANCE.add(p, b, p.createSingleItemTable(WHITE_SYMMETRIC_SAIL.get())))
                     .register();
         }
     });
@@ -879,9 +876,7 @@ public class SimBlocks {
                             blockState -> prov.models().getExistingFile(
                                     prov.modLoc("block/spring/" + (blockState.getValue(SpringBlock.SIZE) == SpringBlock.Size.MEDIUM ? "" : (blockState.getValue(SpringBlock.SIZE).getSerializedName() + "_")) + "block"))))
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag, AllTags.AllBlockTags.BRITTLE.tag, AllTags.AllBlockTags.NON_MOVABLE.tag, SimTags.Blocks.LIGHT)
-                    .loot((tables, block) -> {
-                        tables.add(block, tables.createSingleItemTable(SimItems.SPRING));
-                    })
+                    .loot((tables, block) -> SimLootService.INSTANCE.add(tables, block, tables.createSingleItemTable(SimItems.SPRING.get())))
                     .register();
 
     private static BlockBuilder<HandleBlock, CreateRegistrate> createHandle(@Nullable final DyeColor color, final HandleBlock.Variant variant) {

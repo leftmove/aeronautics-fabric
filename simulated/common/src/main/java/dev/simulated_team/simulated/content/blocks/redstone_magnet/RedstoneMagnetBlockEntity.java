@@ -98,17 +98,17 @@ public class RedstoneMagnetBlockEntity extends SmartBlockEntity implements SimMa
     }
 
     @Override
-    public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    public void write(final CompoundTag compound, final boolean clientPacket) {
         compound.putBoolean("IsPowered", this.powered);
         compound.putInt("SignalStrength", this.signalStrength);
-        super.write(compound, registries, clientPacket);
+        super.write(compound, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
         this.powered = compound.getBoolean("IsPowered");
         this.signalStrength = compound.getInt("SignalStrength");
-        super.read(compound, registries, clientPacket);
+        super.read(compound, clientPacket);
     }
 
     private void spawnParticles() {

@@ -86,13 +86,13 @@ public class PhysicsStaffClientHandler {
 
         if (player.isLocalPlayer() && !camera.isDetached()) {
             final Vec3 savedPos = PhysicsStaffItemRenderer.getFirstPersonFocusPos(pt)
-                    .add(player.getPosition(pt)).add(0, Mth.lerp(pt, camera.eyeHeightOld, camera.eyeHeight), 0);
+                    .add(player.getPosition(pt)).add(0, Mth.lerp(pt, ((dev.simulated_team.simulated.mixin.accessor.CameraAccessor) camera).simulated$getEyeHeightOld(), ((dev.simulated_team.simulated.mixin.accessor.CameraAccessor) camera).simulated$getEyeHeight()), 0);
 
             return savedPos;
         }
 
-        final Vec3 viewDirection = player.calculateViewVector(0.0f, player.getPreciseBodyRotation(pt));
-        final Vec3 handDirection = player.calculateViewVector(0.0f, player.getPreciseBodyRotation(pt) + 90.0f);
+        final Vec3 viewDirection = net.minecraft.world.phys.Vec3.directionFromRotation(0.0f, net.minecraft.util.Mth.rotLerp(pt, player.yBodyRotO, player.yBodyRot));
+        final Vec3 handDirection = net.minecraft.world.phys.Vec3.directionFromRotation(0.0f, net.minecraft.util.Mth.rotLerp(pt, player.yBodyRotO, player.yBodyRot) + 90.0f);
         return player.getPosition(pt).add(0.0, 1.28, 0.0).add(viewDirection.scale(1.275)).add(handDirection.scale(0.325 * (mainHand ? 1 : -1)));
     }
 
@@ -422,7 +422,7 @@ public class PhysicsStaffClientHandler {
     }
 
     private double clampDistance(final double distance) {
-        return Math.clamp(distance, 2.0, PhysicsStaffItem.RANGE);
+        return net.minecraft.util.Mth.clamp(distance, 2.0, PhysicsStaffItem.RANGE);
     }
 
     private boolean isRotating() {
@@ -556,7 +556,7 @@ public class PhysicsStaffClientHandler {
                 assert handler.dragSession != null;
                 assert mc.player != null;
 
-                final Vec3 axis = mc.player.calculateViewVector(0.0f, mc.player.getYRot() - 90.0f);
+                final Vec3 axis = net.minecraft.world.phys.Vec3.directionFromRotation(0.0f, mc.player.getYRot() - 90.0f);
                 final Quaterniond orientation = handler.dragSession.dragOrientation();
 
                 final SimItemConfigs config = SimConfigService.INSTANCE.client().itemConfig;

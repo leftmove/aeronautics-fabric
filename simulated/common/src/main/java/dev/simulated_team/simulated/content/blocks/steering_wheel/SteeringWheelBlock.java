@@ -20,7 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -49,16 +49,10 @@ public class SteeringWheelBlock extends HorizontalDirectionalBlock
         implements IBE<SteeringWheelBlockEntity>, ProperWaterloggedBlock, IRotate, IHaveBigOutline, QuietUse, IDirectionalAnalogOutput {
 
     public static final BooleanProperty ON_FLOOR = BooleanProperty.create("on_floor");
-    public static final MapCodec<SteeringWheelBlock> CODEC = simpleCodec(SteeringWheelBlock::new);
 
     public SteeringWheelBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false).setValue(ON_FLOOR, true));
-    }
-
-    @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -71,7 +65,7 @@ public class SteeringWheelBlock extends HorizontalDirectionalBlock
                 player.isLocalPlayer()) {
             final VoxelShape wheel = (onFloor ? SimBlockShapes.STEERING_WHEEL_FLOOR : SimBlockShapes.STEERING_WHEEL_CEILING).get(facing);
             final VoxelShape mount = SimBlockShapes.STEERING_WHEEL_MOUNT.get(facing);
-            return lookingAtWheel(player, pos, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true), wheel, mount) ? wheel : mount;
+            return lookingAtWheel(player, pos, Minecraft.getInstance().getFrameTime(), wheel, mount) ? wheel : mount;
         }
 
         if (state.getValue(ON_FLOOR)) {
@@ -94,7 +88,7 @@ public class SteeringWheelBlock extends HorizontalDirectionalBlock
 
     public static boolean lookingAtWheel(final Player player, final BlockPos pos, final float pt, final VoxelShape wheel, final VoxelShape mount) {
         Vec3 from = player.getEyePosition(pt);
-        Vec3 to = from.add(player.getViewVector(pt).scale(player.blockInteractionRange()));
+        Vec3 to = from.add(player.getViewVector(pt).scale(player.getBlockReach()));
         final SubLevel subLevel = Sable.HELPER.getContaining(player.level(), pos);
         if (subLevel != null) {
             final Pose3dc pose;
@@ -122,7 +116,7 @@ public class SteeringWheelBlock extends HorizontalDirectionalBlock
     }
 
     @Override
-    protected VoxelShape getInteractionShape(final BlockState state, final BlockGetter level, final BlockPos pos) {
+    public VoxelShape getInteractionShape(final BlockState state, final BlockGetter level, final BlockPos pos) {
         if (state.getValue(ON_FLOOR)) {
             return SimBlockShapes.STEERING_WHEEL_FULL_FLOOR.get(state.getValue(FACING));
         } else {
@@ -142,7 +136,7 @@ public class SteeringWheelBlock extends HorizontalDirectionalBlock
 
     @Override
     public @Nullable InteractionResult quietUse(final Player player, final InteractionHand hand, final BlockPos pos, final BlockState state) {
-        if (lookingAtWheel(player, pos, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true), state)) {
+        if (lookingAtWheel(player, pos, Minecraft.getInstance().getFrameTime(), state)) {
             return this.getBlockEntityOptional(player.level(), pos).map( be -> {
                 if (!be.held &&
                         !be.isMaterialValid(player.getItemInHand(hand)) &&
@@ -162,11 +156,12 @@ public class SteeringWheelBlock extends HorizontalDirectionalBlock
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+    public InteractionResult use(final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        final ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
-        return this.onBlockEntityUseItemOn(level, pos, be -> be.applyMaterialIfValid(stack));
+        return this.onBlockEntityUse(level, pos, be -> be.applyMaterialIfValid(stack));
     }
 
     @Override
@@ -195,7 +190,7 @@ public class SteeringWheelBlock extends HorizontalDirectionalBlock
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(final BlockState blockState) {
+    public boolean hasAnalogOutputSignal(final BlockState blockState) {
         return true;
     }
 

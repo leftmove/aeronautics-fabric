@@ -5,6 +5,7 @@ import dev.eriksonn.aeronautics.content.particle.GustParticleData;
 import dev.eriksonn.aeronautics.index.AeroEntityTypes;
 import dev.eriksonn.aeronautics.index.AeroSoundEvents;
 import dev.ryanhcode.sable.Sable;
+import dev.simulated_team.simulated.entity.ExtraSpawnData;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -23,14 +24,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaterniond;
 import org.joml.Quaterniondc;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 
-public class GustEntity extends Entity implements IEntityWithComplexSpawn {
+public class GustEntity extends Entity implements ExtraSpawnData {
     private final Quaterniond orientation = new Quaterniond();
     private boolean spawnedInitialBurst = false;
 
@@ -143,7 +143,7 @@ public class GustEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    protected void defineSynchedData(final @NotNull SynchedEntityData.Builder builder) {
+    protected void defineSynchedData() {
 
     }
 

@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class SchematicPrinterMixin {
     @Shadow private SchematicLevel blockReader;
 
-    @Redirect(method = "getCurrentRequirement", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/foundation/utility/BlockHelper;prepareBlockEntityData(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)Lnet/minecraft/nbt/CompoundTag;"))
-    private CompoundTag fixBlockRequirements(final Level level, final BlockState block, final BlockEntity _blockEntity, @Local(name = "target") final BlockPos target) {
-        return BlockHelper.prepareBlockEntityData(level, block, this.blockReader.getBlockEntity(target));
+    @Redirect(method = "getCurrentRequirement", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/foundation/utility/BlockHelper;prepareBlockEntityData(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)Lnet/minecraft/nbt/CompoundTag;"))
+    private CompoundTag fixBlockRequirements(final BlockState block, final BlockEntity _blockEntity, @Local(name = "target") final BlockPos target) {
+        return BlockHelper.prepareBlockEntityData(block, this.blockReader.getBlockEntity(target));
     }
 }

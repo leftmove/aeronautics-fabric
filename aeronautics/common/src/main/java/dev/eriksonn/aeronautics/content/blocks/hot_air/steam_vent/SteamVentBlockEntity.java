@@ -278,8 +278,8 @@ public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntit
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
+        super.write(tag, clientPacket);
 
         tag.putInt("SignalStrength", this.signalStrength);
         tag.putInt("RawSignalStrength", this.rawSignalStrength);
@@ -289,8 +289,8 @@ public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntit
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
+        super.read(tag, clientPacket);
 
         this.signalStrength = tag.getInt("SignalStrength");
         this.rawSignalStrength = tag.getInt("RawSignalStrength");

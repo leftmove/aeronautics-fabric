@@ -21,10 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import dev.simulated_team.simulated.service.SimFluidService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,8 +153,8 @@ public class DockingConnectorScenes {
         scene.idle(5);
         world.showSection(mainBeltSelection,Direction.DOWN);
 
-        scene.world().modifyBlockEntity(new BlockPos(11,1,4), FluidTankBlockEntity.class, be -> be.getTankInventory()
-                .fill(new FluidStack(Fluids.LAVA,12000), IFluidHandler.FluidAction.EXECUTE));
+        scene.world().modifyBlockEntity(new BlockPos(11,1,4), FluidTankBlockEntity.class, be ->
+                SimFluidService.INSTANCE.fillCreateFluidTank(be, Fluids.LAVA, 12000));
         scene.idle(10);
 
         BlockPos entryBeltCart = new BlockPos(3,2,4);

@@ -19,7 +19,6 @@ import foundry.veil.api.client.render.post.PostProcessingManager;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
@@ -46,7 +45,7 @@ public class EndSeaShadowRenderer {
         return true;
     }
 
-    public static void renderShadowMap(final VeilRenderLevelStageEvent.Stage stage, final LevelRenderer levelRenderer, final MultiBufferSource.BufferSource bufferSource, final MatrixStack matrixStack, final Matrix4fc frustumMatrix, final Matrix4fc projectionMatrix, final int renderTick, final DeltaTracker deltaTracker, final Camera camera, final Frustum frustum) {
+    public static void renderShadowMap(final VeilRenderLevelStageEvent.Stage stage, final LevelRenderer levelRenderer, final MultiBufferSource.BufferSource bufferSource, final PoseStack poseStack, final Matrix4f projectionMatrix, final int renderTick, final float partialTicks, final Camera camera, final Frustum frustum) {
         if (!EndSeaShadowRenderer.isEnabled() ||
                 stage != VeilRenderLevelStageEvent.Stage.AFTER_LEVEL) {
             return;
@@ -120,10 +119,10 @@ public class EndSeaShadowRenderer {
         RenderSystem.depthMask(true);
         RenderSystem.enableDepthTest();
 
-        shader.setDefaultUniforms(VertexFormat.Mode.QUADS, RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), minecraft.getWindow());
         shader.apply();
 
-        final BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        final BufferBuilder builder = Tesselator.getInstance().getBuilder();
+        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         final Vector3d pos = new Vector3d();
         final Vec3 cameraPos = camera.getPosition();
 
@@ -133,12 +132,12 @@ public class EndSeaShadowRenderer {
 
             voidAnchor.sub(cameraPos.x, cameraPos.y, cameraPos.z, pos);
             final Matrix4f pose = new Matrix4f().translate((float) pos.x, (float) pos.y, (float) pos.z);
-            builder.addVertex(pose, -size, 0, -size).setUv(0.0f, 0.0f).setColor(0.5f, 0, 0, 1);
-            builder.addVertex(pose, size, 0, -size).setUv(1.0f, 0.0f).setColor(0.5f, 0, 0, 1);
-            builder.addVertex(pose, size, 0, size).setUv(1.0f, 1.0f).setColor(0.5f, 0, 0, 1);
-            builder.addVertex(pose, -size, 0, size).setUv(0.0f, 1.0f).setColor(0.5f, 0, 0, 1);
+            builder.vertex(pose, -size, 0, -size).uv(0.0f, 0.0f).color(0.5f, 0, 0, 1).endVertex();
+            builder.vertex(pose, size, 0, -size).uv(1.0f, 0.0f).color(0.5f, 0, 0, 1).endVertex();
+            builder.vertex(pose, size, 0, size).uv(1.0f, 1.0f).color(0.5f, 0, 0, 1).endVertex();
+            builder.vertex(pose, -size, 0, size).uv(0.0f, 1.0f).color(0.5f, 0, 0, 1).endVertex();
         }
-        BufferUploader.drawWithShader(builder.buildOrThrow());
+        BufferUploader.drawWithShader(builder.end());
         RenderSystem.disableDepthTest();
         shader.clear();
 
