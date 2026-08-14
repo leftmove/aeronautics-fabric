@@ -39,7 +39,15 @@ dependencies {
         exclude group: "maven.modrinth"
     }
 
+    compileOnly 'org.jspecify:jspecify:1.0.0'
+    compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
     compileOnly("dev.ryanhcode.sable:sable-fabric-1.21.1:${sable_version}") {
+        transitive = false
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+        }
+    }
+    compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:${sable_companion_version}") {
         transitive = false
         attributes {
             attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)

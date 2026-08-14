@@ -6,14 +6,17 @@ import dev.eriksonn.aeronautics.neoforge.events.AeroNeoForgeCommonEvents;
 import dev.eriksonn.aeronautics.neoforge.index.AeroFluidsNeoForge;
 import dev.eriksonn.aeronautics.neoforge.index.AeroParticleTypesNeoForge;
 import dev.eriksonn.aeronautics.neoforge.service.NeoForgeAeroConfigService;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Aeronautics.MOD_ID)
 public class AeronauticsNeoForge {
-    public AeronauticsNeoForge(final IEventBus modBus, final ModContainer modContainer) {
+    public AeronauticsNeoForge() {
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.register(AeroNeoForgeCommonEvents.class);
         modBus.register(AeroNeoForgeCommonEvents.ModBusEvents.class);
 
@@ -23,6 +26,8 @@ public class AeronauticsNeoForge {
         Aeronautics.init();
         AeroFluidsNeoForge.init();
 
-        NeoForgeAeroConfigService.register(modContainer);
+        NeoForgeAeroConfigService.register();
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> AeronauticsNeoForgeClient.init(modBus));
     }
 }

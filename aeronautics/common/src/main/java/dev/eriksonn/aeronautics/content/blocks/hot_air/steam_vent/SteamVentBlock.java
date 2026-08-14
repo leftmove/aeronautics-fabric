@@ -61,7 +61,7 @@ public class SteamVentBlock extends Block implements IBE<SteamVentBlockEntity>, 
 
     @Override
     public @NotNull InteractionResult use(final @NotNull BlockState blockState, final @NotNull Level level, final @NotNull BlockPos blockPos, final @NotNull Player player, final @NotNull InteractionHand interactionHand, final @NotNull BlockHitResult blockHitResult) {
-        final Variant conversion = Variant.getConversionFromItem(itemStack.getItem());
+        final Variant conversion = Variant.getConversionFromItem(player.getItemInHand(interactionHand).getItem());
 
         if (conversion != null) {
             final Variant current = blockState.getValue(VARIANT);

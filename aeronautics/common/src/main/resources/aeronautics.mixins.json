@@ -6,6 +6,7 @@
   "plugin": "dev.eriksonn.aeronautics.plugin.AeroMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "accessor.FireBlockAccessor",
     "balloon.SimAssemblyHelperMixin",
     "balloon.SubLevelAssemblyHelperMixin",
     "flywheel_block_entity.FlywheelBlockEntityMixin",

@@ -311,7 +311,7 @@ public class HotAirScenes {
                     .placeNearTarget();
         } else {
             scene.overlay().showControls(util.vector().blockSurface(burnerPos.west(), Direction.NORTH).add(0, shipOffset, 0), Pointing.RIGHT, 30)
-                    .withItem(new ItemStack(Blocks.SOUL_SAND.get().asItem()));
+                    .withItem(new ItemStack(Blocks.SOUL_SAND));
             scene.idle(5);
             scene.world().setBlock(burnerPos,
                     AeroBlocks.HOT_AIR_BURNER.getDefaultState().setValue(HotAirBurnerBlock.VARIANT, HotAirBurnerBlock.Variant.SOUL_FIRE),

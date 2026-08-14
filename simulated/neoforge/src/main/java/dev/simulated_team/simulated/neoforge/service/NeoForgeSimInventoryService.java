@@ -47,7 +47,7 @@ public class NeoForgeSimInventoryService implements SimInventoryService {
     @Override
     public <T extends InventoryLoaderWrapper> T getInventory(@Nullable final BlockEntity be, @Nullable final Direction dir) {
         if (be != null) {
-            final IItemHandler handler = be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), dir);
+            final IItemHandler handler = be.getCapability(ForgeCapabilities.ITEM_HANDLER, dir).orElse(null);
             if (handler != null) {
                 return (T) new InventoryLoaderWrapperImpl(handler);
             }

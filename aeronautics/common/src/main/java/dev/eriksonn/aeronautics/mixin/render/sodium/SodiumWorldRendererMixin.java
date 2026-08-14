@@ -2,12 +2,10 @@ package dev.eriksonn.aeronautics.mixin.render.sodium;
 
 import dev.eriksonn.aeronautics.content.blocks.levitite.LevititeShaderManager;
 import dev.eriksonn.aeronautics.index.client.AeroRenderTypes;
-import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
-import foundry.veil.api.client.render.shader.uniform.ShaderUniform;
-import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
-import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderMatrices;
+import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
+import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderMatrices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,9 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * Priority <1000 to apply before sable
- */
 @Mixin(value = SodiumWorldRenderer.class, priority = 990)
 public class SodiumWorldRendererMixin {
 
@@ -27,15 +22,11 @@ public class SodiumWorldRendererMixin {
             final ShaderProgram shader = VeilRenderSystem.setShader(AeroRenderTypes.LEVITITE_SHADER);
             if (shader == null) return;
 
-            ShaderUniform time = shader.getUniform("time");
-            if (time != null) {
-                long ticks = Minecraft.getInstance().level.getGameTime();
-                final float pt = Minecraft.getInstance().getFrameTime();
-                ticks = ticks % 100000;
-
-                time.setFloat(ticks + pt);
-            }
-            LevititeShaderManager.prepareShaderForWorld(VeilRenderBridge.toShaderInstance(shader), x, y, z);
+            long ticks = Minecraft.getInstance().level.getGameTime();
+            final float pt = Minecraft.getInstance().getFrameTime();
+            ticks = ticks % 100000;
+            shader.setFloat("time", ticks + pt);
+            LevititeShaderManager.prepareShaderForWorld(shader.toShaderInstance(), x, y, z);
         }
     }
 
@@ -45,8 +36,7 @@ public class SodiumWorldRendererMixin {
             final ShaderProgram shader = VeilRenderSystem.setShader(AeroRenderTypes.LEVITITE_SHADER);
             if (shader == null) return;
 
-            // reset back to world once rendering is done, for safety
-            LevititeShaderManager.prepareShaderForWorld(VeilRenderBridge.toShaderInstance(shader), x, y, z);
+            LevititeShaderManager.prepareShaderForWorld(shader.toShaderInstance(), x, y, z);
         }
     }
 }

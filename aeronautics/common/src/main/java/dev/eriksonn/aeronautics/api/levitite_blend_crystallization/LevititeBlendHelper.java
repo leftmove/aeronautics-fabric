@@ -4,7 +4,6 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.LitBlazeBurnerBlock;
 import dev.eriksonn.aeronautics.index.AeroRegistries;
 import dev.eriksonn.aeronautics.service.AeroLevititeService;
-import foundry.veil.platform.registry.RegistryObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -91,8 +90,7 @@ public class LevititeBlendHelper {
         if (litState.isPresent() && !litState.get())
             return null;
 
-        for (RegistryObject<CrystalPropagationContext> entry : AeroRegistries.LEVITITE_CRYSTAL_PROPAGATION_CONTEXT.getEntries()) {
-            CrystalPropagationContext context = entry.get();
+        for (final CrystalPropagationContext context : AeroRegistries.LEVITITE_CRYSTAL_PROPAGATION_CONTEXT.asVanillaRegistry()) {
             if(state.is(context.getCatalyzerTag())) {
                 return context;
             }

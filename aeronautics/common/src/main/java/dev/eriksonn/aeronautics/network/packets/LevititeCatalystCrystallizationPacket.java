@@ -7,14 +7,12 @@ import dev.eriksonn.aeronautics.index.AeroLevititeBlendPropagationContexts;
 import dev.eriksonn.aeronautics.index.AeroTags;
 import dev.eriksonn.aeronautics.util.CatalyzerHelper;
 import foundry.veil.api.network.handler.ServerPacketContext;
-import net.createmod.catnip.codecs.stream.CatnipStreamCodecs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.codec.StreamCodecs;
 
@@ -23,7 +21,7 @@ public record LevititeCatalystCrystallizationPacket(BlockPos pos, InteractionHan
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, LevititeCatalystCrystallizationPacket> STREAM_CODEC = StreamCodec.composite(
 			StreamCodecs.BLOCK_POS, LevititeCatalystCrystallizationPacket::pos,
-			CatnipStreamCodecs.HAND, LevititeCatalystCrystallizationPacket::hand,
+			StreamCodecs.HAND, LevititeCatalystCrystallizationPacket::hand,
 			LevititeCatalystCrystallizationPacket::new);
 
 	@Override
@@ -42,7 +40,7 @@ public record LevititeCatalystCrystallizationPacket(BlockPos pos, InteractionHan
 
 		if (!item.is(AeroTags.ItemTags.LEVITITE_CATALYZER_NO_CONSUME)) {
 			if (item.isDamageableItem()) {
-				item.hurtAndBreak(1, player, this.hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+				item.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(this.hand));
 			} else if (item.isStackable() && !context.player().getAbilities().instabuild) {
 				item.shrink(1);
 			}

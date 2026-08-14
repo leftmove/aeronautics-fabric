@@ -24,17 +24,16 @@ public class AeronauticsClient {
     }
 
     private static void registerEvents() {
-        VeilEventPlatform.INSTANCE.onVeilRenderLevelStage((stage,
-                                                           levelRenderer,
-                                                           bufferSource,
-                                                           matrixStack,
-                                                           frustumMatrix,
-                                                           projectionMatrix,
-                                                           renderTick,
-                                                           deltaTracker,
-                                                           camera,
-                                                           frustum) -> {
-            ClientBalloonEffectRenderer.onRenderLevelStage(stage, frustumMatrix, projectionMatrix, renderTick);
+        VeilEventPlatform.INSTANCE.onVeilRenderTypeStageRender((stage,
+                                                               levelRenderer,
+                                                               bufferSource,
+                                                               poseStack,
+                                                               projectionMatrix,
+                                                               renderTick,
+                                                               partialTicks,
+                                                               camera,
+                                                               frustum) -> {
+            ClientBalloonEffectRenderer.onRenderLevelStage(stage, poseStack.last().pose(), projectionMatrix, renderTick);
         });
 
         VeilEventPlatform.INSTANCE.onVeilRegisterBlockLayers(registry -> {

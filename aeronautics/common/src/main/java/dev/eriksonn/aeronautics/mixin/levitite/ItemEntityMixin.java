@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import dev.simulated_team.simulated.compat.ItemComponents;
 
 @Mixin(ItemEntity.class)
@@ -26,11 +25,11 @@ public abstract class ItemEntityMixin extends Entity {
 
     @Shadow public abstract ItemStack getItem();
 
-    @Inject(method = "getDefaultGravity", at = @At("HEAD"), cancellable = true)
-    private void aeronautics$levitatingGravity(final CallbackInfoReturnable<Double> cir) {
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void aeronautics$levitatingGravity(final CallbackInfo ci) {
         final Levitating component = ItemComponents.get(this.getItem(), AeroDataComponents.LEVITATING);
         if (component != null) {
-            cir.setReturnValue(0d);
+            this.setNoGravity(true);
         }
     }
 
@@ -43,7 +42,7 @@ public abstract class ItemEntityMixin extends Entity {
 
             if (this.level().isClientSide && component.particle().isPresent()) {
                 if (this.level().random.nextFloat() < Mth.clamp(this.getItem().getCount() - 10, 5, 100) / 64f) {
-                    final Vec3 ppos = VecHelper.offsetRandomly(this.getPosition(0), this.getRandom(), 0.4f).add(0, 0.3, 0);
+                    final Vec3 ppos = VecHelper.offsetRandomly(this.getPosition(0), this.random, 0.4f).add(0, 0.3, 0);
                     this.level().addParticle(component.particle().get(), ppos.x, ppos.y, ppos.z, 0, 0, 0);
                 }
             }

@@ -49,7 +49,7 @@ public class NeoForgeSimDiagramFlywheelService implements SimDiagramFlywheelServ
 
 			final PoseStack beMatrices = new PoseStack();
 			beMatrices.pushPose();
-			beMatrices.mulPose(transformation);
+			beMatrices.last().pose().mul(transformation);
 			beRenderer.renderBlockEntities(embeddingInfo.blockEntities(), beMatrices, partialTicks, -chunkOffset.x, -chunkOffset.y, -chunkOffset.z);
 			beMatrices.popPose();
 

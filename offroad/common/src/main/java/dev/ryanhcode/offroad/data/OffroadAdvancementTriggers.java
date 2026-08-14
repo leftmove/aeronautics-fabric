@@ -2,8 +2,6 @@ package dev.ryanhcode.offroad.data;
 
 import dev.simulated_team.simulated.data.advancements.SimpleSimulatedTrigger;
 import dev.simulated_team.simulated.data.advancements.SimulatedCriterionTriggerBase;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.LinkedList;
@@ -22,6 +20,6 @@ public class OffroadAdvancementTriggers {
 	}
 
 	public static void register() {
-		TRIGGERS.forEach(trigger -> Registry.register(BuiltInRegistries.TRIGGER_TYPES, trigger.getId(), trigger));
+		TRIGGERS.forEach(trigger -> net.minecraft.advancements.CriteriaTriggers.register(trigger));
 	}
 }

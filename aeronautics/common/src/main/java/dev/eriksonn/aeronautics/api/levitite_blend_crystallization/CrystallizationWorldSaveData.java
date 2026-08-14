@@ -1,6 +1,5 @@
 package dev.eriksonn.aeronautics.api.levitite_blend_crystallization;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
@@ -32,7 +31,8 @@ public class CrystallizationWorldSaveData extends SavedData {
 
 	public static CrystallizationWorldSaveData get(ServerLevel level) {
 		CrystallizationWorldSaveData data = level.getChunkSource().getDataStorage().computeIfAbsent(
-				new SavedData.Factory<>(CrystallizationWorldSaveData::new, (nbt, lookup) -> load(level, nbt, lookup), null),
+				tag -> load(level, tag),
+				CrystallizationWorldSaveData::new,
 				CrystallizationWorldSaveData.ID);
 
 		data.level = level;

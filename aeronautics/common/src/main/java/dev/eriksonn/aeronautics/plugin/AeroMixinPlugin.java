@@ -1,7 +1,5 @@
 package dev.eriksonn.aeronautics.plugin;
 
-import foundry.veil.api.compat.IrisCompat;
-import foundry.veil.api.compat.SodiumCompat;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -16,13 +14,18 @@ public class AeroMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(final String mixinPackage) {
-        this.sodiumPresent = SodiumCompat.isLoaded();
-        this.irisPresent = IrisCompat.isLoaded();
+        this.sodiumPresent = classExists("me.jellysquid.mods.sodium.client.SodiumClientMod")
+                || classExists("net.caffeinemc.mods.sodium.client.SodiumClientMod");
+        this.irisPresent = classExists("net.irisshaders.iris.Iris");
+        this.neoforgePresent = classExists("net.minecraftforge.client.ChunkRenderTypeSet");
+    }
+
+    private static boolean classExists(final String name) {
         try {
-            Class.forName("net.minecraftforge.client.ChunkRenderTypeSet");
-            this.neoforgePresent = true;
+            Class.forName(name, false, AeroMixinPlugin.class.getClassLoader());
+            return true;
         } catch (final ClassNotFoundException ignored) {
-            this.neoforgePresent = false;
+            return false;
         }
     }
 

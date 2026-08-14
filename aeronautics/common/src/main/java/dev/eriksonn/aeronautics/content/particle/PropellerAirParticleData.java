@@ -53,12 +53,23 @@ public class PropellerAirParticleData implements ParticleOptions, ICustomParticl
     
     @Override
     public ParticleOptions.Deserializer<PropellerAirParticleData> getDeserializer() {
-        return (type, buf) -> STREAM_CODEC.decode(buf);
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public PropellerAirParticleData fromCommand(final ParticleType<PropellerAirParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return new PropellerAirParticleData();
+            }
+
+            @Override
+            public PropellerAirParticleData fromNetwork(final ParticleType<PropellerAirParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return new PropellerAirParticleData(buf.readBoolean(), buf.readBoolean());
+            }
+        };
     }
 
     @Override
     public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
-        STREAM_CODEC.encode(buffer, this);
+        buffer.writeBoolean(this.enableCollision);
+        buffer.writeBoolean(this.isVirtual);
     }
 
     @Override

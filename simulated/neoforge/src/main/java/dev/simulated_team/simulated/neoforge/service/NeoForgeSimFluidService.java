@@ -5,7 +5,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 public class NeoForgeSimFluidService implements SimFluidService {
     public long mbToLoaderUnits(final long mb) {
@@ -14,13 +13,9 @@ public class NeoForgeSimFluidService implements SimFluidService {
 
     @Override
     public Fluid getFluidInItem(final ItemStack stack) {
-        final IFluidHandlerItem handler = stack.getCapability(Capabilities.FluidHandler.ITEM);
-        if(handler != null) {
+        return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).map(handler -> {
             final FluidStack fluid = handler.getFluidInTank(0);
-            if(!fluid.isEmpty()) {
-                return fluid.getFluid();
-            }
-        }
-        return null;
+            return fluid.isEmpty() ? null : fluid.getFluid();
+        }).orElse(null);
     }
 }

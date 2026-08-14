@@ -15,17 +15,24 @@ import java.util.function.ToDoubleFunction;
 public class SimulatedGameTestHelper {
 
     public static <T extends BlockEntity & ExtraKinetics> void assertExtraKinetics(final GameTestHelper helper, final BlockPos pos, final BiPredicate<T, KineticBlockEntity> predicate, final BiFunction<T, KineticBlockEntity, String> exceptionMessage) {
-        final T t = helper.getBlockEntity(pos);
+        final T t = (T) helper.getBlockEntity(pos);
         if (!predicate.test(t, t.getExtraKinetics())) {
             throw new GameTestAssertPosException(exceptionMessage.apply(t, t.getExtraKinetics()), helper.absolutePos(pos), pos, helper.getTick());
         }
     }
 
     public static <T extends KineticBlockEntity> void assertKineticsSpeed(final GameTestHelper helper, final BlockPos pos, final ToDoubleFunction<T> speed, final double delta) {
-        helper.<T>assertBlockEntityData(pos, be -> Math.abs(Math.abs(be.getSpeed()) - Math.abs(speed.applyAsDouble(be))) < delta, () -> {
-            final T be = helper.getBlockEntity(pos);
+        assertBlockEntityData(helper, pos, (T be) -> Math.abs(Math.abs(be.getSpeed()) - Math.abs(speed.applyAsDouble(be))) < delta, () -> {
+            final T be = (T) helper.getBlockEntity(pos);
             return "Expected %.2f speed, got %.2f".formatted(Math.abs(speed.applyAsDouble(be)), Math.abs(be.getSpeed()));
         });
+    }
+
+    public static <T extends BlockEntity> void assertBlockEntityData(final GameTestHelper helper, final BlockPos pos, final java.util.function.Predicate<T> predicate, final java.util.function.Supplier<String> message) {
+        final T be = (T) helper.getBlockEntity(pos);
+        if (be == null || !predicate.test(be)) {
+            throw new GameTestAssertPosException(message.get(), helper.absolutePos(pos), pos, helper.getTick());
+        }
     }
 
     public static <T extends KineticBlockEntity> void assertKineticsSpeed(final GameTestHelper helper, final BlockPos pos, final ToDoubleFunction<T> speed) {

@@ -7,7 +7,6 @@ import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData
 import dev.ryanhcode.sable.physics.floating_block.FloatingBlockMaterial;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.ryanhcode.sable.util.SableMathUtils;
-import foundry.veil.api.client.render.VeilRenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix3f;
@@ -165,6 +164,6 @@ public class LevititeShaderManager {
     }
 
     public static boolean isEnabled() {
-        return VeilRenderSystem.tessellationSupported() && enabled;
+        return enabled;
     }
 }

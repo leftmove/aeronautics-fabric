@@ -18,11 +18,11 @@ public class AeroStress extends CStress {
 	@Override
 	public void registerAll(ForgeConfigSpec.Builder builder) {
 		builder.comment(".", Comments.su, Comments.impact).push("impact");
-		DEFAULT_IMPACTS.forEach((id, value) -> this.impacts.put(id, this.entityData.define(id.getPath(), value)));
+		DEFAULT_IMPACTS.forEach((id, value) -> this.impacts.put(id, builder.define(id.getPath(), value)));
 		builder.pop();
 
 		builder.comment(".", Comments.su, Comments.capacity).push("capacity");
-		DEFAULT_CAPACITIES.forEach((id, value) -> this.capacities.put(id, this.entityData.define(id.getPath(), value)));
+		DEFAULT_CAPACITIES.forEach((id, value) -> this.capacities.put(id, builder.define(id.getPath(), value)));
 		builder.pop();
 	}
 

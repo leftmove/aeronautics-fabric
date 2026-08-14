@@ -47,7 +47,10 @@ public final class RegistrationProvider<T> {
     }
 
     public RegistryObject<T> register(final String name, final Supplier<? extends T> supplier) {
-        final ResourceLocation id = new ResourceLocation(this.modId, name);
+        return this.register(new ResourceLocation(this.modId, name), supplier);
+    }
+
+    public RegistryObject<T> register(final ResourceLocation id, final Supplier<? extends T> supplier) {
         final T value = Registry.register(this.registry, id, supplier.get());
         if (value instanceof final DataComponentType<?> type) {
             type.bind(id);

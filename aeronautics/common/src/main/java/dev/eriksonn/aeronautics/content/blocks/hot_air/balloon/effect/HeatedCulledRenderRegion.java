@@ -67,7 +67,12 @@ public class HeatedCulledRenderRegion implements NativeResource {
                 .translate((float) relativePos.x, (float) relativePos.y, (float) relativePos.z)
                 .rotate(globalOrientation);
 
-        shader.setDefaultUniforms(VertexFormat.Mode.QUADS, modelViewMatrix, projectionMatrix, client.getWindow());
+        if (shader.MODEL_VIEW_MATRIX != null) {
+            shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);
+        }
+        if (shader.PROJECTION_MATRIX != null) {
+            shader.PROJECTION_MATRIX.set(projectionMatrix);
+        }
         shader.apply();
 
         this.buffer.bind();
@@ -111,11 +116,12 @@ public class HeatedCulledRenderRegion implements NativeResource {
 
         builder.buildNoGreedy();
 
-        final BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder().begin(VertexFormat.Mode.QUADS, this.getVertexFormat());
+        final BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, this.getVertexFormat());
         builder.render(new Matrix4f(), bufferBuilder);
 
         this.balloon = null;
-        final MeshData builtData = bufferBuilder.build();
+        final BufferBuilder.RenderedBuffer builtData = bufferBuilder.endOrDiscardIfEmpty();
 
         if (builtData != null) {
             this.buffer = new VertexBuffer(VertexBuffer.Usage.STATIC);

@@ -53,7 +53,6 @@ if (project.path.endsWith(":common")) {
         compileOnly 'org.jspecify:jspecify:1.0.0'
 
         compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
-        annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
 
         compileOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 

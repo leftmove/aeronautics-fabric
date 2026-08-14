@@ -18,6 +18,7 @@ import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import dev.eriksonn.aeronautics.Aeronautics;
+import dev.eriksonn.aeronautics.mixin.accessor.FireBlockAccessor;
 import dev.eriksonn.aeronautics.config.server.AeroStress;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.envelope.EnvelopeBlock;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.envelope.EnvelopeEncasedShaftBlock;
@@ -52,13 +53,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
@@ -163,10 +165,15 @@ public class AeroBlocks {
                         .withExistingParent(colorName + "_envelope_encased_shaft",
                                 p.modLoc("block/envelope_encased_shaft/block"))
                         .texture("0", p.modLoc("block/envelope_block/envelope_" + colorName))))
-                .loot((p, b) -> p.add(b, p.createSingleItemTable(DYED_ENVELOPE_BLOCKS.get(color))
-                        .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
+                .loot((p, b) -> p.m_247577_(b, LootTable.lootTable()
+                        .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
-                                .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
+                                .add(LootItem.lootTableItem(DYED_ENVELOPE_BLOCKS.get(color)))
+                                .when(ExplosionCondition.survivesExplosion()))
+                        .withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))
+                                .when(ExplosionCondition.survivesExplosion()))))
                 .tag(AeroTags.BlockTags.ENVELOPE)
                 .transform(axeOnly())
                 .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))
@@ -387,8 +394,8 @@ public class AeroBlocks {
                     .register();
 
     private static <B extends Block, R> NonNullUnaryOperator<BlockBuilder<B, R>> flammable(final int encouragement, final int flamability) {
-        return builder -> builder.onRegisterAfter(Registries.BLOCK, block -> ((FireBlock) Blocks.FIRE)
-                .setFlammable(block, encouragement, flamability));
+        return builder -> builder.onRegisterAfter(Registries.BLOCK, block ->
+                ((FireBlockAccessor) Blocks.FIRE).aeronautics$setFlammable(block, encouragement, flamability));
     }
 
     public static void init() {

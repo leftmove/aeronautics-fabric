@@ -22,7 +22,7 @@ public class NeoForgeSimEntityService implements SimEntityService {
 
 	@Override
 	public boolean isFake(final Player player) {
-		return player.isFakePlayer();
+		return player instanceof net.minecraftforge.common.util.FakePlayer;
 	}
 
 	@Override

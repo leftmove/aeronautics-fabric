@@ -1,14 +1,17 @@
 package dev.simulated_team.simulated.neoforge.service.compat;
 
+import dan200.computercraft.api.ForgeComputerCraftAPI;
 import dan200.computercraft.api.network.wired.WiredElement;
-import dan200.computercraft.api.network.wired.WiredElementCapability;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dev.simulated_team.simulated.service.compat.SimPeripheralService;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +35,20 @@ public class NeoForgeSimPeripheralService implements SimPeripheralService {
     }
 
     @SubscribeEvent
-    public static void registerCapabilities(final RegisterCapabilitiesEvent event) {
-        for (final Entry<BlockEntity, IPeripheral> entry : PERIPHERALS) {
-            event.registerBlockEntity(PeripheralCapability.get(), entry.typeSupplier.get(), (be, direction) ->
-                    entry.peripheralFunction().get(be, direction)
-            );
-        }
-
-        for (final Entry<BlockEntity, WiredElement> entry : WIRED_ELEMENTS) {
-            event.registerBlockEntity(WiredElementCapability.get(), entry.typeSupplier.get(), (be, direction) ->
-                    entry.peripheralFunction().get(be, direction)
-            );
-        }
+    public static void commonSetup(final FMLCommonSetupEvent event) {
+        ForgeComputerCraftAPI.registerPeripheralProvider((final Level level, final BlockPos pos, final Direction side) -> {
+            final BlockEntity be = level.getBlockEntity(pos);
+            if (be == null) {
+                return LazyOptional.empty();
+            }
+            for (final Entry<BlockEntity, IPeripheral> entry : PERIPHERALS) {
+                if (entry.typeSupplier.get() == be.getType()) {
+                    final IPeripheral peripheral = entry.peripheralFunction().get(be, side);
+                    return peripheral == null ? LazyOptional.empty() : LazyOptional.of(() -> peripheral);
+                }
+            }
+            return LazyOptional.empty();
+        });
     }
 
     private record Entry<T extends BlockEntity, V>(Supplier<BlockEntityType<T>> typeSupplier,

@@ -7,7 +7,6 @@ import dev.ryanhcode.offroad.config.server.OffroadServer;
 import dev.ryanhcode.offroad.config.OffroadConfig;
 import net.createmod.catnip.config.ConfigBase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -49,12 +48,12 @@ public class NeoForgeOffroadConfigService implements OffroadConfig {
 		return config;
 	}
 
-	public static void register(final ModContainer container) {
+	public static void register() {
 		server = register(OffroadServer::new, ModConfig.Type.SERVER);
 		client = register(OffroadClientConfig::new, ModConfig.Type.CLIENT);
 
 		for (final Map.Entry<ModConfig.Type, ConfigBase> typeConfigBaseEntry : CONFIGS.entrySet()) {
-			container.registerConfig(typeConfigBaseEntry.getKey(), typeConfigBaseEntry.getValue().specification);
+			net.minecraftforge.fml.ModLoadingContext.get().registerConfig(typeConfigBaseEntry.getKey(), typeConfigBaseEntry.getValue().specification);
 		}
 
 		CStress stress = server.kinetics.stressValues;

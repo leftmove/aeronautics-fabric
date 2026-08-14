@@ -2,7 +2,6 @@ package dev.eriksonn.aeronautics.fabric;
 
 import com.simibubi.create.compat.jei.ConversionRecipe;
 import com.simibubi.create.compat.jei.category.MysteriousItemConversionCategory;
-import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import dev.eriksonn.aeronautics.Aeronautics;
 import dev.eriksonn.aeronautics.data.AeroAdvancementTriggers;
 import dev.eriksonn.aeronautics.events.AeronauticsCommonEvents;
@@ -12,8 +11,6 @@ import dev.eriksonn.aeronautics.fabric.service.FabricAeroConfigService;
 import dev.eriksonn.aeronautics.index.AeroAdvancements;
 import dev.eriksonn.aeronautics.index.AeroArmInteractionPoints;
 import dev.eriksonn.aeronautics.index.AeroBlocks;
-import dev.eriksonn.aeronautics.index.AeroItems;
-import dev.eriksonn.aeronautics.index.AeroTags;
 import dev.simulated_team.simulated.registrate.RegistrateFlusher;
 import dev.simulated_team.simulated.service.SimPlatformService;
 import net.fabricmc.api.ModInitializer;
@@ -24,10 +21,7 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.EmptyItemFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class AeronauticsFabric implements ModInitializer {
 	@Override
@@ -68,12 +62,5 @@ public class AeronauticsFabric implements ModInitializer {
 				ConversionRecipe.create(LevititeBlendFluid.BUCKET.getDefaultInstance(), AeroBlocks.LEVITITE.get().asItem().getDefaultInstance()));
 		MysteriousItemConversionCategory.RECIPES.add(
 				ConversionRecipe.create(LevititeBlendFluid.BUCKET.getDefaultInstance(), AeroBlocks.PEARLESCENT_LEVITITE.get().asItem().getDefaultInstance()));
-
-		final ResourceLocation recipeId = Aeronautics.path("conversion_music_disc_cloud_skipper");
-		final ConversionRecipe recipe = new StandardProcessingRecipe.Builder<>(ConversionRecipe::new, recipeId)
-				.withItemIngredients(Ingredient.of(AeroTags.ItemTags.CONVERTS_TO_CLOUD_SKIPPER))
-				.withSingleItemOutput(AeroItems.MUSIC_DISC_CLOUD_SKIPPER.asStack())
-				.build();
-		MysteriousItemConversionCategory.RECIPES.add(new RecipeHolder<>(recipeId, recipe));
 	}
 }

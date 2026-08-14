@@ -85,7 +85,8 @@ public class HotAirBurnerRenderer extends SmartBlockEntityRenderer<HotAirBurnerB
     private static void renderFlame(final PoseStack poseStack) {
         final float size = 2.0f;
 
-        final BufferBuilder builder = Tesselator.getInstance().getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        final BufferBuilder builder = Tesselator.getInstance().getBuilder();
+        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         RenderSystem.enableDepthTest();
         RenderSystem.disableCull();

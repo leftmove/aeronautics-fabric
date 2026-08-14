@@ -514,7 +514,7 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
     protected AABB createRenderBoundingBox() {
         AABB aabb = new AABB(this.getBlockPos());
         if(this.getHeldItem() != null && ItemComponents.has(this.getHeldItem(), OffroadDataComponents.TIRE)) {
-            final TireLike tire = this.getHeldItem().ItemComponents.get(getComponents(), OffroadDataComponents.TIRE);
+            final TireLike tire = ItemComponents.get(this.getHeldItem(), OffroadDataComponents.TIRE);
             aabb = aabb.inflate(tire.radius() + 1);
         }
         return aabb;

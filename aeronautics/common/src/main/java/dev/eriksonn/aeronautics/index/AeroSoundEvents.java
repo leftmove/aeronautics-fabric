@@ -91,7 +91,7 @@ public class AeroSoundEvents {
 
         GUST = REGISTRY.create("entity.gust", definition -> definition
                 .subtitle("Balloon leaks")
-                .addEventVariant(SoundEvents.WIND_CHARGE_BURST.value(), sound -> sound
+                .addEventVariant(SoundEvents.WOOL_BREAK, sound -> sound
                         .setAttenuationDistance(16)
                         .setPitch(0.3f)
                         .setVolume(0.5f))),

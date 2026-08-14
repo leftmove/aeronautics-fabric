@@ -1,8 +1,8 @@
 package dev.eriksonn.aeronautics.mixin.render.sodium;
 
 import dev.eriksonn.aeronautics.index.client.AeroRenderTypes;
-import net.caffeinemc.mods.sodium.client.render.chunk.terrain.material.DefaultMaterials;
-import net.caffeinemc.mods.sodium.client.render.chunk.terrain.material.Material;
+import me.jellysquid.mods.sodium.client.render.chunk.terrain.material.DefaultMaterials;
+import me.jellysquid.mods.sodium.client.render.chunk.terrain.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

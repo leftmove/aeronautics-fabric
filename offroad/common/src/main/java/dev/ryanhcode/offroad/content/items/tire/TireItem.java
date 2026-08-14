@@ -20,7 +20,7 @@ public class TireItem extends Item {
 
         if (player != null && player.level().isClientSide) {
             player.displayClientMessage(Component.translatable("item.offroad.tire.placement_error")
-                    .setStyle(Style.EMPTY.withStyle(s -> s.withColor(SimColors.NUH_UH_RED))), true);
+                    .setStyle(Style.EMPTY.withColor(SimColors.NUH_UH_RED)), true);
         }
 
         return super.useOn(context);

@@ -48,12 +48,22 @@ public class HotAirEmberParticleData implements ParticleOptions, ICustomParticle
     
     @Override
     public ParticleOptions.Deserializer<HotAirEmberParticleData> getDeserializer() {
-        return (type, buf) -> STREAM_CODEC.decode(buf);
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public HotAirEmberParticleData fromCommand(final ParticleType<HotAirEmberParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return new HotAirEmberParticleData();
+            }
+
+            @Override
+            public HotAirEmberParticleData fromNetwork(final ParticleType<HotAirEmberParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return new HotAirEmberParticleData(buf.readBoolean());
+            }
+        };
     }
 
     @Override
     public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
-        STREAM_CODEC.encode(buffer, this);
+        buffer.writeBoolean(this.isSoul);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class MountedPotatoCannonBlockEntity extends KineticBlockEntity implement
 	public void initialize() {
 		super.initialize();
 
-		this.inventory.updateCachedType(this.level.registryAccess(), this.inventory.slot.getStack());
+		this.inventory.updateCachedType(this.inventory.slot.getStack());
 		this.resetAndUpdate();
 	}
 
@@ -307,7 +307,7 @@ public class MountedPotatoCannonBlockEntity extends KineticBlockEntity implement
 		super.read(compound, clientPacket);
 
 		this.inventory.read(compound.getCompound("inventory"));
-		this.inventory.updateCachedType(registries, this.inventory.slot.getStack());
+		this.inventory.updateCachedType(this.inventory.slot.getStack());
 		if (clientPacket && compound.getBoolean("NeedsUpdate")) {
 			this.resetAndUpdate();
 		}

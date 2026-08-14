@@ -8,7 +8,6 @@ import dev.eriksonn.aeronautics.config.AeroConfig;
 import dev.eriksonn.aeronautics.config.server.AeroStress;
 import net.createmod.catnip.config.ConfigBase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -49,12 +48,12 @@ public class NeoForgeAeroConfigService implements AeroConfig {
 		return config;
 	}
 
-	public static void register(final ModContainer container) {
+	public static void register() {
 		server = register(AeroServer::new, ModConfig.Type.SERVER);
 		client = register(AeroClient::new, ModConfig.Type.CLIENT);
 
 		for (final Map.Entry<ModConfig.Type, ConfigBase> typeConfigBaseEntry : CONFIGS.entrySet()) {
-			container.registerConfig(typeConfigBaseEntry.getKey(), typeConfigBaseEntry.getValue().specification);
+			net.minecraftforge.fml.ModLoadingContext.get().registerConfig(typeConfigBaseEntry.getKey(), typeConfigBaseEntry.getValue().specification);
 		}
 
 		CStress stress = server.kinetics.stressValues;

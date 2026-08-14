@@ -48,6 +48,10 @@ public final class ItemComponents {
         DEFAULTS.computeIfAbsent(item.asItem(), key -> new IdentityHashMap<>()).put(type, value);
     }
 
+    public static <T> void set(final DataComponentPatch.Builder builder, final DataComponentType<T> type, final T value) {
+        builder.set(type, value);
+    }
+
     public static <T> T get(final ItemStack stack, final DataComponentType<T> type) {
         if (type == DataComponents.CUSTOM_NAME) {
             return stack.hasCustomHoverName() ? (T) stack.getHoverName() : null;
