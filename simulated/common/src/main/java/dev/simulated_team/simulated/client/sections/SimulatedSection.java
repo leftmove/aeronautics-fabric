@@ -4,9 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.simulated_team.simulated.Simulated;
 import foundry.veil.api.client.color.Color;
-import foundry.veil.api.client.color.Colorc;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +26,10 @@ public record SimulatedSection(int priority, Title title, ResourceLocation sprit
         return (int) Math.signum(this.priority() - other.priority());
     }
 
-    public record Title(Component text, Colorc color, Optional<Colorc> secondaryColor, Colorc background) {
-        public static final Codec<Colorc> COLOR_CODEC = Color.ARGB_INT_CODEC.xmap(i -> new Color(i, true), Colorc::argb);
+    public record Title(Component text, Color color, Optional<Color> secondaryColor, Color background) {
+        public static final Codec<Color> COLOR_CODEC = Codec.INT.xmap(i -> new Color(i, true), Color::getHex);
         public static final Codec<Title> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ComponentSerialization.CODEC.fieldOf("text").forGetter(Title::text),
+            ExtraCodecs.COMPONENT.fieldOf("text").forGetter(Title::text),
             COLOR_CODEC.fieldOf("color").orElse(new Color(0xffffffff, true)).forGetter(Title::color),
             COLOR_CODEC.optionalFieldOf("secondary_color").forGetter(Title::secondaryColor),
             COLOR_CODEC.fieldOf("background").orElse(new Color(0xaa000000, true)).forGetter(Title::background)

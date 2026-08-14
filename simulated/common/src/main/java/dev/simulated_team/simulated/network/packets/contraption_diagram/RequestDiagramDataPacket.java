@@ -7,6 +7,7 @@ import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import foundry.veil.api.network.handler.ServerPacketContext;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.codec.StreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -20,7 +21,7 @@ public record RequestDiagramDataPacket(UUID subLevel) implements CustomPacketPay
     public static Type<RequestDiagramDataPacket> TYPE = new Type<>(Simulated.path("request_diagram_data"));
 
     public static StreamCodec<RegistryFriendlyByteBuf, RequestDiagramDataPacket> CODEC = StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC, RequestDiagramDataPacket::subLevel,
+            StreamCodecs.UUID, RequestDiagramDataPacket::subLevel,
             RequestDiagramDataPacket::new);
 
     public void handle(final ServerPacketContext context) {

@@ -14,7 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -32,9 +32,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import net.minecraft.world.InteractionResult;
 
 public class RedstoneAccumulatorBlock extends AbstractDiodeBlock implements IBE<RedstoneAccumulatorBlockEntity>, CommonRedstoneBlock {
-    public static final MapCodec<RedstoneAccumulatorBlock> CODEC = simpleCodec(RedstoneAccumulatorBlock::new);
     public static BooleanProperty POWERING = BooleanProperty.create("powering");
     public static BooleanProperty SIDE_POWERED = BooleanProperty.create("side_powered");
     public static BooleanProperty INVERTED = BlockStateProperties.INVERTED;
@@ -47,11 +47,6 @@ public class RedstoneAccumulatorBlock extends AbstractDiodeBlock implements IBE<
                 .setValue(POWERING, false)
                 .setValue(INVERTED, false)
         );
-    }
-
-    @Override
-    protected MapCodec<? extends DiodeBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -105,14 +100,15 @@ public class RedstoneAccumulatorBlock extends AbstractDiodeBlock implements IBE<
 
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack itemStack, final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+        final ItemStack stack = player.getItemInHand(interactionHand);
         level.setBlock(blockPos, this.getUpdatedBlockstate(blockPos, blockState.cycle(INVERTED), level), 2);
         level.updateNeighborsAt(blockPos, blockState.getBlock());
 
         final float f = !blockState.getValue(INVERTED) ? 0.6F : 0.5F;
         level.playSound(null, blockPos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
 
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override

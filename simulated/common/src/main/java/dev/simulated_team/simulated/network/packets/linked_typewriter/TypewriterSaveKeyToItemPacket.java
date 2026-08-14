@@ -21,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public record TypewriterSaveKeyToItemPacket(InteractionHand hand, LinkedTypewriterEntries.KeyboardEntry entry) implements CustomPacketPayload {
 
@@ -36,20 +37,20 @@ public record TypewriterSaveKeyToItemPacket(InteractionHand hand, LinkedTypewrit
         final ItemStack item = player.getItemInHand(this.hand);
 
         CompoundTag currentTag = new CompoundTag();
-        if (item.has(DataComponents.BLOCK_ENTITY_DATA)) {
-            currentTag = item.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
+        if (ItemComponents.has(item, DataComponents.BLOCK_ENTITY_DATA)) {
+            currentTag = ItemComponents.get(item, DataComponents.BLOCK_ENTITY_DATA).copyTag();
         } else {
             currentTag.putString("id", item.getItem().toString());
         }
 
-        final RegistryOps<Tag> ops = context.level().registryAccess().createSerializationContext(NbtOps.INSTANCE);
+        final RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, context.level().registryAccess());
         final DataResult<Tag> result = LinkedTypewriterEntries.KeyboardEntry.CODEC.encodeStart(ops, this.entry);
-        if (result.isError()) {
+        if (result.error().isPresent()) {
             Simulated.LOGGER.warn("Unable to process entry for item saving!: {}", result.error().get().message());
             return;
         }
 
-        final CompoundTag entryTag = (CompoundTag) result.getOrThrow();
+        final CompoundTag entryTag = (CompoundTag) result.getOrThrow(false, s -> {});
         if (!currentTag.contains("Keys")) {
             currentTag.put("Keys", new ListTag());
         }
@@ -73,7 +74,7 @@ public record TypewriterSaveKeyToItemPacket(InteractionHand hand, LinkedTypewrit
         }
 
         currentTag.put("Keys", keys);
-        if (item.is(SimBlocks.LINKED_TYPEWRITER.asItem())) {
+        if (item.is(SimBlocks.LINKED_TYPEWRITER.get().asItem())) {
             CustomData.set(DataComponents.BLOCK_ENTITY_DATA, item, currentTag);
         }
     }

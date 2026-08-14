@@ -65,9 +65,9 @@ public class AeronauticsFabric implements ModInitializer {
 
 	private static void registerJeiConversions() {
 		MysteriousItemConversionCategory.RECIPES.add(
-				ConversionRecipe.create(LevititeBlendFluid.BUCKET.getDefaultInstance(), AeroBlocks.LEVITITE.asItem().getDefaultInstance()));
+				ConversionRecipe.create(LevititeBlendFluid.BUCKET.getDefaultInstance(), AeroBlocks.LEVITITE.get().asItem().getDefaultInstance()));
 		MysteriousItemConversionCategory.RECIPES.add(
-				ConversionRecipe.create(LevititeBlendFluid.BUCKET.getDefaultInstance(), AeroBlocks.PEARLESCENT_LEVITITE.asItem().getDefaultInstance()));
+				ConversionRecipe.create(LevititeBlendFluid.BUCKET.getDefaultInstance(), AeroBlocks.PEARLESCENT_LEVITITE.get().asItem().getDefaultInstance()));
 
 		final ResourceLocation recipeId = Aeronautics.path("conversion_music_disc_cloud_skipper");
 		final ConversionRecipe recipe = new StandardProcessingRecipe.Builder<>(ConversionRecipe::new, recipeId)

@@ -124,13 +124,12 @@ public class LinkedTypewriterScreen extends AbstractSimiContainerScreen<LinkedTy
 
     @Override
     protected void rebuildWidgets() {
-        this.clearFocus();
-
         this.rescaleWindow();
         this.keyEditorScreen.resetPositions();
         this.modifier.resetXYPositions();
-
-        this.setInitialFocus();
+        if (!this.children().isEmpty()) {
+            this.setInitialFocus(this.children().get(0));
+        }
     }
 
     private void rebuildExtraAreas() {
@@ -223,12 +222,12 @@ public class LinkedTypewriterScreen extends AbstractSimiContainerScreen<LinkedTy
     }
 
     @Override
-    public boolean mouseScrolled(final double mouseX, final double mouseY, final double scrollX, final double scrollY) {
+    public boolean mouseScrolled(final double mouseX, final double mouseY, final double scrollY) {
         if (this.keyEditorScreen.active && !this.modifier.modifying) {
             this.keyEditorScreen.shiftEntries(scrollY > 0);
         }
 
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     @Override

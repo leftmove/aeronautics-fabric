@@ -19,7 +19,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class MergingGlueBlock extends DirectionalBlock implements IBE<MergingGlueBlockEntity> {
-    public static final MapCodec<MergingGlueBlock> CODEC = simpleCodec(MergingGlueBlock::new);
 
     public MergingGlueBlock(final Properties properties) {
         super(properties);
@@ -27,7 +26,7 @@ public class MergingGlueBlock extends DirectionalBlock implements IBE<MergingGlu
     }
 
     @Override
-    protected BlockState updateShape(final BlockState state, final Direction facing, final BlockState facingState, final LevelAccessor level, final BlockPos currentPos, final BlockPos facingPos) {
+    public BlockState updateShape(final BlockState state, final Direction facing, final BlockState facingState, final LevelAccessor level, final BlockPos currentPos, final BlockPos facingPos) {
         return getConnectedDirection(state) == facing && !state.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, facing, facingState, level, currentPos, facingPos);
     }
 
@@ -36,7 +35,7 @@ public class MergingGlueBlock extends DirectionalBlock implements IBE<MergingGlu
     }
 
     @Override
-    protected boolean canSurvive(final BlockState state, final LevelReader level, final BlockPos pos) {
+    public boolean canSurvive(final BlockState state, final LevelReader level, final BlockPos pos) {
         return canAttach(level, pos, getConnectedDirection(state));
     }
 
@@ -46,12 +45,12 @@ public class MergingGlueBlock extends DirectionalBlock implements IBE<MergingGlu
     }
 
     @Override
-    protected VoxelShape getCollisionShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
+    public VoxelShape getCollisionShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    protected VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
+    public VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
         return SimBlockShapes.MERGING_GlUE.get(state.getValue(FACING));
     }
 
@@ -69,11 +68,6 @@ public class MergingGlueBlock extends DirectionalBlock implements IBE<MergingGlu
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(FACING);
-    }
-
-    @Override
-    protected @NotNull MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override

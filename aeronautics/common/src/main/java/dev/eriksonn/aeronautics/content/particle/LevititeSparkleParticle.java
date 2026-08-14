@@ -18,7 +18,7 @@ public class LevititeSparkleParticle extends SimpleAnimatedParticle {
         this.quadSize *= 0.75f;
         this.selectSprite(level.random.nextInt(2));
         this.age++;
-        this.setColor(color);
+        this.color(color);
     }
 
     private void selectSprite(final int index) {

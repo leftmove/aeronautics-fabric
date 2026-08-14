@@ -13,7 +13,7 @@ import dev.simulated_team.simulated.multiloader.CommonRedstoneBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -30,9 +30,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.InteractionResult;
 
 public class ModulatingLinkedReceiverBlock extends WrenchableDirectionalBlock implements IBE<ModulatingLinkedReceiverBlockEntity>, IWrenchable, CommonRedstoneBlock {
-    public static final MapCodec<ModulatingLinkedReceiverBlock> CODEC = simpleCodec(ModulatingLinkedReceiverBlock::new);
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     static {
@@ -52,11 +52,6 @@ public class ModulatingLinkedReceiverBlock extends WrenchableDirectionalBlock im
     public ModulatingLinkedReceiverBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, false));
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -135,15 +130,16 @@ public class ModulatingLinkedReceiverBlock extends WrenchableDirectionalBlock im
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack itemStack, final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
-        if (!player.getMainHandItem().is(SimBlocks.LINKED_TYPEWRITER.asItem())) { //TODO: make this more generalized
+    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+        final ItemStack stack = player.getItemInHand(interactionHand);
+        if (!player.getMainHandItem().is(SimBlocks.LINKED_TYPEWRITER.get().asItem())) { //TODO: make this more generalized
 	        if (level.isClientSide()) {
                 this.withBlockEntityDo(level, blockPos, ModulatingLinkedReceiverScreen::open);
 	        }
 
-	        return ItemInteractionResult.SUCCESS;
+	        return InteractionResult.SUCCESS;
         }
 
-		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		return InteractionResult.PASS;
     }
 }

@@ -399,7 +399,7 @@ public class DiagramScreen extends AbstractSimiScreen {
         if (this.renderTime >= 20.0f / FPS) {
             this.renderTime = 0.0f;
         } else {
-            this.renderTime += minecraft.getTimer().getRealtimeDeltaTicks();
+            this.renderTime += minecraft.getDeltaFrameTime();
             return;
         }
 
@@ -448,14 +448,14 @@ public class DiagramScreen extends AbstractSimiScreen {
             final Color LINE_SHADOW_COLOR = new Color(lineShadowColor);
             final Color LINE_COLOR = new Color(lineColor);
 
-            pipeline.getUniformSafe("LineColor").setVector((LINE_COLOR.getRed()) / 255.0f, (LINE_COLOR.getGreen()) / 255.0f, (LINE_COLOR.getBlue()) / 255.0f, 1.0f);
-            pipeline.getUniformSafe("LineShadowColor").setVector((LINE_SHADOW_COLOR.getRed()) / 255.0f, (LINE_SHADOW_COLOR.getGreen()) / 255.0f, (LINE_SHADOW_COLOR.getBlue()) / 255.0f, 1.0f);
-            pipeline.getUniformSafe("InSize").setVector(inWidth, inHeight);
-            pipeline.getUniformSafe("PaletteOffset").setFloat(paletteOffset);
-            pipeline.getUniformSafe("FadeScale").setFloat(fadeScale);
+            pipeline.setVector("LineColor", (LINE_COLOR.getRed()) / 255.0f, (LINE_COLOR.getGreen()) / 255.0f, (LINE_COLOR.getBlue()) / 255.0f, 1.0f);
+            pipeline.setVector("LineShadowColor", (LINE_SHADOW_COLOR.getRed()) / 255.0f, (LINE_SHADOW_COLOR.getGreen()) / 255.0f, (LINE_SHADOW_COLOR.getBlue()) / 255.0f, 1.0f);
+            pipeline.setVector("InSize", inWidth, inHeight);
+            pipeline.setFloat("PaletteOffset", paletteOffset);
+            pipeline.setFloat("FadeScale", fadeScale);
         }
 
-        final PostPipeline.Context context = manager.getPostPipelineContext();
+        final PostPipeline.Context context = manager.getContext();
         context.setFramebuffer(Simulated.path("diagram"), fbo);
         context.setFramebuffer(Simulated.path("diagram_outlined"), outlineFbo);
         context.setFramebuffer(Simulated.path("diagram_final"), finalFbo);
@@ -746,15 +746,16 @@ public class DiagramScreen extends AbstractSimiScreen {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.enableBlend();
         final Matrix4f matrix4f = graphics.pose().last().pose();
-        final BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        final BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
         final float x1 = 0.0f;
         final float y1 = 0.0f;
-        bufferbuilder.addVertex(matrix4f, x1, y1, 0.0f).setUv(0.0f, 1.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, x1, height, 0.0f).setUv(0.0f, 0.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, width, height, 0.0f).setUv(1.0f, 0.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, width, y1, 0.0f).setUv(1.0f, 1.0f).setColor(0xFFFFFFFF);
-        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+        bufferbuilder.vertex(matrix4f, x1, y1, 0.0f).uv(0.0f, 1.0f).color(0xFFFFFFFF).endVertex();
+        bufferbuilder.vertex(matrix4f, x1, height, 0.0f).uv(0.0f, 0.0f).color(0xFFFFFFFF).endVertex();
+        bufferbuilder.vertex(matrix4f, width, height, 0.0f).uv(1.0f, 0.0f).color(0xFFFFFFFF).endVertex();
+        bufferbuilder.vertex(matrix4f, width, y1, 0.0f).uv(1.0f, 1.0f).color(0xFFFFFFFF).endVertex();
+        BufferUploader.drawWithShader(bufferbuilder.end());
         RenderSystem.disableBlend();
     }
 
@@ -915,10 +916,10 @@ public class DiagramScreen extends AbstractSimiScreen {
         // Draw base dot
         final int z = 1;
         int inflation = 3;
-        builder.addVertex(pose, (float) x1 - inflation, (float) y1 - inflation, (float) z).setColor(shadowColor);
-        builder.addVertex(pose, (float) x1 - inflation, (float) y1 + 1 + inflation, (float) z).setColor(shadowColor);
-        builder.addVertex(pose, (float) x1 + 1 + inflation, (float) y1 + 1 + inflation, (float) z).setColor(shadowColor);
-        builder.addVertex(pose, (float) x1 + 1 + inflation, (float) y1 - inflation, (float) z).setColor(shadowColor);
+        builder.vertex(pose, (float) x1 - inflation, (float) y1 - inflation, (float) z).color(shadowColor).endVertex();
+        builder.vertex(pose, (float) x1 - inflation, (float) y1 + 1 + inflation, (float) z).color(shadowColor).endVertex();
+        builder.vertex(pose, (float) x1 + 1 + inflation, (float) y1 + 1 + inflation, (float) z).color(shadowColor).endVertex();
+        builder.vertex(pose, (float) x1 + 1 + inflation, (float) y1 - inflation, (float) z).color(shadowColor).endVertex();
 
         if (drawArrow) {
             // Arrow shadow
@@ -933,10 +934,10 @@ public class DiagramScreen extends AbstractSimiScreen {
         }
 
         inflation = 2;
-        builder.addVertex(pose, (float) x1 - inflation, (float) y1 - inflation, (float) z).setColor(color);
-        builder.addVertex(pose, (float) x1 - inflation, (float) y1 + 1 + inflation, (float) z).setColor(color);
-        builder.addVertex(pose, (float) x1 + 1 + inflation, (float) y1 + 1 + inflation, (float) z).setColor(color);
-        builder.addVertex(pose, (float) x1 + 1 + inflation, (float) y1 - inflation, (float) z).setColor(color);
+        builder.vertex(pose, (float) x1 - inflation, (float) y1 - inflation, (float) z).color(color).endVertex();
+        builder.vertex(pose, (float) x1 - inflation, (float) y1 + 1 + inflation, (float) z).color(color).endVertex();
+        builder.vertex(pose, (float) x1 + 1 + inflation, (float) y1 + 1 + inflation, (float) z).color(color).endVertex();
+        builder.vertex(pose, (float) x1 + 1 + inflation, (float) y1 - inflation, (float) z).color(color).endVertex();
     }
 
     private static void addForceArrowTooltip(final ForceGroup forceGroup, final int forceCount, final double forceMagnitude, final int color, final List<FormattedText> tooltipLines) {
@@ -964,10 +965,10 @@ public class DiagramScreen extends AbstractSimiScreen {
         int err = dx - dy;
 
         while (true) {
-            builder.addVertex(pose, (float) x1 - inflation, (float) y1 - inflation, (float) z).setColor(color);
-            builder.addVertex(pose, (float) x1 - inflation, (float) y1 + 1 + inflation, (float) z).setColor(color);
-            builder.addVertex(pose, (float) x1 + 1 + inflation, (float) y1 + 1 + inflation, (float) z).setColor(color);
-            builder.addVertex(pose, (float) x1 + 1 + inflation, (float) y1 - inflation, (float) z).setColor(color);
+            builder.vertex(pose, (float) x1 - inflation, (float) y1 - inflation, (float) z).color(color).endVertex();
+            builder.vertex(pose, (float) x1 - inflation, (float) y1 + 1 + inflation, (float) z).color(color).endVertex();
+            builder.vertex(pose, (float) x1 + 1 + inflation, (float) y1 + 1 + inflation, (float) z).color(color).endVertex();
+            builder.vertex(pose, (float) x1 + 1 + inflation, (float) y1 - inflation, (float) z).color(color).endVertex();
 
             if (x1 == x2 && y1 == y2) break;
 

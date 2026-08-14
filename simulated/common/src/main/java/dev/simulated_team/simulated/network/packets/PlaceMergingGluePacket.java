@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record PlaceMergingGluePacket(BlockPos parentPos, BlockPos childPos, Direction parentFacing, Direction childFacing,
                                      InteractionHand hand) implements CustomPacketPayload {
@@ -30,10 +31,10 @@ public record PlaceMergingGluePacket(BlockPos parentPos, BlockPos childPos, Dire
 
     public static StreamCodec<RegistryFriendlyByteBuf, PlaceMergingGluePacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.INT, (packet) -> packet.hand().ordinal(),
-            BlockPos.STREAM_CODEC, PlaceMergingGluePacket::parentPos,
-            BlockPos.STREAM_CODEC, PlaceMergingGluePacket::childPos,
-            Direction.STREAM_CODEC, PlaceMergingGluePacket::parentFacing,
-            Direction.STREAM_CODEC, PlaceMergingGluePacket::childFacing,
+            StreamCodecs.BLOCK_POS, PlaceMergingGluePacket::parentPos,
+            StreamCodecs.BLOCK_POS, PlaceMergingGluePacket::childPos,
+            StreamCodecs.DIRECTION, PlaceMergingGluePacket::parentFacing,
+            StreamCodecs.DIRECTION, PlaceMergingGluePacket::childFacing,
             (hand, parentPos, childPos, parentFacing, childFacing) -> new PlaceMergingGluePacket(parentPos, childPos, parentFacing, childFacing, hand == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND)
     );
 

@@ -7,13 +7,14 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record TypewriterDisconnectUser(BlockPos pos) implements CustomPacketPayload {
 
     public static Type<TypewriterDisconnectUser> TYPE = new Type<>(Simulated.path("typewriter_disconnect_user"));
 
     public static StreamCodec<ByteBuf, TypewriterDisconnectUser> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, TypewriterDisconnectUser::pos, TypewriterDisconnectUser::new
+            StreamCodecs.BLOCK_POS, TypewriterDisconnectUser::pos, TypewriterDisconnectUser::new
     );
 
     public void handle(final ServerPacketContext context) {

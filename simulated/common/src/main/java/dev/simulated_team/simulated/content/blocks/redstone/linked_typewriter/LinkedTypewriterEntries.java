@@ -13,6 +13,7 @@ import net.createmod.catnip.data.Couple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import net.minecraft.network.codec.StreamCodecs;
 
 public class LinkedTypewriterEntries {
 
@@ -43,16 +45,15 @@ public class LinkedTypewriterEntries {
         this.newlyDeactivatedKeyboardEntries = new HashSet<>();
     }
 
-    public static LinkedTypewriterEntries readKeys(final HolderLookup.Provider registryAccess, final ListTag tags, final BlockPos pos) {
+    public static LinkedTypewriterEntries readKeys(final ListTag tags, final BlockPos pos) {
         final LinkedTypewriterEntries keys = new LinkedTypewriterEntries();
 
         for (final Tag tag : tags) {
-            final RegistryOps<Tag> ops = registryAccess.createSerializationContext(NbtOps.INSTANCE);
-            final DataResult<Pair<KeyboardEntry, Tag>> result = KeyboardEntry.CODEC.decode(ops, tag);
-            if (result.isError()) { //if there was an error saving the entry, we want to output to the console instead of crashing
+            final DataResult<Pair<KeyboardEntry, Tag>> result = KeyboardEntry.CODEC.decode(NbtOps.INSTANCE, tag);
+            if (result.error().isPresent()) { //if there was an error saving the entry, we want to output to the console instead of crashing
                 Simulated.LOGGER.error(result.error().get().message());
             } else {
-                final KeyboardEntry entry = result.getOrThrow().getFirst();
+                final KeyboardEntry entry = result.getOrThrow(false, s -> {}).getFirst();
                 entry.setLocation(pos);
                 keys.setKey(entry.glfwKeyCode, entry);
             }
@@ -138,19 +139,18 @@ public class LinkedTypewriterEntries {
         this.keyMap.putAll(newMap);
     }
 
-    public ListTag saveKeys(final HolderLookup.Provider registryAccess) {
+    public ListTag saveKeys() {
         final ListTag tags = new ListTag();
         if (this.keyMap.isEmpty()) {
             return tags;
         }
 
         for (final Map.Entry<Integer, KeyboardEntry> set : this.keyMap.entrySet()) {
-            final RegistryOps<Tag> ops = registryAccess.createSerializationContext(NbtOps.INSTANCE);
-            final DataResult<Tag> result = KeyboardEntry.CODEC.encodeStart(ops, set.getValue());
-            if (result.isError()) { //if there was an error saving the entry, we want to output to the console instead of crashing
+            final DataResult<Tag> result = KeyboardEntry.CODEC.encodeStart(NbtOps.INSTANCE, set.getValue());
+            if (result.error().isPresent()) { //if there was an error saving the entry, we want to output to the console instead of crashing
                 Simulated.LOGGER.error(result.error().get().message());
             } else {
-                tags.add(result.getOrThrow());
+                tags.add(result.getOrThrow(false, s -> {}));
             }
         }
 
@@ -175,16 +175,16 @@ public class LinkedTypewriterEntries {
     public static class KeyboardEntry implements IRedstoneLinkable {
 
         public static final Codec<KeyboardEntry> CODEC = RecordCodecBuilder.create((instance) ->
-                instance.group(ItemStack.OPTIONAL_CODEC.fieldOf("FirstItem")
+                instance.group(CompoundTag.CODEC.xmap(ItemStack::of, stack -> stack.save(new CompoundTag())).fieldOf("FirstItem")
                                         .forGetter(KeyboardEntry::getFirstAsItemStack),
-                                ItemStack.OPTIONAL_CODEC.fieldOf("SecondItem")
+                                CompoundTag.CODEC.xmap(ItemStack::of, stack -> stack.save(new CompoundTag())).fieldOf("SecondItem")
                                         .forGetter(KeyboardEntry::getSecondAsItemStack),
                                 Codec.INT.fieldOf("GLFWKey").forGetter(KeyboardEntry::getGLFWKeyCode))
                         .apply(instance, KeyboardEntry::createFromCodec));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, KeyboardEntry> STREAM_CODEC = StreamCodec.composite(
-                ItemStack.OPTIONAL_STREAM_CODEC, KeyboardEntry::getFirstAsItemStack,
-                ItemStack.OPTIONAL_STREAM_CODEC, KeyboardEntry::getSecondAsItemStack,
+                StreamCodecs.OPTIONAL_ITEM_STACK, KeyboardEntry::getFirstAsItemStack,
+                StreamCodecs.OPTIONAL_ITEM_STACK, KeyboardEntry::getSecondAsItemStack,
                 ByteBufCodecs.INT, KeyboardEntry::getGLFWKeyCode,
                 KeyboardEntry::createFromCodec);
 

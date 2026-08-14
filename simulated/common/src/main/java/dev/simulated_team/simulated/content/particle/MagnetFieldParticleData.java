@@ -34,8 +34,28 @@ public class MagnetFieldParticleData implements ParticleOptions, ICustomParticle
         return SimParticleTypes.MAGNET_FIELD.get();
     }
 
-    public MapCodec<MagnetFieldParticleData> getCodec(final ParticleType<MagnetFieldParticleData> type) {
-        return CODEC;
+    public com.mojang.serialization.Codec<MagnetFieldParticleData> getCodec(final ParticleType<MagnetFieldParticleData> type) { return CODEC.codec(); }
+
+    public ParticleOptions.Deserializer<MagnetFieldParticleData> getDeserializer() {
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public MagnetFieldParticleData fromCommand(final ParticleType<MagnetFieldParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return new MagnetFieldParticleData();
+            }
+
+            @Override
+            public MagnetFieldParticleData fromNetwork(final ParticleType<MagnetFieldParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return new MagnetFieldParticleData(buf.readBoolean());
+            }
+        };
+    }
+
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
+        buffer.writeBoolean(this.negative);
+    }
+
+    public String writeToString() {
+        return Boolean.toString(this.negative);
     }
 
     public ParticleEngine.SpriteParticleRegistration<MagnetFieldParticleData> getMetaFactory() {

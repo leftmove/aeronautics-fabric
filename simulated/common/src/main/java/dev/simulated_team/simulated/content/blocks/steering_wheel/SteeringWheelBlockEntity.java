@@ -31,7 +31,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -223,8 +223,8 @@ public class SteeringWheelBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     @Override
-    protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(final CompoundTag compound, final boolean clientPacket) {
+        super.write(compound, clientPacket);
 
         compound.putFloat("Angle", this.angle);
         compound.putFloat("TargetAngle", this.targetAngle);
@@ -244,14 +244,14 @@ public class SteeringWheelBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     @Override
-    public void writeSafe(final CompoundTag compound, final HolderLookup.Provider registries) {
-        super.writeSafe(compound, registries);
+    public void writeSafe(final CompoundTag compound) {
+        super.writeSafe(compound);
         compound.put("Material", NbtUtils.writeBlockState(this.material));
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
+        super.read(compound, clientPacket);
 
         this.angle = compound.getFloat("Angle");
         if (clientPacket) {
@@ -374,16 +374,16 @@ public class SteeringWheelBlockEntity extends GeneratingKineticBlockEntity {
         return material.is(BlockTags.PLANKS);
     }
 
-    public ItemInteractionResult applyMaterialIfValid(final ItemStack stack) {
+    public InteractionResult applyMaterialIfValid(final ItemStack stack) {
         if (this.isMaterialValid(stack) && (stack.getItem()instanceof final BlockItem blockItem)) {
             if (this.level.isClientSide() && !this.isVirtual())
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             this.material = blockItem.getBlock().defaultBlockState();;
             this.notifyUpdate();
             this.level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, this.worldPosition, Block.getId(material));
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     private static class SteeringWheelValueBoxTransform extends ValueBoxTransform.Sided {

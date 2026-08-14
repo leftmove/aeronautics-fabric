@@ -17,7 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -36,17 +36,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import dev.simulated_team.simulated.compat.ItemComponents;
+import net.minecraft.world.InteractionResult;
 
 public class NavTableBlock extends DirectionalBlock implements IBE<NavTableBlockEntity>, IWrenchable, CommonRedstoneBlock, SpecialBlockItemRequirement {
-    public static final MapCodec<NavTableBlock> CODEC = simpleCodec(NavTableBlock::new);
 
     public NavTableBlock(final Properties pProperties) {
         super(pProperties);
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -61,22 +57,23 @@ public class NavTableBlock extends DirectionalBlock implements IBE<NavTableBlock
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack itemStack, final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+        final ItemStack itemStack = player.getItemInHand(interactionHand);
         if (level.isClientSide() && this.canSwitchStacks(itemStack, level, blockPos)) {
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (this.switchStacks(level, blockPos, player, interactionHand)) {
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
 
-        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+        return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     private boolean canSwitchStacks(ItemStack heldStack, Level level, BlockPos pos) {
         NavTableBlockEntity blockEntity = (NavTableBlockEntity) level.getBlockEntity(pos);
         if(blockEntity != null) {
-            return heldStack.has(SimDataComponents.TARGET) || !blockEntity.getHeldItem().isEmpty() && heldStack.isEmpty();
+            return ItemComponents.has(heldStack, SimDataComponents.TARGET) || !blockEntity.getHeldItem().isEmpty() && heldStack.isEmpty();
         }
         return false;
     }
@@ -104,7 +101,7 @@ public class NavTableBlock extends DirectionalBlock implements IBE<NavTableBlock
                 }
 
                 slot.setStack(insert);
-                if (!player.hasInfiniteMaterials()) {
+                if (!player.getAbilities().instabuild) {
                     heldItem.shrink(1);
                 }
                 if (!extract.isEmpty()) {

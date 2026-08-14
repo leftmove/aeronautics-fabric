@@ -111,7 +111,7 @@ public class HeatedCulledRenderRegion implements NativeResource {
 
         builder.buildNoGreedy();
 
-        final BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, this.getVertexFormat());
+        final BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder().begin(VertexFormat.Mode.QUADS, this.getVertexFormat());
         builder.render(new Matrix4f(), bufferBuilder);
 
         this.balloon = null;

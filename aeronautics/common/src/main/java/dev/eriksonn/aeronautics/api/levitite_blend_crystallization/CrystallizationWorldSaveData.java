@@ -13,7 +13,7 @@ public class CrystallizationWorldSaveData extends SavedData {
 	Level level;
 	
 	@Override
-	public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
+	public CompoundTag save(CompoundTag tag) {
 		ListTag list = new ListTag();
 		LevititeCrystallizerManager.saveData(list, level);
 		tag.put("Levitite Manager Data", list);
@@ -21,7 +21,7 @@ public class CrystallizationWorldSaveData extends SavedData {
 		return tag;
 	}
 
-	public static CrystallizationWorldSaveData load(ServerLevel level, CompoundTag tag, final HolderLookup.Provider registries) {
+	public static CrystallizationWorldSaveData load(ServerLevel level, CompoundTag tag) {
 		CrystallizationWorldSaveData data = new CrystallizationWorldSaveData();
 		data.level = level;
 

@@ -14,6 +14,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.codec.StreamCodecs;
 
 public class MagnetFieldParticleData2 implements ParticleOptions, ICustomParticleDataWithSprite<MagnetFieldParticleData2> {
     //public static final MapCodec<MagnetFieldParticleData2> CODEC = RecordCodecBuilder.mapCodec((i) -> {
@@ -50,8 +51,28 @@ public class MagnetFieldParticleData2 implements ParticleOptions, ICustomParticl
         return SimParticleTypes.MAGNET_FIELD2.get();
     }
 
-    public MapCodec<MagnetFieldParticleData2> getCodec(final ParticleType<MagnetFieldParticleData2> type) {
-        return CODEC;
+    public com.mojang.serialization.Codec<MagnetFieldParticleData2> getCodec(final ParticleType<MagnetFieldParticleData2> type) { return CODEC.codec(); }
+
+    public ParticleOptions.Deserializer<MagnetFieldParticleData2> getDeserializer() {
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public MagnetFieldParticleData2 fromCommand(final ParticleType<MagnetFieldParticleData2> type, final com.mojang.brigadier.StringReader reader) {
+                return new MagnetFieldParticleData2();
+            }
+
+            @Override
+            public MagnetFieldParticleData2 fromNetwork(final ParticleType<MagnetFieldParticleData2> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return STREAM_CODEC.decode(buf);
+            }
+        };
+    }
+
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
+        STREAM_CODEC.encode(buffer, this);
+    }
+
+    public String writeToString() {
+        return this.getType().toString();
     }
 
     public ParticleEngine.SpriteParticleRegistration<MagnetFieldParticleData2> getMetaFactory() {

@@ -160,7 +160,7 @@ public class HandleBlockEntity extends SmartBlockEntity implements BlockEntitySu
             final Vector3d constraintGoal = JOMLConversion.toJOML(player.getEyePosition().add(player.getLookAngle().scale(Math.max(2.0, this.scrollDistance))));
             final Vector3d constraintPosition = HandleBlockEntity.this.getGrabCenter();
 
-            final double validRange = player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE).getValue() + 2.0;
+            final double validRange = player.getBlockReach() + 2.0;
             final double currentDistance = Sable.HELPER.distanceSquaredWithSubLevels(HandleBlockEntity.this.level, constraintGoal, constraintPosition);
 
             if (Mth.equal(-1, this.scrollDistance) || currentDistance > validRange * validRange) {

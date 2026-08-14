@@ -42,7 +42,7 @@ public class ClientHandleHandler extends BlockHoldInteraction {
         final Vector3d projected = Sable.HELPER.projectOutOfSubLevel(player.level(), grabCenter);
 
         final Vec3 eyePosition = player.getEyePosition();
-        this.desiredRange = (float) Math.min(projected.distance(eyePosition.x, eyePosition.y, eyePosition.z), Math.min(HandleBlockEntity.MAX_HANDLE_RANGE, player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE).getValue()));
+        this.desiredRange = (float) Math.min(projected.distance(eyePosition.x, eyePosition.y, eyePosition.z), Math.min(HandleBlockEntity.MAX_HANDLE_RANGE, player.getBlockReach()));
         this.movingSubLevel = player.isShiftKeyDown();
         player.swing(hand);
 
@@ -184,7 +184,7 @@ public class ClientHandleHandler extends BlockHoldInteraction {
     }
 
     public void deltaRange(final Player player, final float delta) {
-        this.desiredRange = (float) Math.clamp(this.desiredRange + delta, 1, Math.min(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE).getValue(), HandleBlockEntity.MAX_HANDLE_RANGE));
+        this.desiredRange = (float) net.minecraft.util.Mth.clamp(this.desiredRange + delta, 1, Math.min(player.getBlockReach(), HandleBlockEntity.MAX_HANDLE_RANGE));
     }
 
     @Override

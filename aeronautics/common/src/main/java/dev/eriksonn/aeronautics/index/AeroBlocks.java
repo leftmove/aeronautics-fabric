@@ -64,6 +64,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class AeroBlocks {
     private static final SimulatedRegistrate REGISTRATE = Aeronautics.getRegistrate();
@@ -200,8 +201,8 @@ public class AeroBlocks {
                             .define('S', CommonMetal.IRON.plates)
                             .define('A', AllItems.ANDESITE_ALLOY)
                             .define('C', AeroTags.ItemTags.BURNER_FIRE)
-                            .define('R', AllTags.commonItemTag("dusts/redstone"))
-                            .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.commonItemTag("dusts/redstone")))
+                            .define('R', AllTags.forgeItemTag("dusts/redstone"))
+                            .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.forgeItemTag("dusts/redstone")))
                             .save(p))
                     .register();
 
@@ -360,7 +361,7 @@ public class AeroBlocks {
             .tag(SableTags.ALWAYS_CHUNK_RENDERING)
             .item(BlockItem::new)
             .tag(AeroTags.ItemTags.LEVITITE)
-            .properties(p -> p.component(AeroDataComponents.LEVITATING, Levitating.LEVITITE))
+            .properties(p -> ItemComponents.with(p, AeroDataComponents.LEVITATING, Levitating.LEVITITE))
             .build()
             .register();
 
@@ -381,7 +382,7 @@ public class AeroBlocks {
                     .tag(SableTags.ALWAYS_CHUNK_RENDERING)
                     .item(BlockItem::new)
                     .tag(AeroTags.ItemTags.LEVITITE)
-                    .properties(p -> p.component(AeroDataComponents.LEVITATING, Levitating.PEARLESCENT_LEVITITE))
+                    .properties(p -> ItemComponents.with(p, AeroDataComponents.LEVITATING, Levitating.PEARLESCENT_LEVITITE))
                     .build()
                     .register();
 

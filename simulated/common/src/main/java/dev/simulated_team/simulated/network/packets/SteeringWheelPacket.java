@@ -11,6 +11,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record SteeringWheelPacket(boolean shouldStop, float targetAngle, BlockPos pos) implements CustomPacketPayload {
 
@@ -19,7 +20,7 @@ public record SteeringWheelPacket(boolean shouldStop, float targetAngle, BlockPo
     public static StreamCodec <RegistryFriendlyByteBuf, SteeringWheelPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL, SteeringWheelPacket::shouldStop,
             ByteBufCodecs.FLOAT, SteeringWheelPacket::targetAngle,
-            BlockPos.STREAM_CODEC, SteeringWheelPacket::pos,
+            StreamCodecs.BLOCK_POS, SteeringWheelPacket::pos,
             SteeringWheelPacket::new);
 
     public void handle(final ServerPacketContext context) {

@@ -25,6 +25,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class SimItems {
     public static final SimulatedRegistrate REGISTRATE = Simulated.getRegistrate();
@@ -40,7 +41,7 @@ public class SimItems {
 
     public static final ItemEntry<SpringItem> SPRING =
             REGISTRATE.item("spring", SpringItem::new)
-                    .properties(p -> p.component(SimDataComponents.BOUNCINESS, 1f))
+                    .properties(p -> ItemComponents.with(p, SimDataComponents.BOUNCINESS, 1f))
                     .recipe((ctx, prov) ->
                             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get(), 2)
                                     .pattern("S")
@@ -59,9 +60,9 @@ public class SimItems {
                     .pattern(" S ")
                     .pattern("NSN")
                     .pattern(" S ")
-                    .define('S', AllTags.commonItemTag("strings"))
-                    .define('N', AllTags.commonItemTag("nuggets/iron"))
-                    .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.commonItemTag("strings")))
+                    .define('S', AllTags.forgeItemTag("strings"))
+                    .define('N', AllTags.forgeItemTag("nuggets/iron"))
+                    .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllTags.forgeItemTag("strings")))
                     .save(prov))
             .register();
 
@@ -79,13 +80,12 @@ public class SimItems {
                     .transform(CreativeTabItemTransforms.VisibilityType.INVISIBLE.applyItem())
                     .register();
 
-    static { REGISTRATE.addExtraItem(ResourceLocation.withDefaultNamespace("slime_ball")); }
+    static { REGISTRATE.addExtraItem(new ResourceLocation("slime_ball")); }
 
     public static final ItemEntry<HoneyGlueItem> HONEY_GLUE =
             REGISTRATE.item("honey_glue", HoneyGlueItem::new)
                     .properties(p -> p.stacksTo(1)
                             .durability(100))
-                    .tag(ItemTags.DURABILITY_ENCHANTABLE)
                     .register();
 
     public static final ItemEntry<PhysicsStaffItem> PHYSICS_STAFF =
@@ -98,7 +98,6 @@ public class SimItems {
             REGISTRATE.item("plunger_launcher", PlungerLauncherItem::new)
                     .properties(p -> p.stacksTo(1).durability(200))
                     .model(AssetLookup.itemModelWithPartials())
-                    .tag(AllTags.commonItemTag("enchantable"), ItemTags.DURABILITY_ENCHANTABLE)
                     .register();
 
     private static ItemEntry<Item> ingredient(final String name) {

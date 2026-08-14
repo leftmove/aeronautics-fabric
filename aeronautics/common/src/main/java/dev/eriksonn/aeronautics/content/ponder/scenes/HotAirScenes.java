@@ -311,7 +311,7 @@ public class HotAirScenes {
                     .placeNearTarget();
         } else {
             scene.overlay().showControls(util.vector().blockSurface(burnerPos.west(), Direction.NORTH).add(0, shipOffset, 0), Pointing.RIGHT, 30)
-                    .withItem(new ItemStack(Blocks.SOUL_SAND.asItem()));
+                    .withItem(new ItemStack(Blocks.SOUL_SAND.get().asItem()));
             scene.idle(5);
             scene.world().setBlock(burnerPos,
                     AeroBlocks.HOT_AIR_BURNER.getDefaultState().setValue(HotAirBurnerBlock.VARIANT, HotAirBurnerBlock.Variant.SOUL_FIRE),
@@ -518,7 +518,7 @@ public class HotAirScenes {
         scene.idle(7);
         scene.world().modifyBlocks(util.select().layers(5, 4),
                 state -> {
-                    if (state.is(AeroBlocks.WHITE_ENVELOPE_BLOCK)) {
+                    if (state.is(AeroBlocks.WHITE_ENVELOPE_BLOCK.get())) {
                         return AeroBlocks.DYED_ENVELOPE_BLOCKS.get(DyeColor.BLUE).getDefaultState();
                     }
                     return state;

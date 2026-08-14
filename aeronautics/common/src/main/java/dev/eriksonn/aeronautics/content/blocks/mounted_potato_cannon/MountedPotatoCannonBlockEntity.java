@@ -233,7 +233,7 @@ public class MountedPotatoCannonBlockEntity extends KineticBlockEntity implement
 				end,
 				ClipContext.Block.COLLIDER,
 				ClipContext.Fluid.NONE,
-				CollisionContext.empty()
+				net.minecraft.world.entity.EntityType.PLAYER.create(null)
 		));
 		final Vector3dc projected = Sable.HELPER.projectOutOfSubLevel(this.getLevel(), JOMLConversion.toJOML(ray.getLocation()));
 		this.blocked = ray.getType() != HitResult.Type.MISS;
@@ -286,10 +286,10 @@ public class MountedPotatoCannonBlockEntity extends KineticBlockEntity implement
 	}
 
 	@Override
-	protected void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-		super.write(compound, registries, clientPacket);
+	protected void write(final CompoundTag compound, final boolean clientPacket) {
+		super.write(compound, clientPacket);
 
-		compound.put("inventory", this.inventory.write(registries));
+		compound.put("inventory", this.inventory.write());
 		compound.putInt("ItemRotationID", this.itemRotationId);
 		compound.putInt("ItemTimer", this.itemTimer);
 		compound.putFloat("ChargeTimer", this.chargeTimer);
@@ -303,10 +303,10 @@ public class MountedPotatoCannonBlockEntity extends KineticBlockEntity implement
 	}
 
 	@Override
-	protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
-		super.read(compound, registries, clientPacket);
+	protected void read(final CompoundTag compound, final boolean clientPacket) {
+		super.read(compound, clientPacket);
 
-		this.inventory.read(registries, compound.getCompound("inventory"));
+		this.inventory.read(compound.getCompound("inventory"));
 		this.inventory.updateCachedType(registries, this.inventory.slot.getStack());
 		if (clientPacket && compound.getBoolean("NeedsUpdate")) {
 			this.resetAndUpdate();

@@ -80,14 +80,14 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
         final Vector4f v4 = new Vector4f((float) focusPoint.x, (float) focusPoint.y, (float) focusPoint.z, 1.0f);
 
 
-        final Matrix4f actualProjMat = gameRenderer.getProjectionMatrix(gameRenderer.getFov(camera, AnimationTickHolder.getPartialTicks(), true));
+        final Matrix4f actualProjMat = gameRenderer.getProjectionMatrix(((dev.simulated_team.simulated.mixin.accessor.GameRendererAccessor) gameRenderer).simulated$getFov(camera, AnimationTickHolder.getPartialTicks(), true));
         actualProjMat.invert(new Matrix4f()).transform(v4);
         PlungerLauncherItemRenderer.itemProjMat.transform(v4);
         final Vec3 cameraPosition = camera.getPosition();
         focusPoint.set(v4.x, v4.y, v4.z);
         orientation.transform(focusPoint);
 
-        final double fov = gameRenderer.getFov(camera, pt, true);
+        final double fov = ((dev.simulated_team.simulated.mixin.accessor.GameRendererAccessor) gameRenderer).simulated$getFov(camera, pt, true);
         focusPoint.mul(100 / fov);
         focusPoint.add(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
@@ -103,7 +103,7 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
 
         Vec3 selfNormal = Vec3.ZERO;
         Vec3 perpendicularNormal = Vec3.ZERO;
-        final Direction dir = entity.getData(LaunchedPlungerEntity.PLUNGED_DIRECTION);
+        final Direction dir = entity.getEntityData().get(LaunchedPlungerEntity.PLUNGED_DIRECTION);
         if (entity.isPlunged()) {
             selfNormal = Vec3.atLowerCornerOf(dir.getNormal());
             if (dir.getAxis().isHorizontal()) {
@@ -112,8 +112,8 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
                 perpendicularNormal = Vec3.atLowerCornerOf(Direction.NORTH.getNormal());
             }
         } else {
-            selfNormal = entity.calculateViewVector(-Mth.lerp(pt, entity.xRotO, entity.getXRot()),-Mth.lerp(pt, entity.yRotO, entity.getYRot())).reverse();
-            perpendicularNormal = entity.calculateViewVector(-Mth.lerp(pt, entity.xRotO, entity.getXRot()),-Mth.lerp(pt, entity.yRotO, entity.getYRot())-90).reverse();
+            selfNormal = net.minecraft.world.phys.Vec3.directionFromRotation(-Mth.lerp(pt, entity.xRotO, entity.getXRot()),-Mth.lerp(pt, entity.yRotO, entity.getYRot())).reverse();
+            perpendicularNormal = net.minecraft.world.phys.Vec3.directionFromRotation(-Mth.lerp(pt, entity.xRotO, entity.getXRot()),-Mth.lerp(pt, entity.yRotO, entity.getYRot())-90).reverse();
         }
 
         poseStack.pushPose();
@@ -147,10 +147,10 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
         if (other != null) {
             Vec3 otherNormal = Vec3.ZERO;
             if (other.isPlunged()) {
-                final Direction otherDir = other.getData(LaunchedPlungerEntity.PLUNGED_DIRECTION);
+                final Direction otherDir = other.getEntityData().get(LaunchedPlungerEntity.PLUNGED_DIRECTION);
                 otherNormal = Vec3.atLowerCornerOf(otherDir.getNormal());
             } else {
-                otherNormal = other.calculateViewVector(-Mth.lerp(pt, other.xRotO, other.getXRot()),-Mth.lerp(pt, other.yRotO, other.getYRot())).reverse();
+                otherNormal = net.minecraft.world.phys.Vec3.directionFromRotation(-Mth.lerp(pt, other.xRotO, other.getXRot()),-Mth.lerp(pt, other.yRotO, other.getYRot())).reverse();
             }
 
             Vec3 targetOldPos = new Vec3(other.xo, other.yo, other.zo);
@@ -171,19 +171,19 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
             target = targetOldPos.lerp(targetNewPos, pt).add(otherNormal.scale(scalingFactor));
         } else {
             final Entity owner = entity.getOwner();
-            if (entity.getData(LaunchedPlungerEntity.OTHER_PLUNGER).isEmpty() && owner == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+            if (entity.getEntityData().get(LaunchedPlungerEntity.OTHER_PLUNGER).isEmpty() && owner == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
                 target = getFirstPersonFocusPos(pt);
             } else {
-                if (owner instanceof final AbstractClientPlayer player && entity.getData(LaunchedPlungerEntity.OTHER_PLUNGER).isEmpty()) {
+                if (owner instanceof final AbstractClientPlayer player && entity.getEntityData().get(LaunchedPlungerEntity.OTHER_PLUNGER).isEmpty()) {
                     final PlayerRenderer playerrenderer = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher()
                             .getRenderer(player);
                     float headYDirection = Mth.lerp(pt, player.yHeadRotO, player.yHeadRot);
-                    final float bodyDifference = Math.abs(headYDirection - player.getPreciseBodyRotation(pt)) / 50f;
+                    final float bodyDifference = Math.abs(headYDirection - net.minecraft.util.Mth.rotLerp(pt, player.yBodyRotO, player.yBodyRot)) / 50f;
                     final float headXDirection = Mth.lerp(pt, player.xRotO, player.getXRot());
                     final float lookDelta = Math.abs(Mth.map(headXDirection, 90, 0, 1f, 0f));
-                    headYDirection = Mth.lerp(lookDelta, headYDirection, player.getPreciseBodyRotation(pt));
-                    final Vec3 viewDirection = player.calculateViewVector(headXDirection, headYDirection);
-                    final Vec3 handDirection = player.calculateViewVector(0, headYDirection + 90.0f);
+                    headYDirection = Mth.lerp(lookDelta, headYDirection, net.minecraft.util.Mth.rotLerp(pt, player.yBodyRotO, player.yBodyRot));
+                    final Vec3 viewDirection = net.minecraft.world.phys.Vec3.directionFromRotation(headXDirection, headYDirection);
+                    final Vec3 handDirection = net.minecraft.world.phys.Vec3.directionFromRotation(0, headYDirection + 90.0f);
                     target = player.getPosition(pt).add(0.0, 1.28, 0.0).add(viewDirection.scale(0.875)).add(handDirection.scale(Math.abs(Mth.map(headXDirection, 90, 0, 0.325f, 0f)) * (1)));
                 } else {
                     target = Vec3.ZERO;
@@ -196,7 +196,7 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
         final Vector3f finalRotation = new Vector3f();
 
         poseStack.popPose();
-        if ((entity.getData(LaunchedPlungerEntity.IS_FIRST) || other == null || other.isRemoved()) && !target.equals(Vec3.ZERO)) {
+        if ((entity.getEntityData().get(LaunchedPlungerEntity.IS_FIRST) || other == null || other.isRemoved()) && !target.equals(Vec3.ZERO)) {
             final float renderTime = (entity.tickCount + pt + entity.getAnimationOffset());
             final List<Vec3> points = new ObjectArrayList<>();
             final Vec3 start = pos;
@@ -259,7 +259,7 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
         POS.set(perpendicularNormal.x, perpendicularNormal.y, perpendicularNormal.z);
 
         float angle = 0;
-        if (entity.getData(LaunchedPlungerEntity.IS_PLUNGED)) {
+        if (entity.getEntityData().get(LaunchedPlungerEntity.IS_PLUNGED)) {
             angle = (float) (POS.angleSigned(TARGET, FACE_NORMAL) + Math.PI / 2f);
         }
         if (Float.isNaN(angle)) {
@@ -330,64 +330,64 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
             NEXT_ORIENTATION.transform(NEXT_NORMAL.set(0, -1, 0));
 
             NEXT_ORIENTATION.transform(POS.set(-nextCableRadius, -nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(0, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(0, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             ORIENTATION.transform(POS.set(-cableRadius, -cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(0, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(0, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             ORIENTATION.transform(POS.set(cableRadius, -cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(u, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(u, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             NEXT_ORIENTATION.transform(POS.set(nextCableRadius, -nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(u, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(u, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             // Up
             ORIENTATION.transform(NORMAL.set(0, 1, 0));
             NEXT_ORIENTATION.transform(NEXT_NORMAL.set(0, 1, 0));
 
             ORIENTATION.transform(POS.set(-cableRadius, cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(0, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(0, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             NEXT_ORIENTATION.transform(POS.set(-nextCableRadius, nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(0, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(0, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             NEXT_ORIENTATION.transform(POS.set(nextCableRadius, nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(u, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(u, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             ORIENTATION.transform(POS.set(cableRadius, cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(u, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(u, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             // West
             ORIENTATION.transform(NORMAL.set(-1, 0, 0));
             NEXT_ORIENTATION.transform(NEXT_NORMAL.set(-1, 0, 0));
 
             NEXT_ORIENTATION.transform(POS.set(-nextCableRadius, -nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(u, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(u, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             NEXT_ORIENTATION.transform(POS.set(-nextCableRadius, nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(0, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(0, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             ORIENTATION.transform(POS.set(-cableRadius, cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(0, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(0, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             ORIENTATION.transform(POS.set(-cableRadius, -cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(u, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(u, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             // East
             ORIENTATION.transform(NORMAL.set(1, 0, 0));
             NEXT_ORIENTATION.transform(NEXT_NORMAL.set(1, 0, 0));
 
             ORIENTATION.transform(POS.set(cableRadius, -cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(u, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(u, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             ORIENTATION.transform(POS.set(cableRadius, cableRadius, 0));
-            builder.addVertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).setColor(color).setUv(0, v).setLight(lightStart).setNormal(NORMAL.x, NORMAL.y, NORMAL.z);
+            builder.vertex((float) (x - origin.x() + POS.x), (float) (y - origin.y() + POS.y), (float) (z - origin.z() + POS.z)).color(color).uv(0, v).uv2(lightStart).normal(NORMAL.x, NORMAL.y, NORMAL.z).endVertex();
 
             NEXT_ORIENTATION.transform(POS.set(nextCableRadius, nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(0, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(0, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             NEXT_ORIENTATION.transform(POS.set(nextCableRadius, -nextCableRadius, 0));
-            builder.addVertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).setColor(color).setUv(u, nextV).setLight(lightEnd).setNormal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z);
+            builder.vertex((float) (nextX - origin.x() + POS.x), (float) (nextY - origin.y() + POS.y), (float) (nextZ - origin.z() + POS.z)).color(color).uv(u, nextV).uv2(lightEnd).normal(NEXT_NORMAL.x, NEXT_NORMAL.y, NEXT_NORMAL.z).endVertex();
 
             ORIENTATION.set(NEXT_ORIENTATION);
             v = nextV;
@@ -404,7 +404,7 @@ public class LaunchedPlungerEntityRenderer extends EntityRenderer<LaunchedPlunge
 
     @Override
     public ResourceLocation getTextureLocation(final LaunchedPlungerEntity entity) {
-        return ResourceLocation.withDefaultNamespace("missing");
+        return new ResourceLocation("missing");
     }
 
     @Override

@@ -43,11 +43,9 @@ public class LodestoneTrackingMap extends SavedData {
 	private static final LevelAttached<LodestoneTrackingMap> LODESTONE_MAP = new LevelAttached<>(level -> {
 		if (level instanceof ServerLevel sl) {
 			return sl.getDataStorage().computeIfAbsent(
-					new Factory<>(
-							() -> new LodestoneTrackingMap(sl),
-							(tag, prov) -> LodestoneTrackingMap.load(sl, tag),
-							null
-					), FILE_ID);
+					tag -> LodestoneTrackingMap.load(sl, tag),
+					() -> new LodestoneTrackingMap(sl),
+					FILE_ID);
 		}
 
 		return null;
@@ -86,7 +84,7 @@ public class LodestoneTrackingMap extends SavedData {
 
 	@Override
 	@NotNull
-	public CompoundTag save(final @NotNull CompoundTag compoundTag, final HolderLookup.@NotNull Provider provider) {
+	public CompoundTag save(final @NotNull CompoundTag compoundTag) {
 		final ListTag lodestoneInformationList = new ListTag();
 
 		for (final LodestoneInformation info : this.lodestoneInformationSet) {

@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.Tuple;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class SingleTankStorage extends SnapshotParticipant<Tuple<CFluidType, Long>> implements SingleSlotStorage<FluidVariant> {
 
@@ -29,7 +30,7 @@ public class SingleTankStorage extends SnapshotParticipant<Tuple<CFluidType, Lon
 		if (variant.isBlank()) {
 			return CFluidType.BLANK;
 		}
-		return new CFluidType(variant.getFluid(), variant.getComponents());
+		return new CFluidType(variant.getFluid(), ItemComponents.view(variant));
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package dev.eriksonn.aeronautics.neoforge.mixin.self_mixins;
 
 import dev.eriksonn.aeronautics.content.blocks.hot_air.gust.GustEntity;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(GustEntity.class)

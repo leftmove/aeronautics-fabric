@@ -81,7 +81,7 @@ public class LinkedTypewriterBlockEntity extends SmartBlockEntity implements Men
     }
 
     public static boolean playerInRange(final Player player, final Level world, final BlockPos pos) {
-        final double range = player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE).getValue();
+        final double range = player.getBlockReach();
 
         // Make sure we take into account sub-levels! We are a sable addon after all!
         return Sable.HELPER.distanceSquaredWithSubLevels(world, player.getEyePosition(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) < range * range;
@@ -128,12 +128,12 @@ public class LinkedTypewriterBlockEntity extends SmartBlockEntity implements Men
     }
 
     public void sendConnectMessage(final Player player) {
-        final Component customName = this.components().getOrDefault(DataComponents.CUSTOM_NAME, SimLang.translate("linked_typewriter.title").component());
+        final Component customName = this.getDisplayName();
         player.displayClientMessage(SimLang.translate("linked_typewriter.start_controlling", customName.getString()).component(), true);
     }
 
     public void sendDisconnectMessage(final Player player) {
-        final Component customName = this.components().getOrDefault(DataComponents.CUSTOM_NAME, SimLang.translate("linked_typewriter.title").component());
+        final Component customName = this.getDisplayName();
         player.displayClientMessage(SimLang.translate("linked_typewriter.stop_controlling", customName.getString()).component(), true);
     }
 
@@ -231,11 +231,11 @@ public class LinkedTypewriterBlockEntity extends SmartBlockEntity implements Men
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
+        super.write(tag, clientPacket);
 
         tag.putString("typedEntry", this.typedEntry);
-        tag.put("Keys", this.entryMap.saveKeys(registries));
+        tag.put("Keys", this.entryMap.saveKeys());
 
         if (this.currentUser != null) {
             tag.putUUID("CurrentUser", this.currentUser);
@@ -243,11 +243,11 @@ public class LinkedTypewriterBlockEntity extends SmartBlockEntity implements Men
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
+        super.read(tag, clientPacket);
 
         this.typedEntry = tag.getString("typedEntry");
-        this.entryMap = LinkedTypewriterEntries.readKeys(registries, tag.getList("Keys", 10), this.getBlockPos());
+        this.entryMap = LinkedTypewriterEntries.readKeys(tag.getList("Keys", 10), this.getBlockPos());
         if (tag.contains("CurrentUser")) {
             this.currentUser = tag.getUUID("CurrentUser");
         } else {
@@ -287,23 +287,31 @@ public class LinkedTypewriterBlockEntity extends SmartBlockEntity implements Men
         return SimBlocks.LINKED_TYPEWRITER.get().getName();
     }
 
+    public boolean hasCustomName() {
+        return false;
+    }
+
+    public Component getCustomName() {
+        return this.getDisplayName();
+    }
+
     @Override
     public String getClipboardKey() {
         return "TypewriterKeys";
     }
 
     @Override
-    public boolean writeToClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Direction side) {
-        tag.put("Keys", this.entryMap.saveKeys(registries));
+    public boolean writeToClipboard(final CompoundTag tag, final Direction side) {
+        tag.put("Keys", this.entryMap.saveKeys());
         return true;
     }
 
     @Override
-    public boolean readFromClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
+    public boolean readFromClipboard(final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
         if (simulate) {
             return true;
         }
-        this.entryMap = LinkedTypewriterEntries.readKeys(registries, tag.getList("Keys", 10), this.getBlockPos());
+        this.entryMap = LinkedTypewriterEntries.readKeys(tag.getList("Keys", 10), this.getBlockPos());
         return true;
     }
 

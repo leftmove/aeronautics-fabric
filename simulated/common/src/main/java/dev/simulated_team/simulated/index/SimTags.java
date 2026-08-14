@@ -14,7 +14,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class SimTags {
             return TagKey.create(Registries.BLOCK, Simulated.path(path));
         }
         private static TagKey<Block> create(final String namespace, final String path) {
-            return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(namespace, path));
+            return TagKey.create(Registries.BLOCK, new ResourceLocation(namespace, path));
         }
         protected static void addGenerators() {
             Simulated.getRegistrate().addDataGenerator(ProviderType.BLOCK_TAGS, Blocks::genBlockTags);
@@ -66,10 +65,10 @@ public class SimTags {
     }
 
     public static class Items {
-        public static final TagKey<Item> STONE = AllTags.commonItemTag("stones");
-        public static final TagKey<Item> REDSTONE_DUST = AllTags.commonItemTag("dusts/redstone");
-        public static final TagKey<Item> SLIME_BALLS = AllTags.commonItemTag("slime_balls");
-        public static final TagKey<Item> AMETHYST_SHARDS = AllTags.commonItemTag("gems/amethyst");
+        public static final TagKey<Item> STONE = AllTags.forgeItemTag("stones");
+        public static final TagKey<Item> REDSTONE_DUST = AllTags.forgeItemTag("dusts/redstone");
+        public static final TagKey<Item> SLIME_BALLS = AllTags.forgeItemTag("slime_balls");
+        public static final TagKey<Item> AMETHYST_SHARDS = AllTags.forgeItemTag("gems/amethyst");
 
         public static final TagKey<Item> NAMEPLATE_ITEMS = create("nameplate_items");
         public static final TagKey<Item> ROTATE_WITH_NAV_ARROW = create("rotate_with_nav_arrow");
@@ -92,12 +91,12 @@ public class SimTags {
             final TagGen.CreateTagsProvider<Item> prov = new TagGen.CreateTagsProvider<>(provIn, Item::builtInRegistryHolder);
             prov.tag(ROTATE_WITH_NAV_ARROW)
                     .add(COMPASS, RECOVERY_COMPASS)
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("naturescompass", "naturescompass"));
+                    .addOptional(new ResourceLocation("naturescompass", "naturescompass"));
             prov.tag(ROTATE_WITH_NAV_ARROW)
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("explorerscompass", "explorerscompass"));
+                    .addOptional(new ResourceLocation("explorerscompass", "explorerscompass"));
             prov.tag(DESTROYS_ROPE)
                     .add(SHEARS)
-                    .add(AllItems.WRENCH.asItem());
+                    .add(AllItems.WRENCH.get().asItem());
             prov.tag(MERGING_GLUE)
                     .addTag(SLIME_BALLS);
             prov.tag(LASER_POINTER_LENS)
@@ -105,15 +104,11 @@ public class SimTags {
             prov.tag(LASER_POINTER_RAINBOW)
                     .add(NETHER_STAR);
             prov.tag(SPRING_ADJUSTER)
-                    .add(AllItems.IRON_SHEET.asItem());
+                    .add(AllItems.IRON_SHEET.get().asItem());
         }
     }
 
     public static class Misc {
-        public static final TagKey<MapDecorationType> NAV_TABLE_FINDABLE = TagKey.create(
-                Registries.MAP_DECORATION_TYPE, Simulated.path("nav_table_findable"));
-
-        // entities which won't block the placement of an armor stand
         public static final TagKey<EntityType<?>> ARMOR_STAND_IGNORE = TagKey.create(
                 Registries.ENTITY_TYPE, Simulated.path("armor_stand_ignore")
         );
@@ -127,7 +122,7 @@ public class SimTags {
     public static final Map<String, TagKey<Item>> DYE_MAP = new HashMap<>();
     static {
         for (final DyeColor color : DyeColor.values()) {
-            DYE_MAP.put(color.getName(), AllTags.commonItemTag("dyes/" + color.getName()));
+            DYE_MAP.put(color.getName(), AllTags.forgeItemTag("dyes/" + color.getName()));
         }
     }
 

@@ -10,14 +10,14 @@ import dev.simulated_team.simulated.neoforge.service.SimpleResourceManagerRegist
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.InteractionResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.util.TriState;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 @EventBusSubscriber(modid = Simulated.MOD_ID, value = Dist.CLIENT)
 public class SimNeoForgeClientEvents {
@@ -59,7 +59,7 @@ public class SimNeoForgeClientEvents {
 			}
 		}
 
-		if (event.getItemStack().is(SimItems.HONEY_GLUE)) {
+		if (event.getItemStack().is(SimItems.HONEY_GLUE.get())) {
 			event.setUseBlock(TriState.FALSE);
 			if (event.getLevel().isClientSide) {
 				SimClickInteractions.HONEY_GLUE_MANAGER.selectPos(event.getPos(), event.getEntity(), event.getItemStack());

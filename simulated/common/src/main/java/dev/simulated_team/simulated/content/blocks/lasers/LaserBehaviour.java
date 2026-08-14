@@ -125,7 +125,7 @@ public class LaserBehaviour extends BlockEntityBehaviour {
                 end,
                 this.blockCollide,
                 this.fluidCollide,
-                CollisionContext.empty()
+                net.minecraft.world.entity.EntityType.PLAYER.create(null)
         );
     }
 

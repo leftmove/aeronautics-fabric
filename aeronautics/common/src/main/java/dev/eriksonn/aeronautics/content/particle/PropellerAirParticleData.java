@@ -48,12 +48,22 @@ public class PropellerAirParticleData implements ParticleOptions, ICustomParticl
     }
 
     @Override
-    public MapCodec<PropellerAirParticleData> getCodec(ParticleType<PropellerAirParticleData> particleType) {
-        return CODEC;
+    public com.mojang.serialization.Codec<PropellerAirParticleData> getCodec(ParticleType<PropellerAirParticleData> particleType) { return CODEC.codec(); }
+
+    
+    @Override
+    public ParticleOptions.Deserializer<PropellerAirParticleData> getDeserializer() {
+        return (type, buf) -> STREAM_CODEC.decode(buf);
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, PropellerAirParticleData> getStreamCodec() {
-        return STREAM_CODEC;
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
+        STREAM_CODEC.encode(buffer, this);
     }
+
+    @Override
+    public String writeToString() {
+        return this.getType().toString();
+    }
+
 }

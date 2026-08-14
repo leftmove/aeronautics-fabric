@@ -11,11 +11,12 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.codec.StreamCodecs;
 
 public class ConfigureAltitudeSensorPacket extends SimBlockEntityConfigurationPacket<AltitudeSensorBlockEntity> {
     public static final Type<ConfigureAltitudeSensorPacket> TYPE = new Type<>(Simulated.path("configure_altitude_sensor"));
     public static final StreamCodec<ByteBuf, ConfigureAltitudeSensorPacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, SimBlockEntityConfigurationPacket::getPos,
+            StreamCodecs.BLOCK_POS, SimBlockEntityConfigurationPacket::getPos,
             ByteBufCodecs.FLOAT, ConfigureAltitudeSensorPacket::highSignal,
             ByteBufCodecs.FLOAT, ConfigureAltitudeSensorPacket::lowSignal,
             ConfigureAltitudeSensorPacket::new

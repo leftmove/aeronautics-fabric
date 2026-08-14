@@ -61,7 +61,7 @@ public class GustParticle extends TextureSheetParticle implements ParticleSubLev
 
 	private void renderVertex(final VertexConsumer buffer, final Quaternionf quaternion, final float x, final float y, final float z, final float xOffset, final float yOffset, final float quadSize, final float u, final float v, final int packedLight) {
 		final Vector3f vector3f = (new Vector3f(xOffset, yOffset, 0.0F)).rotate(quaternion).mul(quadSize).add(x, y, z);
-		buffer.addVertex(vector3f.x(), vector3f.y(), vector3f.z()).setUv(u, v).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(packedLight);
+		buffer.vertex(vector3f.x(), vector3f.y(), vector3f.z()).uv(u, v).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(packedLight).endVertex();
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -48,20 +48,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements IBE<LinkedTypewriterBlockEntity>, IWrenchable {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-    public static final MapCodec<LinkedTypewriterBlock> CODEC = simpleCodec(LinkedTypewriterBlock::new);
     public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public LinkedTypewriterBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, false));
-    }
-
-    @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -94,10 +89,10 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack itemStack, final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
         final ItemStack heldItem = player.getItemInHand(interactionHand);
 
-        final Item linkedControllerItem = AllItems.LINKED_CONTROLLER.asItem();
+        final Item linkedControllerItem = AllItems.LINKED_CONTROLLER.get().asItem();
         if (player.getMainHandItem().is(linkedControllerItem) || player.getOffhandItem().is(linkedControllerItem)) {
             if (level.isClientSide) {
                 final ItemStack item = player.getMainHandItem().is(linkedControllerItem) ?
@@ -107,7 +102,7 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
                 LinkedControllerClientHandler.MODE = LinkedControllerClientHandler.Mode.IDLE;
             }
 
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
         if (heldItem.isEmpty() && interactionHand == InteractionHand.MAIN_HAND) {
@@ -141,11 +136,11 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
             });
 
             if (success.getValue()) {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
 
-        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+        return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     @Override
@@ -154,7 +149,7 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
     }
 
     @Override
-    protected int getAnalogOutputSignal(final BlockState state, final Level level, final BlockPos pos) {
+    public int getAnalogOutputSignal(final BlockState state, final Level level, final BlockPos pos) {
         final BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof final LinkedTypewriterBlockEntity typewriter) {
             return typewriter.isInUse() ? 15 : 0;
@@ -178,13 +173,13 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
     }
 
     @Override
-    public ItemStack getCloneItemStack(final LevelReader level, final BlockPos pos, final BlockState state) {
+    public ItemStack getCloneItemStack(final BlockGetter level, final BlockPos pos, final BlockState state) {
         final ItemStack itemStack = super.getCloneItemStack(level, pos, state);
         final BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity != null) {
-            BlockItem.setBlockEntityData(itemStack, blockEntity.getType(), blockEntity.saveWithoutMetadata(level.registryAccess()));
-            if (blockEntity.components().has(DataComponents.CUSTOM_NAME)) {
-                itemStack.set(DataComponents.CUSTOM_NAME, blockEntity.components().get(DataComponents.CUSTOM_NAME));
+            BlockItem.setBlockEntityData(itemStack, blockEntity.getType(), blockEntity.saveWithoutMetadata());
+            if (blockEntity instanceof final LinkedTypewriterBlockEntity typewriter && typewriter.hasCustomName()) {
+                itemStack.setHoverName(typewriter.getCustomName());
             }
         }
 
@@ -192,16 +187,16 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
     }
 
     @Override
-    public BlockState playerWillDestroy(final Level level, final BlockPos pos, final BlockState state, final Player player) {
+    public void playerWillDestroy(final Level level, final BlockPos pos, final BlockState state, final Player player) {
         assert level != null;
 
         final BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity != null && !level.isClientSide && player.isCreative() &&
-                blockEntity instanceof final LinkedTypewriterBlockEntity linkedTypewriterBlockEntity && (!linkedTypewriterBlockEntity.getTypewriterEntries().getKeyMap().isEmpty() || linkedTypewriterBlockEntity.components().has(DataComponents.CUSTOM_NAME))) {
+                blockEntity instanceof final LinkedTypewriterBlockEntity linkedTypewriterBlockEntity && (!linkedTypewriterBlockEntity.getTypewriterEntries().getKeyMap().isEmpty() || linkedTypewriterBlockEntity.hasCustomName())) {
 
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), this.getCloneItemStack(level, pos, state));
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -209,7 +204,7 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
         final BlockEntity blockEntity = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (blockEntity instanceof final LinkedTypewriterBlockEntity typewriter) {
             final ItemStack itemStack = new ItemStack(this);
-            typewriter.saveToItem(itemStack, params.getLevel().registryAccess());
+            typewriter.saveToItem(itemStack);
 
             params.withDynamicDrop(ShulkerBoxBlock.CONTENTS, consumer -> itemStack.copy());
             return ImmutableList.of(itemStack);

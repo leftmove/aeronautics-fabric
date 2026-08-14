@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record TypewriterKeySavePacket(Map<Integer, LinkedTypewriterEntries.KeyboardEntry> changedKeys, BlockPos pos,
                                       boolean clearAll) implements CustomPacketPayload {
@@ -24,7 +25,7 @@ public record TypewriterKeySavePacket(Map<Integer, LinkedTypewriterEntries.Keybo
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TypewriterKeySavePacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.map(HashMap::new, ByteBufCodecs.INT, LinkedTypewriterEntries.KeyboardEntry.STREAM_CODEC), TypewriterKeySavePacket::changedKeys,
-            BlockPos.STREAM_CODEC, TypewriterKeySavePacket::pos,
+            StreamCodecs.BLOCK_POS, TypewriterKeySavePacket::pos,
             ByteBufCodecs.BOOL, TypewriterKeySavePacket::clearAll,
             TypewriterKeySavePacket::new);
 

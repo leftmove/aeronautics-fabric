@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.extensions.IBlockExtension;
+import net.minecraftforge.common.extensions.IForgeBlock;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 

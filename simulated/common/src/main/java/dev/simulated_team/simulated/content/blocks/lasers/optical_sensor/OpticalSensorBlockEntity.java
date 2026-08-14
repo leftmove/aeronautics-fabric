@@ -168,7 +168,7 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
 
     public void setRange(final int blocks) {
         final int max = SimConfigService.INSTANCE.server().blocks.opticalSensorRange.get();
-        this.range.setValue(Math.clamp(blocks, 1, max));
+        this.range.setValue(net.minecraft.util.Mth.clamp(blocks, 1, max));
     }
 
     public float getRayDistance() {
@@ -201,14 +201,14 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
-        this.opacity = Math.clamp(tag.contains("Opacity") ? tag.getFloat("Opacity") : 1, 0, 1);
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
+        super.read(tag, clientPacket);
+        this.opacity = net.minecraft.util.Mth.clamp(tag.contains("Opacity") ? tag.getFloat("Opacity") : 1, 0, 1);
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
+        super.write(tag, clientPacket);
         tag.putFloat("Opacity", this.opacity);
     }
 
@@ -223,13 +223,13 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
     }
 
     @Override
-    public boolean writeToClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Direction side) {
+    public boolean writeToClipboard(final CompoundTag tag, final Direction side) {
         tag.putFloat("Opacity", this.getOpacity());
         return true;
     }
 
     @Override
-    public boolean readFromClipboard(final HolderLookup.@NotNull Provider registries, final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
+    public boolean readFromClipboard(final CompoundTag tag, final Player player, final Direction side, final boolean simulate) {
         if(simulate) {
             return true;
         }

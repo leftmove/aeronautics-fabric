@@ -21,14 +21,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.concurrent.CompletableFuture;
@@ -70,10 +70,10 @@ public class AeroNeoForgeCommonEvents {
 		private static void jeiCompat() {
 			MysteriousItemConversionCategory.RECIPES.add(
 					ConversionRecipe.create(AeroFluidsNeoForge.LEVITITE_BLEND.getBucket().get().getDefaultInstance(),
-							AeroBlocks.LEVITITE.asItem().getDefaultInstance()));
+							AeroBlocks.LEVITITE.get().asItem().getDefaultInstance()));
 			MysteriousItemConversionCategory.RECIPES.add(
 					ConversionRecipe.create(AeroFluidsNeoForge.LEVITITE_BLEND.getBucket().get().getDefaultInstance(),
-							AeroBlocks.PEARLESCENT_LEVITITE.asItem().getDefaultInstance()));
+							AeroBlocks.PEARLESCENT_LEVITITE.get().asItem().getDefaultInstance()));
 
 			ResourceLocation recipeId = Aeronautics.path("conversion_music_disc_cloud_skipper");
 			ConversionRecipe recipe = new StandardProcessingRecipe.Builder<>(ConversionRecipe::new, recipeId)

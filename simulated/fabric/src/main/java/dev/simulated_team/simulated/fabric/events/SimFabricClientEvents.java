@@ -34,7 +34,7 @@ public final class SimFabricClientEvents {
 
 		int index = 0;
 		for (final PreparableReloadListener listener : FabricSimpleResourceManagerRegistry.LISTENERS) {
-			final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("simulated", "client_reload_" + index++);
+			final ResourceLocation id = new ResourceLocation("simulated", "client_reload_" + index++);
 			ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(SimFabricCommonEvents.wrap(id, listener));
 		}
 	}

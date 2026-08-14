@@ -82,9 +82,9 @@ public class SimAssemblyHelper {
         disassembleAndAddCreateContraptions(level, plot.getBoundingBox(), blocks, false, null);
 
         // move glue
-        final PersistentEntitySectionManager<Entity> manager = ((ServerLevel) toDisassemble.getLevel()).entityManager;
+        final PersistentEntitySectionManager<Entity> manager = ((dev.simulated_team.simulated.mixin.accessor.ServerLevelAccessor) toDisassemble.getLevel()).simulated$getEntityManager();
         for (final PlotChunkHolder chunk : toDisassemble.getPlot().getLoadedChunks()) {
-            final Stream<EntitySection<Entity>> sections = manager.sectionStorage.getExistingSectionsInChunk(chunk.getPos().toLong());
+            final Stream<EntitySection<Entity>> sections = ((dev.simulated_team.simulated.mixin.accessor.PersistentEntitySectionManagerAccessor<Entity>) manager).simulated$getSectionStorage().getExistingSectionsInChunk(chunk.getPos().toLong());
 
             for (final EntitySection<Entity> section : sections.toList()) {
                 final List<Entity> entities = section.getEntities().toList();
@@ -115,10 +115,10 @@ public class SimAssemblyHelper {
                     entity.yRotO = entity.getYRot();
 
                     if (entity instanceof final HangingEntity hangingEntity) {
-                        hangingEntity.recalculateBoundingBox();
+                        ((dev.simulated_team.simulated.mixin.accessor.HangingEntityAccessor) hangingEntity).simulated$recalculateBoundingBox();
                     }
 
-                    entity.levelCallback.onRemove(Entity.RemovalReason.CHANGED_DIMENSION);
+                    ((dev.simulated_team.simulated.mixin.accessor.EntityAccessor) entity).simulated$getLevelCallback().onRemove(Entity.RemovalReason.CHANGED_DIMENSION);
                     ((ServerLevel) level).addDuringTeleport(entity);
                 }
             }

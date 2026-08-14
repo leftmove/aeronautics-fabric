@@ -18,7 +18,7 @@ public class FabricSimEntityService implements SimEntityService {
 
 	@Override
 	public double getPlayerReach(final Player player) {
-		return player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+		return player.getBlockReach();
 	}
 
 	@Override

@@ -29,7 +29,7 @@ public class SimSequencedAssemblyRecipes extends SequencedAssemblyRecipeGen {
             .addOutput(AllItems.ANDESITE_ALLOY, 8)
             .addOutput(AllItems.BRASS_NUGGET, 3)
             .addOutput(AllItems.CRUSHED_IRON, 2)
-            .addOutput(Items.COMPASS.asItem(), 1));
+            .addOutput(Items.COMPASS.get().asItem(), 1));
 
     private final GeneratedRecipe ENGINE_ASSEMBLY = this.create("engine_assembly", b -> b.require(CommonMetal.IRON.plates)
             .transitionTo(SimItems.INCOMPLETE_ENGINE_ASSEMBLY)

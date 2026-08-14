@@ -1,6 +1,6 @@
 package dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter;
 
-import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.foundation.utility.ControlsUtil;
 import dev.simulated_team.simulated.index.SimSoundEvents;
@@ -20,7 +20,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.lwjgl.glfw.GLFW;
@@ -28,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Vector;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class LinkedTypewriterInteractionHandler {
 
@@ -211,25 +211,13 @@ public class LinkedTypewriterInteractionHandler {
             return;
         }
 
-        final ItemContainerContents linkedControllerData = item.get(AllDataComponents.LINKED_CONTROLLER_ITEMS);
-
-        final List<ItemStack> linkedControllerItems;
-
-        if (linkedControllerData == null) {
-            final int size = 12;
-            final ObjectArrayList<ItemStack> emptyData = new ObjectArrayList<>(size);
-
-            for (int i = 0; i < size; i++) {
-                emptyData.add(ItemStack.EMPTY);
-            }
-
-            linkedControllerItems = emptyData;
-        } else {
-            linkedControllerItems = new ObjectArrayList<>(linkedControllerData.stream().toList());
-
-            while (linkedControllerItems.size() < 12) {
-                linkedControllerItems.add(ItemStack.EMPTY);
-            }
+        final net.minecraftforge.items.ItemStackHandler linkedControllerData = LinkedControllerItem.getFrequencyItems(item);
+        final List<ItemStack> linkedControllerItems = new ObjectArrayList<>();
+        for (int i = 0; i < Math.max(12, linkedControllerData.getSlots()); i++) {
+            linkedControllerItems.add(i < linkedControllerData.getSlots() ? linkedControllerData.getStackInSlot(i) : ItemStack.EMPTY);
+        }
+        while (linkedControllerItems.size() < 12) {
+            linkedControllerItems.add(ItemStack.EMPTY);
         }
 
         final Int2ObjectMap<LinkedTypewriterEntries.KeyboardEntry> newKeyBindings = new Int2ObjectOpenHashMap<>();

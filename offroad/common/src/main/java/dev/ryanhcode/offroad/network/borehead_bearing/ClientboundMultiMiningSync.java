@@ -13,6 +13,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
+import net.minecraft.network.codec.StreamCodecs;
 
 /**
  * A packet specialized for converting server side {@link dev.ryanhcode.offroad.handlers.server.MultiMiningServerManager.BlockBreakingData server block breaking data} into {@link ClientBlockBreakingData client block breaking data}
@@ -58,7 +59,7 @@ public final class ClientboundMultiMiningSync implements CustomPacketPayload {
 
         buf.writeInt(this.inData.size());
         for (final Map.Entry<BlockPos, BlockBreakingData> set : this.inData.entrySet()) {
-            BlockPos.STREAM_CODEC.encode(buf, set.getKey());
+            StreamCodecs.BLOCK_POS.encode(buf, set.getKey());
             set.getValue().clientAimedSerialization(buf);
         }
     }
@@ -69,7 +70,7 @@ public final class ClientboundMultiMiningSync implements CustomPacketPayload {
 
         final int size = buf.readInt();
         for (int i = 0; i < size; i++) {
-            final BlockPos pos = BlockPos.STREAM_CODEC.decode(buf);
+            final BlockPos pos = StreamCodecs.BLOCK_POS.decode(buf);
 
             final ClientBlockBreakingData clientData = new ClientBlockBreakingData();
 

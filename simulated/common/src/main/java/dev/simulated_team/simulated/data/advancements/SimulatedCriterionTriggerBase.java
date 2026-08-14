@@ -57,7 +57,7 @@ public abstract class SimulatedCriterionTriggerBase<T extends SimulatedCriterion
             final List<Listener<T>> list = new LinkedList<>();
 
             for (final Listener<T> listener : playerListeners) {
-                if(listener.trigger().test(suppliers)) {
+                if(listener.getTriggerInstance().test(suppliers)) {
                     list.add(listener);
                 }
             }
@@ -65,6 +65,13 @@ public abstract class SimulatedCriterionTriggerBase<T extends SimulatedCriterion
             list.forEach(listener -> listener.run(playerAdvancements));
         }
     }
+
+    @Override
+    public T createInstance(final com.google.gson.JsonObject json, final net.minecraft.advancements.critereon.DeserializationContext context) {
+        return this.createDefaultInstance();
+    }
+
+    protected abstract T createDefaultInstance();
 
     public abstract static class Instance implements CriterionTriggerInstance {
         private final ResourceLocation id;
@@ -74,6 +81,14 @@ public abstract class SimulatedCriterionTriggerBase<T extends SimulatedCriterion
         public ResourceLocation getId() {
             return this.id;
         }
-        protected abstract boolean test (@Nullable List<Supplier<Object>> suppliers);
+        public ResourceLocation getCriterion() {
+            return this.id;
+        }
+
+        public com.google.gson.JsonObject serializeToJson(final net.minecraft.advancements.critereon.SerializationContext context) {
+            return new com.google.gson.JsonObject();
+        }
+
+        public abstract boolean test(@Nullable List<Supplier<Object>> suppliers);
     }
 }

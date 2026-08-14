@@ -67,6 +67,6 @@ public class Offroad {
 	}
 
 	public static ResourceLocation path(final String path) {
-		return ResourceLocation.tryBuild(MOD_ID, path);
+		return new ResourceLocation(MOD_ID, path);
 	}
 }

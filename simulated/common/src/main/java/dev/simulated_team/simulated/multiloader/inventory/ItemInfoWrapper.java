@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Optional;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 /**
  * An info wrapper that holds an item type, and its associated component data. Primarly used for Simulated's multiloader inventory structure. <p>
@@ -26,7 +27,7 @@ public record ItemInfoWrapper(Item type, DataComponentPatch patchMap) {
      * @return A <b>new</b> {@link ItemInfoWrapper} containing the type and data components from the given item.
      */
     public static ItemInfoWrapper generateFromStack(final ItemStack stack) {
-        return new ItemInfoWrapper(stack.getItem(), stack.getComponentsPatch());
+        return new ItemInfoWrapper(stack.getItem(), ItemComponents.patchOf(stack));
     }
 
     /**
@@ -41,7 +42,7 @@ public record ItemInfoWrapper(Item type, DataComponentPatch patchMap) {
         for (final Map.Entry<DataComponentType<?>, Optional<?>> set : info.patchMap().entrySet()) {
             setDataComponent(set.getKey(), set.getValue(), builder);
         }
-        newStack.applyComponents(builder.build());
+        ItemComponents.apply(newStack, builder.build());
         return newStack;
     }
 

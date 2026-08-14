@@ -52,7 +52,7 @@ public final class RegistrateFlusher {
 	private static void flushRegistration(final Registry registry, final Object registration) throws ReflectiveOperationException {
 		final ResourceLocation name = (ResourceLocation) registration.getClass().getMethod("getName").invoke(registration);
 		final NonNullSupplier<?> creator = (NonNullSupplier<?>) registration.getClass().getMethod("getCreator").invoke(registration);
-		final RegistryEntry<?, ?> delegate = (RegistryEntry<?, ?>) registration.getClass().getMethod("getDelegate").invoke(registration);
+		final RegistryEntry<?> delegate = (RegistryEntry<?>) registration.getClass().getMethod("getDelegate").invoke(registration);
 
 		if (name == null || creator == null) {
 			LOGGER.warn("Skipping unreadable registrate entry {}", registration);

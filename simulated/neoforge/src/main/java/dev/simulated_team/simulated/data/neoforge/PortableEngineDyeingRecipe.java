@@ -12,7 +12,8 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.Tags;
+import net.minecraftforge.common.Tags;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class PortableEngineDyeingRecipe extends CustomRecipe {
 
@@ -46,7 +47,7 @@ public class PortableEngineDyeingRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(final CraftingInput input, final HolderLookup.Provider registries) {
+    public ItemStack assemble(final CraftingInput input) {
         ItemStack engine = ItemStack.EMPTY;
         DyeColor color = DyeColor.RED;
 
@@ -67,7 +68,7 @@ public class PortableEngineDyeingRecipe extends CustomRecipe {
         final ItemStack dyedEngine = SimBlocks.PORTABLE_ENGINES.get(color)
                 .asStack();
         if (!engine.isComponentsPatchEmpty()) {
-            dyedEngine.applyComponents(engine.getComponentsPatch());
+            ItemComponents.apply(dyedEngine, ItemComponents.patchOf(engine));
         }
 
         return dyedEngine;

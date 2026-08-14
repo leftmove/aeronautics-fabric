@@ -10,10 +10,10 @@ import dev.eriksonn.aeronautics.neoforge.content.fluids.levitite.LevititeBlendFl
 import dev.eriksonn.aeronautics.neoforge.content.fluids.levitite.LevititeBlendNeoForge;
 import dev.eriksonn.aeronautics.util.AeroColors;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.NeoForgeMod;
+import net.minecraftforge.common.ForgeMod;
 import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
+import net.minecraftforge.fluids.BaseFlowingFluid;
+import net.minecraftforge.fluids.FluidInteractionRegistry;
 
 public class AeroFluidsNeoForge {
 	public static final SimulatedRegistrate REGISTRATE = Aeronautics.getRegistrate();

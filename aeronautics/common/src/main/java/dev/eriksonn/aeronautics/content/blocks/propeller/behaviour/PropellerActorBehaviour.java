@@ -200,7 +200,7 @@ public class PropellerActorBehaviour extends BlockEntityBehaviour implements IHa
                             mojEnd,
                             ClipContext.Block.COLLIDER,
                             ClipContext.Fluid.ANY,
-                            CollisionContext.empty()
+                            net.minecraft.world.entity.EntityType.PLAYER.create(null)
                     );
 
                     if (this.getWorld().clip(ctx).getType() == HitResult.Type.MISS) {
@@ -237,7 +237,7 @@ public class PropellerActorBehaviour extends BlockEntityBehaviour implements IHa
 
     public float getParticleSpeed() {
         final float speed = this.getAirflowTickSpeed();
-        return Math.clamp(speed, -5, 5);
+        return net.minecraft.util.Mth.clamp(speed, -5, 5);
     }
 
     /**

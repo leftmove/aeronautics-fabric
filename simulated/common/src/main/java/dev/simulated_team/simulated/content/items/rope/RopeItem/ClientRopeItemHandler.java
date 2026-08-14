@@ -21,6 +21,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class ClientRopeItemHandler {
 
@@ -39,10 +40,10 @@ public class ClientRopeItemHandler {
             if (!SimItems.ROPE_COUPLING.isIn(heldItem))
                 continue;
 
-            if (!heldItem.has(SimDataComponents.ROPE_FIRST_CONNECTION))
+            if (!ItemComponents.has(heldItem, SimDataComponents.ROPE_FIRST_CONNECTION))
                 continue;
 
-            final BlockPos firstBlock = heldItem.get(SimDataComponents.ROPE_FIRST_CONNECTION);
+            final BlockPos firstBlock = ItemComponents.get(heldItem, SimDataComponents.ROPE_FIRST_CONNECTION);
 
             final HitResult rayTrace = Minecraft.getInstance().hitResult;
 

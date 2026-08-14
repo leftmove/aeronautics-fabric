@@ -143,7 +143,7 @@ public class GustEntity extends Entity implements ExtraSpawnData {
     }
 
     @Override
-    protected void defineSynchedData(final @NotNull SynchedEntityData.Builder builder) {
+    protected void defineSynchedData() {
 
     }
 

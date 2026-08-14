@@ -11,14 +11,14 @@ import foundry.veil.forge.event.ForgeVeilRegisterBlockLayersEvent;
 import foundry.veil.forge.event.ForgeVeilRegisterFixedBuffersEvent;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.client.ChunkRenderTypeSet;
+import net.minecraftforge.client.event.ClientTickEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.extensions.common.RegisterClientExtensionsEvent;
 
 import java.util.List;
 

@@ -113,11 +113,11 @@ public class MergingGlueBlockEntity extends SmartBlockEntity implements BlockEnt
     }
 
     private void breakGlue() {
-        if (this.level.getBlockState(this.getBlockPos()).is(SimBlocks.MERGING_GLUE)) {
+        if (this.level.getBlockState(this.getBlockPos()).is(SimBlocks.MERGING_GLUE.get())) {
             this.level.destroyBlock(this.getBlockPos(), true);
         }
 
-        if (this.partnerPosition != null && this.level.getBlockState(this.partnerPosition).is(SimBlocks.MERGING_GLUE)) {
+        if (this.partnerPosition != null && this.level.getBlockState(this.partnerPosition).is(SimBlocks.MERGING_GLUE.get())) {
             this.level.destroyBlock(this.partnerPosition, true);
         }
     }
@@ -184,8 +184,8 @@ public class MergingGlueBlockEntity extends SmartBlockEntity implements BlockEnt
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
+        super.write(tag, clientPacket);
 
         tag.putBoolean("Controller", this.isController);
 
@@ -195,8 +195,8 @@ public class MergingGlueBlockEntity extends SmartBlockEntity implements BlockEnt
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
+        super.read(tag, clientPacket);
 
         this.isController = tag.getBoolean("Controller");
 

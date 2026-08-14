@@ -12,13 +12,14 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record NameplateChangeNamePacket(BlockPos controllerPos, @Nullable String name) implements CustomPacketPayload {
 
     public static Type<NameplateChangeNamePacket> TYPE = new Type<>(Simulated.path("nameplate_change_name"));
 
     public static StreamCodec<RegistryFriendlyByteBuf, NameplateChangeNamePacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, NameplateChangeNamePacket::controllerPos,
+            StreamCodecs.BLOCK_POS, NameplateChangeNamePacket::controllerPos,
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8), (packet) -> Optional.ofNullable(packet.name()),
             NameplateChangeNamePacket::fromCodec);
 

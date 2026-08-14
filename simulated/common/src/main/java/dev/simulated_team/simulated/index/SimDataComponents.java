@@ -13,13 +13,14 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import net.minecraft.network.codec.StreamCodecs;
 
 public class SimDataComponents {
-    private static final RegistrationProvider<DataComponentType<?>> REGISTRY = RegistrationProvider.get(Registries.DATA_COMPONENT_TYPE, Simulated.MOD_ID);
+    private static final RegistrationProvider<DataComponentType<?>> REGISTRY = RegistrationProvider.get(DataComponentType.REGISTRY_KEY, Simulated.MOD_ID);
 
     public static final DataComponentType<BlockPos> ROPE_FIRST_CONNECTION = register(
             "rope_first_connection",
-            builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
+            builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(StreamCodecs.BLOCK_POS)
     );
 
 	public static final DataComponentType<UUID> LODESTONE_COMPASS_SUBLEVEL_TRACKER = register("lodestone_compass_tracker",
@@ -32,7 +33,7 @@ public class SimDataComponents {
 
     public static final DataComponentType<NavigationTarget> TARGET = register("target", builder -> builder
             .persistent(SimRegistries.NAVIGATION_TARGET.byNameCodec())
-            .networkSynchronized(ResourceLocation.STREAM_CODEC
+            .networkSynchronized(StreamCodecs.RESOURCE_LOCATION
                     .map(SimRegistries.NAVIGATION_TARGET::get, SimRegistries.NAVIGATION_TARGET::getKey))
     );
 

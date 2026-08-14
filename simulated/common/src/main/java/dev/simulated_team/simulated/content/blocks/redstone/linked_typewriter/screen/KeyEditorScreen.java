@@ -165,7 +165,7 @@ public class KeyEditorScreen {
         final int maxScroll = Math.max(0,
                 (this.parentScreen.getNewEntries().getSize() - 4) * (SimGUITextures.LINKED_TYPEWRITER_KEY_ENTRY.height + ENTRY_HEIGHT_PADDING_PIXELS)
         );
-        this.scroll = Math.clamp(this.scroll, 0, maxScroll);
+        this.scroll = net.minecraft.util.Mth.clamp(this.scroll, 0, maxScroll);
     }
 
     /**

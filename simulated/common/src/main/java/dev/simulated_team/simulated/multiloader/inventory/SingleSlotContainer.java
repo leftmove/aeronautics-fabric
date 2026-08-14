@@ -75,13 +75,13 @@ public abstract class SingleSlotContainer implements AbstractContainer {
     }
 
     @Override
-    public CompoundTag write(final HolderLookup.Provider provider) {
-        return this.slot.write(provider);
+    public CompoundTag write() {
+        return this.slot.write();
     }
 
     @Override
-    public void read(final HolderLookup.Provider provider, final CompoundTag nbt) {
-        this.slot.read(provider, nbt);
+    public void read(final CompoundTag nbt) {
+        this.slot.read(nbt);
     }
 
     @Override

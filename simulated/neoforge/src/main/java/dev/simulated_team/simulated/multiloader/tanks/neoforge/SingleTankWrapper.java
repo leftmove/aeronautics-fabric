@@ -2,9 +2,10 @@ package dev.simulated_team.simulated.multiloader.tanks.neoforge;
 
 import dev.simulated_team.simulated.multiloader.tanks.CFluidType;
 import dev.simulated_team.simulated.multiloader.tanks.SingleTank;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class SingleTankWrapper extends FluidTank {
     private final SingleTank tank;
@@ -19,7 +20,7 @@ public class SingleTankWrapper extends FluidTank {
     }
 
     public static CFluidType toCType(final FluidStack stack) {
-        return new CFluidType(stack.getFluid(), stack.getComponents().asPatch());
+        return new CFluidType(stack.getFluid(), ItemComponents.view(stack).asPatch());
     }
 
     @Override

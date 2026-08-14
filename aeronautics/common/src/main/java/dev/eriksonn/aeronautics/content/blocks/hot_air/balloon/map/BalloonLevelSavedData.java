@@ -23,7 +23,7 @@ public class BalloonLevelSavedData extends SavedData {
 
     private Level level;
 
-    private static BalloonLevelSavedData create(final ServerLevel level, final CompoundTag tag, final HolderLookup.Provider registries) {
+    private static BalloonLevelSavedData create(final ServerLevel level, final CompoundTag tag) {
         final BalloonLevelSavedData sd = new BalloonLevelSavedData();
 
         if (tag.contains(ID)) {
@@ -45,7 +45,7 @@ public class BalloonLevelSavedData extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(final CompoundTag tag, final HolderLookup.@NotNull Provider provider) {
+    public @NotNull CompoundTag save(final CompoundTag tag) {
         final BalloonMap map = BalloonMap.MAP.get(this.level);
         final ObjectArrayList<SavedBalloon> list = new ObjectArrayList<>(map.getUnloadedBalloons());
 

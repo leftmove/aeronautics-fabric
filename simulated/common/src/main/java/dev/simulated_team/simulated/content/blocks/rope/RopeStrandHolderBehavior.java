@@ -140,9 +140,12 @@ public class RopeStrandHolderBehavior extends BlockEntityBehaviour {
 
     public VeilPacketManager.PacketSink getStrandPacketSink() {
         final List<ServerPlayer> players = this.getStrandTrackingPlayers();
-        return packet -> {
+        return (packet, others) -> {
             for (final ServerPlayer player : players) {
-                player.connection.send(packet);
+                VeilPacketManager.dispatch(player, packet);
+                for (final net.minecraft.network.protocol.common.custom.CustomPacketPayload extra : others) {
+                    VeilPacketManager.dispatch(player, extra);
+                }
             }
         };
     }
@@ -369,7 +372,7 @@ public class RopeStrandHolderBehavior extends BlockEntityBehaviour {
                 final ItemStack stack = new ItemStack(SimItems.ROPE_COUPLING.get());
 
                 if (player != null) {
-                    if (!player.hasInfiniteMaterials() || !player.getInventory().contains(stack)) {
+                    if (!player.getAbilities().instabuild || !player.getInventory().contains(stack)) {
                         player.getInventory().placeItemBackInInventory(stack);
                     }
                 } else {
@@ -429,8 +432,8 @@ public class RopeStrandHolderBehavior extends BlockEntityBehaviour {
     }
 
     @Override
-    public void write(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.write(nbt, registries, clientPacket);
+    public void write(final CompoundTag nbt, final boolean clientPacket) {
+        super.write(nbt, clientPacket);
         nbt.putBoolean("OwnStrand", this.strandOwner);
 
         if (this.attachedRopeID != null) {
@@ -439,13 +442,13 @@ public class RopeStrandHolderBehavior extends BlockEntityBehaviour {
 
         final ServerRopeStrand strand = this.getOwnedStrand();
         if (strand != null && this.strandOwner && !clientPacket) {
-            nbt.put("Strand", ServerRopeStrand.CODEC.encodeStart(NbtOps.INSTANCE, strand).getOrThrow());
+            nbt.put("Strand", ServerRopeStrand.CODEC.encodeStart(NbtOps.INSTANCE, strand).getOrThrow(false, s -> {}));
         }
     }
 
     @Override
-    public void read(final CompoundTag nbt, final HolderLookup.Provider registries, final boolean clientPacket) {
-        super.read(nbt, registries, clientPacket);
+    public void read(final CompoundTag nbt, final boolean clientPacket) {
+        super.read(nbt, clientPacket);
         this.strandOwner = nbt.getBoolean("OwnStrand");
 
         if (nbt.contains("HasRopeAttached")) {
@@ -553,7 +556,7 @@ public class RopeStrandHolderBehavior extends BlockEntityBehaviour {
      */
     private void loadServerStrand(final CompoundTag tag) {
         final DataResult<Pair<ServerRopeStrand, Tag>> result = ServerRopeStrand.CODEC.decode(NbtOps.INSTANCE, tag);
-        final ServerRopeStrand strand = result.getOrThrow().getFirst();
+        final ServerRopeStrand strand = result.getOrThrow(false, s -> {}).getFirst();
 
         this.ownedServerStrand = strand;
         this.queuedLevelAddition = true;

@@ -10,11 +10,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.codec.StreamCodecs;
 
 public class ConfigureModulatingLinkedRecieverPacket extends SimBlockEntityConfigurationPacket<ModulatingLinkedReceiverBlockEntity> {
     public static final Type<ConfigureModulatingLinkedRecieverPacket> TYPE = new Type<>(Simulated.path("configure_modulating_linked_reciever"));
     public static final StreamCodec<ByteBuf, ConfigureModulatingLinkedRecieverPacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, SimBlockEntityConfigurationPacket::getPos,
+            StreamCodecs.BLOCK_POS, SimBlockEntityConfigurationPacket::getPos,
             ByteBufCodecs.INT, ConfigureModulatingLinkedRecieverPacket::getMinRange,
             ByteBufCodecs.INT, ConfigureModulatingLinkedRecieverPacket::getMaxRange,
             ConfigureModulatingLinkedRecieverPacket::new);

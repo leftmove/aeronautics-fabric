@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin {
@@ -23,19 +24,19 @@ public abstract class ItemEntityMixin {
 
 		final ItemStack item = entity.getItem();
 		final Level level = entity.level();
-		if(item.has(AeroDataComponents.CONVERTER)) {
-			final Converter converter = item.get(AeroDataComponents.CONVERTER);
+		if(ItemComponents.has(item, AeroDataComponents.CONVERTER)) {
+			final Converter converter = ItemComponents.get(item, AeroDataComponents.CONVERTER);
 			Converter.tick(level, entity, item, converter);
 		}
 
 		if(level.dimension().equals(Level.OVERWORLD) && item.is(AeroTags.ItemTags.CONVERTS_TO_CLOUD_SKIPPER)) {
 			// magic cloud number, i have no idea where its actually defined
-			if(entity.getY() >= 192 && entity.getY() <= 196 && !item.has(AeroDataComponents.CONVERTER)) {
+			if(entity.getY() >= 192 && entity.getY() <= 196 && !ItemComponents.has(item, AeroDataComponents.CONVERTER)) {
 				final DataComponentPatch patch = DataComponentPatch.builder()
 						.set(AeroDataComponents.CONVERTER, Converter.cloudSkipper())
 						.set(AeroDataComponents.LEVITATING, Levitating.DEFAULT)
 						.build();
-				item.applyComponents(patch);
+				ItemComponents.apply(item, patch);
 				entity.setDeltaMovement(entity.getDeltaMovement().scale(0.5f));
 			}
 		}

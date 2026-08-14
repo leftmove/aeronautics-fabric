@@ -1,18 +1,18 @@
 plugins {
-    id 'net.neoforged.moddev'
+    id 'net.neoforged.moddev.legacyforge'
 }
 
-def neoforgeProjects = rootProject.subprojects.findAll { it.path.endsWith(":neoforge") }
+def forgeProjects = rootProject.subprojects.findAll { it.path.endsWith(":neoforge") }
 
-neoforgeProjects.each { neoforgeProject ->
-    evaluationDependsOn(neoforgeProject.path)
+forgeProjects.each { forgeProject ->
+    evaluationDependsOn(forgeProject.path)
 }
 
-neoForge {
-    version = neoforge_version
+legacyForge {
+    version = forge_full_version
 
-    neoforgeProjects.forEach { neoforgeProject ->
-        def parentName = neoforgeProject.parent.name
+    forgeProjects.forEach { forgeProject ->
+        def parentName = forgeProject.parent.name
         def commonProject = project(":$parentName:common")
         def at = commonProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -28,18 +28,12 @@ neoForge {
 
     runs {
         configureEach {
-            ideName = "NeoForge ${it.name.capitalize()} (${project.path})" // Unify the run config names with fabric
+            ideName = "Forge ${it.name.capitalize()} (${project.path})"
         }
 
         client {
             client()
             gameDirectory = project.file('runs/client')
-        }
-
-        clientAuth {
-            client()
-            gameDirectory = project.file('runs/client')
-            devLogin = true
         }
 
         server {
@@ -50,10 +44,10 @@ neoForge {
     }
 
     mods {
-        neoforgeProjects.forEach { neoforgeProject ->
-            def parentName = neoforgeProject.parent.name
+        forgeProjects.forEach { forgeProject ->
+            def parentName = forgeProject.parent.name
             "$parentName" {
-                sourceSet neoforgeProject.sourceSets.main
+                sourceSet forgeProject.sourceSets.main
             }
         }
     }
@@ -61,13 +55,13 @@ neoForge {
 
 tasks.register("runDataAll") {
     group = "mod development"
-    neoforgeProjects.forEach { neoforgeProject -> 
-        dependsOn(neoforgeProject.tasks.runData)
+    forgeProjects.forEach { forgeProject ->
+        dependsOn(forgeProject.tasks.runData)
     }
 }
 
 dependencies {
-    neoforgeProjects.forEach {
+    forgeProjects.forEach {
         def parentName = it.parent.name
         implementation(it) {
             capabilities {

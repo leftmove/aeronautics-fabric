@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev'
-    id "me.modmuss50.mod-publish-plugin" version "1.1.0" // https://github.com/modmuss50/mod-publish-plugin
+    id 'net.neoforged.moddev.legacyforge'
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 }
 
 def modProps = new Properties()
@@ -23,8 +23,8 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(java_version)
 }
 
-neoForge {
-    version = neoforge_version
+legacyForge {
+    version = forge_full_version
 
     parchment {
         minecraftVersion = parchment_minecraft
@@ -62,6 +62,8 @@ processResources {
             'mod_id'                       : mod_id,
             'license'                      : license,
             'description'                  : project.description,
+            'forge_version'                : forge_version,
+            'forge_loader_version_range'   : forge_loader_version_range,
             'neoforge_version'             : neoforge_version,
             'neoforge_loader_version_range': neoforge_loader_version_range,
             'sable_mod_version_range'            : sable_mod_version_range,
@@ -97,7 +99,7 @@ publishMods {
 
     version = "$project.version+mc$minecraft_version"
     displayName = "$mod_name $project.version for mc$minecraft_version"
-    modLoaders.add("neoforge")
+    modLoaders.add("forge")
 
     curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")

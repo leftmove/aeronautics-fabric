@@ -11,9 +11,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.codec.StreamCodecs;
 
 public record ClientboundRopeStoppedPacket(BlockPos ownerPos) implements CustomPacketPayload {
-    public static final StreamCodec<ByteBuf, ClientboundRopeStoppedPacket> CODEC = BlockPos.STREAM_CODEC.map(ClientboundRopeStoppedPacket::new, ClientboundRopeStoppedPacket::ownerPos);
+    public static final StreamCodec<ByteBuf, ClientboundRopeStoppedPacket> CODEC = StreamCodecs.BLOCK_POS.map(ClientboundRopeStoppedPacket::new, ClientboundRopeStoppedPacket::ownerPos);
     public static Type<ClientboundRopeStoppedPacket> TYPE = new Type<>(Simulated.path("rope_stopped"));
 
     public void handle(final ClientPacketContext context) {

@@ -46,6 +46,8 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.Optional;
+import dev.simulated_team.simulated.compat.ItemComponents;
+import dev.simulated_team.simulated.compat.Mc1201;
 
 public class HoneyGlueClientHandler implements InteractCallback {
     private State currentState = State.UNBOUND;
@@ -196,7 +198,7 @@ public class HoneyGlueClientHandler implements InteractCallback {
                 return;
             }
 
-            Outliner.getInstance().showAABB("HoneyGlue", AABB.encapsulatingFullBlocks(bhr.getBlockPos(), this.selectedPos))
+            Outliner.getInstance().showAABB("HoneyGlue", Mc1201.encapsulatingFullBlocks(bhr.getBlockPos(), this.selectedPos))
                     .colored(color)
                     .withFaceTexture(SimSpecialTextures.HONEY_GLUE)
                     .disableLineNormals()
@@ -207,7 +209,7 @@ public class HoneyGlueClientHandler implements InteractCallback {
     public void updateHovered() {
         final Player player = SimDistUtil.getClientPlayer();
         final Vec3 baseOrigin = player.getEyePosition();
-        final Vec3 baseTarget = RaycastHelper.getTraceTarget(player, player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) * 5, baseOrigin);
+        final Vec3 baseTarget = RaycastHelper.getTraceTarget(player, player.getBlockReach() * 5, baseOrigin);
 
         HoneyGlueEntity closestGlue = null;
         double distance = Double.MAX_VALUE;
@@ -275,15 +277,15 @@ public class HoneyGlueClientHandler implements InteractCallback {
         if (this.currentState == State.BINDING) {
             String key = "super_glue.click_to_confirm";
 
-            final DataComponentMap components = honeyGlueStack.getComponents();
-            final AABB bb = AABB.encapsulatingFullBlocks(this.selectedPos, hoveredPos);
+            final DataComponentMap components = ItemComponents.view(honeyGlueStack);
+            final AABB bb = Mc1201.encapsulatingFullBlocks(this.selectedPos, hoveredPos);
             boolean showDimensions = true;
 
             if (HoneyGlueMaxSizing.checkBBMax(bb)) {
                 key = "super_glue.too_far";
                 color = SimColors.DISCARDABLE_ORANGE;
             } else {
-                if (!components.has(DataComponents.MAX_DAMAGE)) {
+                if (!ItemComponents.has(honeyGlueStack, DataComponents.MAX_DAMAGE)) {
                     key = "super_glue.not_enough";
                     showDimensions = false;
                     color = SimColors.DISCARDABLE_ORANGE;
@@ -312,10 +314,10 @@ public class HoneyGlueClientHandler implements InteractCallback {
 
         final ClipContext clipContext = new ClipContext(
                 player.getEyePosition(),
-                player.getEyePosition().add(player.getViewVector(SimDistUtil.getPartialTick()).scale(player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE))),
+                player.getEyePosition().add(player.getViewVector(SimDistUtil.getPartialTick()).scale(player.getBlockReach())),
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
-                CollisionContext.empty()
+                net.minecraft.world.entity.EntityType.PLAYER.create(null)
         );
 
         return level.clip(clipContext);
@@ -364,8 +366,8 @@ public class HoneyGlueClientHandler implements InteractCallback {
 
     @Nullable
     public InteractionHand getHoneyGlueHand(final Player player) {
-        return player.getItemInHand(InteractionHand.MAIN_HAND).is(SimItems.HONEY_GLUE) ? InteractionHand.MAIN_HAND :
-                player.getItemInHand(InteractionHand.OFF_HAND).is(SimItems.HONEY_GLUE) ? InteractionHand.OFF_HAND :
+        return player.getItemInHand(InteractionHand.MAIN_HAND).is(SimItems.HONEY_GLUE.get()) ? InteractionHand.MAIN_HAND :
+                player.getItemInHand(InteractionHand.OFF_HAND).is(SimItems.HONEY_GLUE.get()) ? InteractionHand.OFF_HAND :
                         null;
     }
 

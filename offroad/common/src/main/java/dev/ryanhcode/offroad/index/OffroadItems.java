@@ -14,12 +14,13 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class OffroadItems {
     private static final SimulatedRegistrate REGISTRATE = Offroad.getRegistrate();
 
     public static final ItemEntry<TireItem> SMALL_TIRE = REGISTRATE.item("small_tire", TireItem::new)
-            .properties(x -> x.component(OffroadDataComponents.TIRE, TireLike.SMALL_TIRE))
+            .properties(x -> ItemComponents.with(x, OffroadDataComponents.TIRE, TireLike.SMALL_TIRE))
             .recipe((c, p) -> ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get(), 1)
                     .requires(AllBlocks.SHAFT)
                     .requires(Items.DRIED_KELP)
@@ -29,39 +30,39 @@ public class OffroadItems {
             .register();
 
     public static final ItemEntry<TireItem> TIRE = REGISTRATE.item("tire", TireItem::new)
-            .properties(x -> x.component(OffroadDataComponents.TIRE, TireLike.TIRE))
+            .properties(x -> ItemComponents.with(x, OffroadDataComponents.TIRE, TireLike.TIRE))
             .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC, c.get(), 1)
                     .pattern(" K ")
                     .pattern("KSK")
                     .pattern(" K ")
-                    .define('K', Items.DRIED_KELP.asItem())
-                    .define('S', AllBlocks.SHAFT.asItem())
+                    .define('K', Items.DRIED_KELP.get().asItem())
+                    .define('S', AllBlocks.SHAFT.get().asItem())
                     .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.SHAFT.get()))
                     .save(p))
             .model(AssetLookup.itemModelWithPartials())
             .register();
 
     public static final ItemEntry<TireItem> LARGE_TIRE = REGISTRATE.item("large_tire", TireItem::new)
-            .properties(x -> x.component(OffroadDataComponents.TIRE, TireLike.LARGE_TIRE))
+            .properties(x -> ItemComponents.with(x, OffroadDataComponents.TIRE, TireLike.LARGE_TIRE))
             .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC, c.get(), 1)
                     .pattern(" B ")
                     .pattern("BSB")
                     .pattern(" B ")
-                    .define('B', AllBlocks.BELT.asItem())
-                    .define('S', AllBlocks.SHAFT.asItem())
+                    .define('B', AllBlocks.BELT.get().asItem())
+                    .define('S', AllBlocks.SHAFT.get().asItem())
                     .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.SHAFT.get()))
                     .save(p))
             .model(AssetLookup.itemModelWithPartials())
             .register();
 
     public static final ItemEntry<TireItem> MONSTROUS_TIRE = REGISTRATE.item("monstrous_tire", TireItem::new)
-            .properties(x -> x.component(OffroadDataComponents.TIRE, TireLike.MONSTROUS_TIRE))
+            .properties(x -> ItemComponents.with(x, OffroadDataComponents.TIRE, TireLike.MONSTROUS_TIRE))
             .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.MISC, c.get(), 1)
                     .pattern(" K ")
                     .pattern("KSK")
                     .pattern(" K ")
-                    .define('K', Blocks.DRIED_KELP_BLOCK.asItem())
-                    .define('S', AllBlocks.SHAFT.asItem())
+                    .define('K', Blocks.DRIED_KELP_BLOCK.get().asItem())
+                    .define('S', AllBlocks.SHAFT.get().asItem())
                     .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.SHAFT.get()))
                     .save(p))
             .model(AssetLookup.itemModelWithPartials())

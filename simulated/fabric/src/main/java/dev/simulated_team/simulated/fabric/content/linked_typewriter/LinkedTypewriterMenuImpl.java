@@ -2,16 +2,16 @@ package dev.simulated_team.simulated.fabric.content.linked_typewriter;
 
 import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.LinkedTypewriterBlockEntity;
 import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.screen.LinkedTypewriterMenuCommon;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class LinkedTypewriterMenuImpl extends LinkedTypewriterMenuCommon {
 
-	public LinkedTypewriterMenuImpl(final MenuType<?> type, final int id, final Inventory inv, final RegistryFriendlyByteBuf extraData) {
+	public LinkedTypewriterMenuImpl(final MenuType<?> type, final int id, final Inventory inv, final FriendlyByteBuf extraData) {
 		super(type, id, inv, extraData);
 	}
 

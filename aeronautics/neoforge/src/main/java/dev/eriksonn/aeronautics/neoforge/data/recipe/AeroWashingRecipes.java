@@ -17,7 +17,7 @@ public class AeroWashingRecipes extends WashingRecipeGen {
 
     GeneratedRecipe ENVELOPE_WASHING = this.create("envelope_washing", b -> b
             .require(AeroTags.ItemTags.SHAFTLESS_ENVELOPE)
-            .output(AeroBlocks.WHITE_ENVELOPE_BLOCK.asItem())
+            .output(AeroBlocks.WHITE_ENVELOPE_BLOCK.get().asItem())
     );
 
     @Override

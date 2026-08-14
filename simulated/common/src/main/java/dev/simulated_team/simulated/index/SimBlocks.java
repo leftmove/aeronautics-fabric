@@ -146,7 +146,7 @@ public class SimBlocks {
                     .initialProperties(SharedProperties::netheriteMetal)
                     .properties(properties -> properties
                             .destroyTime(5f))
-                    .loot((p, b) -> p.dropOther(b, SWIVEL_BEARING.get()))
+                    .loot((p, b) -> p.m_247577_(b, p.createSingleItemTable(SWIVEL_BEARING.get())))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .register();
 
@@ -532,7 +532,7 @@ public class SimBlocks {
                             .pattern(" A ")
                             .pattern(" C ")
                             .pattern(" B ")
-                            .define('A', AllTags.commonItemTag("gems/amethyst"))
+                            .define('A', AllTags.forgeItemTag("gems/amethyst"))
                             .define('B', AllBlocks.BRASS_CASING)
                             .define('C', AllItems.ELECTRON_TUBE)
                             .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.BRASS_CASING))
@@ -818,7 +818,7 @@ public class SimBlocks {
                             .texture("1", p.modLoc("block/symmetric_sail/side_" + colorName))
                             .texture("particle", Create.asResource("block/sail/canvas_" + colorName))))
                     .tag(BlockTags.MINEABLE_WITH_AXE, AllTags.AllBlockTags.WINDMILL_SAILS.tag, SimTags.Blocks.SYMMETRIC_SAILS)
-                    .loot((p, b) -> p.dropOther(b, WHITE_SYMMETRIC_SAIL.asItem()))
+                    .loot((p, b) -> p.m_247577_(b, p.createSingleItemTable(WHITE_SYMMETRIC_SAIL.get())))
                     .register();
         }
     });
@@ -876,7 +876,7 @@ public class SimBlocks {
                                     prov.modLoc("block/spring/" + (blockState.getValue(SpringBlock.SIZE) == SpringBlock.Size.MEDIUM ? "" : (blockState.getValue(SpringBlock.SIZE).getSerializedName() + "_")) + "block"))))
                     .tag(AllTags.AllBlockTags.SAFE_NBT.tag, AllTags.AllBlockTags.BRITTLE.tag, AllTags.AllBlockTags.NON_MOVABLE.tag, SimTags.Blocks.LIGHT)
                     .loot((tables, block) -> {
-                        tables.add(block, tables.createSingleItemTable(SimItems.SPRING));
+                        tables.m_247577_(block, tables.createSingleItemTable(SimItems.SPRING.get()));
                     })
                     .register();
 

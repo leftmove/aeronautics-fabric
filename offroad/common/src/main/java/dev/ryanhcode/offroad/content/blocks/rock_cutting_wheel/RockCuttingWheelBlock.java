@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class RockCuttingWheelBlock extends AbstractDirectionalAxisBlock implements IBE<RockCuttingWheelBlockEntity> {
-    public static final MapCodec<RockCuttingWheelBlock> CODEC = simpleCodec(RockCuttingWheelBlock::new);
 
     static {
         BlockMovementChecksImpl.registerAttachedCheck((state, world, pos, direction) -> {
@@ -38,11 +37,6 @@ public class RockCuttingWheelBlock extends AbstractDirectionalAxisBlock implemen
 
     public RockCuttingWheelBlock(final Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override

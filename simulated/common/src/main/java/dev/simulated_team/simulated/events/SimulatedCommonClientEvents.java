@@ -17,16 +17,17 @@ import dev.simulated_team.simulated.util.click_interactions.InteractCallback;
 import dev.simulated_team.simulated.util.click_interactions.InteractCallback.Result;
 import dev.simulated_team.simulated.util.hold_interaction.HoldInteractionManager;
 import dev.simulated_team.simulated.util.hold_interaction.HoldTipManager;
+import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -37,7 +38,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4fc;
+import org.joml.Matrix4f;
 
 import java.util.List;
 
@@ -103,8 +104,8 @@ public class SimulatedCommonClientEvents {
         return Result.empty();
     }
 
-    public static void onRenderLevelStage(final VeilRenderLevelStageEvent.Stage stage, final LevelRenderer levelRenderer, final MultiBufferSource.BufferSource bufferSource, final MatrixStack matrixStack, final Matrix4fc matrix4fc, final Matrix4fc matrix4fc1, final int i, final DeltaTracker deltaTracker, final Camera camera, final Frustum frustum) {
-        PhysicsStaffRenderHandler.renderSelectionBox(stage, levelRenderer, bufferSource, matrixStack, matrix4fc, matrix4fc1, i, deltaTracker, camera, frustum);
+    public static void onRenderLevelStage(final VeilRenderLevelStageEvent.Stage stage, final LevelRenderer levelRenderer, final MultiBufferSource.BufferSource bufferSource, final PoseStack poseStack, final Matrix4f projectionMatrix, final int renderTick, final float partialTicks, final Camera camera, final Frustum frustum) {
+        PhysicsStaffRenderHandler.renderSelectionBox(stage, levelRenderer, bufferSource, VeilRenderBridge.create(poseStack), projectionMatrix, renderTick, partialTicks, camera, frustum);
     }
 
     public static void onAfterKeyPress(final int key, final int scanCode, final int action, final int modifiers) {

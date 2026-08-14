@@ -9,7 +9,7 @@ import dev.eriksonn.aeronautics.content.blocks.propeller.small.smart_propeller.S
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 
 public class AeroBlockStateGen {
 	public static <T extends DirectionalAxisKineticBlock> void directionalPoweredAxisBlockstate(final DataGenContext<Block, T> ctx, final RegistrateBlockstateProvider prov) {

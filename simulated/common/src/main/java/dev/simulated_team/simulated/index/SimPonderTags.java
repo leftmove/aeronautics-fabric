@@ -28,123 +28,123 @@ public class SimPonderTags {
 
         helper.registerTag(NAVIGATION_ITEMS)
                 .addToIndex()
-                .item(SimBlocks.NAVIGATION_TABLE.asItem())
+                .item(SimBlocks.NAVIGATION_TABLE.get().asItem())
                 .title("Navigation Items")
                 .description("Components which offer a destination to a Navigation Table")
                 .register();
 
         itemHelper.addToTag(NAVIGATION_ITEMS)
-                .add(SimBlocks.NAVIGATION_TABLE.asItem()) // why create... why
+                .add(SimBlocks.NAVIGATION_TABLE.get().asItem()) // why create... why
                 .add(Items.COMPASS)
                 .add(Blocks.LODESTONE)
                 .add(Items.RECOVERY_COMPASS)
                 .add(Items.FILLED_MAP)
-                .add(SimBlocks.REDSTONE_MAGNET.asItem());
+                .add(SimBlocks.REDSTONE_MAGNET.get().asItem());
 
         helper.registerTag(PHYSICS_BEHAVIOR)
                 .addToIndex()
-                .item(SimBlocks.PHYSICS_ASSEMBLER.asItem())
+                .item(SimBlocks.PHYSICS_ASSEMBLER.get().asItem())
                 .title("Physics Behavior")
                 .description("Components which have unique physics behavior or interactions")
                 .register();
 
         itemHelper.addToTag(PHYSICS_BEHAVIOR)
-                .add(SimBlocks.PHYSICS_ASSEMBLER.asItem()) // why create... why
-                .add(SimBlocks.SWIVEL_BEARING.asItem())
-                .add(AllBlocks.STICKER.asItem())
-                .add(AllBlocks.WEIGHTED_EJECTOR.asItem())
-                .add(SimBlocks.DOCKING_CONNECTOR.asItem())
-                .add(SimBlocks.REDSTONE_MAGNET.asItem())
-                .add(AllBlocks.SAIL.asItem())
-                .add(SimBlocks.WHITE_SYMMETRIC_SAIL.asItem())
-                .add(AllItems.BELT_CONNECTOR.asItem())
-                .add(SimItems.SPRING.asItem())
-                .add(SimItems.ROPE_COUPLING.asItem());
+                .add(SimBlocks.PHYSICS_ASSEMBLER.get().asItem()) // why create... why
+                .add(SimBlocks.SWIVEL_BEARING.get().asItem())
+                .add(AllBlocks.STICKER.get().asItem())
+                .add(AllBlocks.WEIGHTED_EJECTOR.get().asItem())
+                .add(SimBlocks.DOCKING_CONNECTOR.get().asItem())
+                .add(SimBlocks.REDSTONE_MAGNET.get().asItem())
+                .add(AllBlocks.SAIL.get().asItem())
+                .add(SimBlocks.WHITE_SYMMETRIC_SAIL.get().asItem())
+                .add(AllItems.BELT_CONNECTOR.get().asItem())
+                .add(SimItems.SPRING.get())
+                .add(SimItems.ROPE_COUPLING.get());
 
         helper.registerTag(THRUST_PRODUCING_BLOCKS)
                 .addToIndex()
-                .item(AllBlocks.ENCASED_FAN.asItem())
+                .item(AllBlocks.ENCASED_FAN.get().asItem())
                 .title("Thrust Producing Blocks")
                 .description("Components which produce thrust on Simulated Contraptions")
                 .register();
 
         itemHelper.addToTag(THRUST_PRODUCING_BLOCKS)
-                .add(AllBlocks.ENCASED_FAN.asItem())
-                .add(AllBlocks.NOZZLE.asItem());
+                .add(AllBlocks.ENCASED_FAN.get().asItem())
+                .add(AllBlocks.NOZZLE.get().asItem());
 
         helper.registerTag(PHYSICS_SENSORS)
                 .addToIndex()
-                .item(SimBlocks.OPTICAL_SENSOR.asItem())
+                .item(SimBlocks.OPTICAL_SENSOR.get().asItem())
                 .title("Physics Sensor Blocks")
                 .description("Components which provide dynamic information about the world around them")
                 .register();
 
         itemHelper.addToTag(PHYSICS_SENSORS)
-                .add(SimBlocks.ALTITUDE_SENSOR.asItem())
-                .add(SimBlocks.VELOCITY_SENSOR.asItem())
-                .add(SimBlocks.GIMBAL_SENSOR.asItem())
-                .add(SimBlocks.OPTICAL_SENSOR.asItem())
-                .add(SimBlocks.NAVIGATION_TABLE.asItem())
-                .add(SimBlocks.LASER_SENSOR.asItem());
+                .add(SimBlocks.ALTITUDE_SENSOR.get().asItem())
+                .add(SimBlocks.VELOCITY_SENSOR.get().asItem())
+                .add(SimBlocks.GIMBAL_SENSOR.get().asItem())
+                .add(SimBlocks.OPTICAL_SENSOR.get().asItem())
+                .add(SimBlocks.NAVIGATION_TABLE.get().asItem())
+                .add(SimBlocks.LASER_SENSOR.get().asItem());
 
         // Create Tags
 
         itemHelper.addToTag(AllCreatePonderTags.KINETIC_RELAYS)
-                .add(SimBlocks.DIRECTIONAL_GEARSHIFT.asItem())
-                .add(SimBlocks.TORSION_SPRING.asItem())
-                .add(SimBlocks.ANALOG_TRANSMISSION.asItem());
+                .add(SimBlocks.DIRECTIONAL_GEARSHIFT.get().asItem())
+                .add(SimBlocks.TORSION_SPRING.get().asItem())
+                .add(SimBlocks.ANALOG_TRANSMISSION.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.KINETIC_SOURCES)
-                .add(SimBlocks.STEERING_WHEEL.asItem())
+                .add(SimBlocks.STEERING_WHEEL.get().asItem())
                 .add(SimBlocks.RED_PORTABLE_ENGINE.asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.KINETIC_APPLIANCES)
-                .add(SimBlocks.SWIVEL_BEARING.asItem())
-                .add(SimBlocks.ROPE_WINCH.asItem());
+                .add(SimBlocks.SWIVEL_BEARING.get().asItem())
+                .add(SimBlocks.ROPE_WINCH.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.FLUIDS)
-                .add(SimBlocks.DOCKING_CONNECTOR.asItem());
+                .add(SimBlocks.DOCKING_CONNECTOR.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.LOGISTICS)
-                .add(SimBlocks.AUGER_SHAFT.asItem())
-                .add(SimBlocks.AUGER_COG.asItem())
-                .add(SimBlocks.DOCKING_CONNECTOR.asItem());
+                .add(SimBlocks.AUGER_SHAFT.get().asItem())
+                .add(SimBlocks.AUGER_COG.get().asItem())
+                .add(SimBlocks.DOCKING_CONNECTOR.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.REDSTONE)
-                .add(SimBlocks.THROTTLE_LEVER.asItem())
-                .add(SimBlocks.LINKED_TYPEWRITER.asItem())
-                .add(SimBlocks.DIRECTIONAL_LINKED_RECEIVER.asItem())
-                .add(SimBlocks.MODULATING_LINKED_RECEIVER.asItem())
-                .add(SimBlocks.REDSTONE_ACCUMULATOR.asItem())
-                .add(SimBlocks.REDSTONE_INDUCTOR.asItem());
+                .add(SimBlocks.THROTTLE_LEVER.get().asItem())
+                .add(SimBlocks.LINKED_TYPEWRITER.get().asItem())
+                .add(SimBlocks.DIRECTIONAL_LINKED_RECEIVER.get().asItem())
+                .add(SimBlocks.MODULATING_LINKED_RECEIVER.get().asItem())
+                .add(SimBlocks.REDSTONE_ACCUMULATOR.get().asItem())
+                .add(SimBlocks.REDSTONE_INDUCTOR.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.MOVEMENT_ANCHOR)
-                .add(SimBlocks.PHYSICS_ASSEMBLER.asItem())
-                .add(SimBlocks.SWIVEL_BEARING.asItem());
+                .add(SimBlocks.PHYSICS_ASSEMBLER.get().asItem())
+                .add(SimBlocks.SWIVEL_BEARING.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.SAILS)
-                .add(SimBlocks.WHITE_SYMMETRIC_SAIL.asItem());
+                .add(SimBlocks.WHITE_SYMMETRIC_SAIL.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.ARM_TARGETS)
                 .add(SimBlocks.RED_PORTABLE_ENGINE.asItem())
-                .add(SimBlocks.NAVIGATION_TABLE.asItem());
+                .add(SimBlocks.NAVIGATION_TABLE.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.DISPLAY_SOURCES)
-                .add(SimBlocks.AUGER_SHAFT.asItem())
-                .add(SimBlocks.AUGER_COG.asItem())
+                .add(SimBlocks.AUGER_SHAFT.get().asItem())
+                .add(SimBlocks.AUGER_COG.get().asItem())
                 .add(SimBlocks.RED_PORTABLE_ENGINE.asItem())
-                .add(SimBlocks.ALTITUDE_SENSOR.asItem())
-                .add(SimBlocks.VELOCITY_SENSOR.asItem())
-                .add(SimBlocks.GIMBAL_SENSOR.asItem())
-                .add(SimBlocks.OPTICAL_SENSOR.asItem())
-                .add(SimBlocks.NAVIGATION_TABLE.asItem())
-                .add(SimBlocks.DOCKING_CONNECTOR.asItem())
-                .add(SimBlocks.LINKED_TYPEWRITER.asItem());
+                .add(SimBlocks.ALTITUDE_SENSOR.get().asItem())
+                .add(SimBlocks.VELOCITY_SENSOR.get().asItem())
+                .add(SimBlocks.GIMBAL_SENSOR.get().asItem())
+                .add(SimBlocks.OPTICAL_SENSOR.get().asItem())
+                .add(SimBlocks.NAVIGATION_TABLE.get().asItem())
+                .add(SimBlocks.DOCKING_CONNECTOR.get().asItem())
+                .add(SimBlocks.LINKED_TYPEWRITER.get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.DISPLAY_TARGETS)
-                .add(SimBlocks.NAMEPLATES.get(DyeColor.WHITE).asItem());
+                .add(SimBlocks.NAMEPLATES.get(DyeColor.WHITE).get().asItem());
 
         itemHelper.addToTag(AllCreatePonderTags.THRESHOLD_SWITCH_TARGETS)
-                .add(SimBlocks.ROPE_WINCH.asItem());
+                .add(SimBlocks.ROPE_WINCH.get().asItem());
     }
 }

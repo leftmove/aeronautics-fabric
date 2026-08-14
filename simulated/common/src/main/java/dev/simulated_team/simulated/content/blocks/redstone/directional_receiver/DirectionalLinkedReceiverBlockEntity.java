@@ -40,7 +40,7 @@ public class DirectionalLinkedReceiverBlockEntity extends AbstractLinkedReceiver
         final double angle = Math.asin(dot);
         this.angleToClosestLink = Math.acos(dot);
 
-        final double strengthScalar = Math.clamp((angle / Math.PI) * 2, 0, 1);
+        final double strengthScalar = net.minecraft.util.Mth.clamp((angle / Math.PI) * 2, 0, 1);
         return new Tuple<>((int) Math.ceil(strengthScalar * transmittedStrength), Math.toDegrees(angle));
     }
 

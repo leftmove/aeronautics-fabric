@@ -1,7 +1,5 @@
 package dev.simulated_team.simulated.content.blocks.handle;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.BlockMovementChecks;
@@ -15,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -35,14 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 import static net.minecraft.core.Direction.Axis.Y;
+import net.minecraft.world.InteractionResult;
 
 public class HandleBlock extends AbstractDirectionalAxisBlock implements IBE<HandleBlockEntity>, IWrenchable {
-
-    public static final MapCodec<HandleBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            propertiesCodec(),
-            DyeColor.CODEC.fieldOf("color").forGetter(HandleBlock::getColor),
-            StringRepresentable.fromValues(Variant::values).fieldOf("variant").forGetter(HandleBlock::getVariant)
-    ).apply(instance, HandleBlock::new));
 
     private static final HandleShaper SHAPER = HandleShaper.make();
 
@@ -73,22 +66,23 @@ public class HandleBlock extends AbstractDirectionalAxisBlock implements IBE<Han
 
     public static boolean canInteractWithHandle(final Player player) {
         final ItemStack mainHandItem = player.getMainHandItem();
-        return mainHandItem.isEmpty() || mainHandItem.is(AllItems.EXTENDO_GRIP);
+        return mainHandItem.isEmpty() || AllItems.EXTENDO_GRIP.isIn(mainHandItem);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack itemStack, final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos, final Player player, final InteractionHand interactionHand, final BlockHitResult blockHitResult) {
+        final ItemStack itemStack = player.getItemInHand(interactionHand);
         if (AllItems.WRENCH.isIn(itemStack))
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
 
         if (canInteractWithHandle(player)) {
             if (level.isClientSide && player.isLocalPlayer()) {
                 SimClickInteractions.HANDLE_HANDLER.startHold(level, player, blockPos);
             }
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -121,12 +115,12 @@ public class HandleBlock extends AbstractDirectionalAxisBlock implements IBE<Han
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(final BlockState state) {
+    public boolean hasAnalogOutputSignal(final BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(final BlockState state, final Level level, final BlockPos pos) {
+    public int getAnalogOutputSignal(final BlockState state, final Level level, final BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof final HandleBlockEntity be) {
             return be.hasPlayer() ? 15 : 0;
         }
@@ -140,11 +134,6 @@ public class HandleBlock extends AbstractDirectionalAxisBlock implements IBE<Han
     @Override
     public Class<HandleBlockEntity> getBlockEntityClass() {
         return HandleBlockEntity.class;
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     public @Nullable DyeColor getColor() {
@@ -162,8 +151,8 @@ public class HandleBlock extends AbstractDirectionalAxisBlock implements IBE<Han
 
 
     public enum Variant implements StringRepresentable {
-        IRON(Ingredient.of(AllTags.commonItemTag("nuggets/iron"))),
-        COPPER(Ingredient.of(AllTags.commonItemTag("nuggets/copper"))),
+        IRON(Ingredient.of(AllTags.forgeItemTag("nuggets/iron"))),
+        COPPER(Ingredient.of(AllTags.forgeItemTag("nuggets/copper"))),
         DYED(null);
 
         @Nullable final Ingredient ingredient;

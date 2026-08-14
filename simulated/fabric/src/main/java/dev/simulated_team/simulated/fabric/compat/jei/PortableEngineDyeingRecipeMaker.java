@@ -31,7 +31,7 @@ public final class PortableEngineDyeingRecipeMaker {
 				.map(color -> {
 					final DyeItem dye = DyeItem.byColor(color);
 					final ItemStack dyeStack = new ItemStack(dye);
-					final TagKey<Item> colorTag = AllTags.commonItemTag("dyes/" + color.getName());
+					final TagKey<Item> colorTag = AllTags.forgeItemTag("dyes/" + color.getName());
 					final Ingredient.Value dyeList = new Ingredient.ItemValue(dyeStack);
 					final Ingredient.Value colorList = new Ingredient.TagValue(colorTag);
 					final Stream<Ingredient.Value> colorIngredientStream = Stream.of(dyeList, colorList);

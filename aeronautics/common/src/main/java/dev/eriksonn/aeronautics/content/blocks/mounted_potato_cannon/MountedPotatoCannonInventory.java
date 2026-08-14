@@ -39,7 +39,7 @@ public class MountedPotatoCannonInventory extends SingleSlotContainer {
 		}
 	}
 
-	public void updateCachedType(final HolderLookup.Provider registries, final ItemStack itemStack) {
+	public void updateCachedType(final ItemStack itemStack) {
 		// why does PotatoCannonProjectileType.getTypeForItem() requires RegistryAccess specifically
 		this.cachedProjectileType = registries.lookupOrThrow(CreateRegistries.POTATO_PROJECTILE_TYPE)
 				.listElements()

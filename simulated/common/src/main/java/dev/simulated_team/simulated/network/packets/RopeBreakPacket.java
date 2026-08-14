@@ -10,6 +10,7 @@ import dev.simulated_team.simulated.content.blocks.rope.strand.server.ServerRope
 import foundry.veil.api.network.handler.ServerPacketContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.codec.StreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -23,7 +24,7 @@ public record RopeBreakPacket(UUID uuid) implements CustomPacketPayload {
     public static Type<RopeBreakPacket> TYPE = new Type<>(Simulated.path("break_rope"));
 
     public static StreamCodec<RegistryFriendlyByteBuf, RopeBreakPacket> CODEC = StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC, RopeBreakPacket::uuid,
+            StreamCodecs.UUID, RopeBreakPacket::uuid,
             RopeBreakPacket::new
     );
 
@@ -60,7 +61,7 @@ public record RopeBreakPacket(UUID uuid) implements CustomPacketPayload {
                 return;
             }
 
-            holder.destroyRope(player, null, !player.hasInfiniteMaterials());
+            holder.destroyRope(player, null, !player.getAbilities().instabuild);
         }
     }
 }

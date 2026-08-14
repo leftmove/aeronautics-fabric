@@ -13,8 +13,8 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Stolen shamelessly from {@link com.simibubi.create.content.kinetics.base.RotationIndicatorParticleData}
@@ -71,14 +71,34 @@ public class AugerIndicatorParticleData implements ParticleOptions, ICustomParti
     }
 
     @Override
-    public MapCodec<AugerIndicatorParticleData> getCodec(final ParticleType<AugerIndicatorParticleData> type) {
-        return CODEC;
+    public com.mojang.serialization.Codec<AugerIndicatorParticleData> getCodec(final ParticleType<AugerIndicatorParticleData> type) { return CODEC.codec(); }
+
+    
+    @Override
+    public ParticleOptions.Deserializer<AugerIndicatorParticleData> getDeserializer() {
+        return new ParticleOptions.Deserializer<>() {
+            @Override
+            public AugerIndicatorParticleData fromCommand(final ParticleType<AugerIndicatorParticleData> type, final com.mojang.brigadier.StringReader reader) {
+                return new AugerIndicatorParticleData();
+            }
+
+            @Override
+            public AugerIndicatorParticleData fromNetwork(final ParticleType<AugerIndicatorParticleData> type, final net.minecraft.network.FriendlyByteBuf buf) {
+                return STREAM_CODEC.decode(buf);
+            }
+        };
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, AugerIndicatorParticleData> getStreamCodec() {
-        return STREAM_CODEC;
+    public void writeToNetwork(final net.minecraft.network.FriendlyByteBuf buffer) {
+        STREAM_CODEC.encode(buffer, this);
     }
+
+    @Override
+    public String writeToString() {
+        return this.getType().toString();
+    }
+
 
     @Override
     @OnlyIn(Dist.CLIENT)

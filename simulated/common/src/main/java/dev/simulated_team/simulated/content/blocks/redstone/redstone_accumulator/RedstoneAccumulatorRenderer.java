@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.index.SimPartialModels;
+import dev.simulated_team.simulated.index.SimRenderTypes;
 import foundry.veil.api.client.render.VeilRenderBridge;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
@@ -22,9 +23,9 @@ public class RedstoneAccumulatorRenderer extends SmartBlockEntityRenderer<Redsto
     public static ResourceLocation SHADER_NAME = Simulated.path("redstone_accumulator/diode");
     public static RenderType DIODE_RENDER_TYPE = RenderType.create("redstone_accumulator_diode", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 131072, true, false,
             RenderType.CompositeState.builder()
-                    .setLightmapState(RenderStateShard.LIGHTMAP)
-                    .setShaderState(RenderStateShard.RENDERTYPE_CUTOUT_SHADER)
-                    .setTextureState(RenderStateShard.BLOCK_SHEET_MIPPED)
+                    .setLightmapState(SimRenderTypes.LIGHTMAP_STATE)
+                    .setShaderState(SimRenderTypes.CUTOUT_SHADER)
+                    .setTextureState(SimRenderTypes.BLOCK_SHEET_MIPPED_STATE)
                     .setShaderState(VeilRenderBridge.shaderState(SHADER_NAME))
                     .createCompositeState(true));
 

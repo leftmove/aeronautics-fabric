@@ -57,6 +57,13 @@ public class ServerHandleHoldingHandler {
 	}
 
 	public static void sync() {
-		CatnipServices.NETWORK.sendToAllClients(new ClientboundPlayersHoldingHandlePacket(holdingPlayers.keySet()));
+		final net.minecraft.server.MinecraftServer server = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer();
+		if (server == null) {
+			return;
+		}
+		final ClientboundPlayersHoldingHandlePacket packet = new ClientboundPlayersHoldingHandlePacket(holdingPlayers.keySet());
+		for (final net.minecraft.server.level.ServerPlayer player : server.getPlayerList().getPlayers()) {
+			foundry.veil.api.network.VeilPacketManager.dispatch(player, packet);
+		}
 	}
 }

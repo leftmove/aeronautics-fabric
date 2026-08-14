@@ -6,11 +6,11 @@ import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.config.client.SimClient;
 import dev.simulated_team.simulated.config.server.SimServer;
 import dev.simulated_team.simulated.service.SimConfigService;
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents;
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
+import fuzs.forgeconfigapiport.api.config.v2.ModConfigEvents;
 import net.createmod.catnip.config.ConfigBase;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.EnumMap;
@@ -45,7 +45,7 @@ public class FabricSimConfigService implements SimConfigService {
 	}
 
 	private static <T extends ConfigBase> T register(final Supplier<T> factory, final ModConfig.Type side) {
-		final Pair<T, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(builder -> {
+		final Pair<T, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(builder -> {
 			final T config = factory.get();
 			config.registerAll(builder);
 			return config;
@@ -61,17 +61,17 @@ public class FabricSimConfigService implements SimConfigService {
 		client = register(SimClient::new, ModConfig.Type.CLIENT);
 
 		for (final Map.Entry<ModConfig.Type, ConfigBase> entry : CONFIGS.entrySet()) {
-			NeoForgeConfigRegistry.INSTANCE.register(Simulated.MOD_ID, entry.getKey(), entry.getValue().specification);
+			ForgeConfigRegistry.INSTANCE.register(Simulated.MOD_ID, entry.getKey(), entry.getValue().specification);
 		}
 
-		NeoForgeModConfigEvents.loading(Simulated.MOD_ID).register(config -> {
+		ModConfigEvents.loading(Simulated.MOD_ID).register(config -> {
 			for (final ConfigBase value : CONFIGS.values()) {
 				if (value.specification == config.getSpec()) {
 					value.onLoad();
 				}
 			}
 		});
-		NeoForgeModConfigEvents.reloading(Simulated.MOD_ID).register(config -> {
+		ModConfigEvents.reloading(Simulated.MOD_ID).register(config -> {
 			for (final ConfigBase value : CONFIGS.values()) {
 				if (value.specification == config.getSpec()) {
 					value.onReload();

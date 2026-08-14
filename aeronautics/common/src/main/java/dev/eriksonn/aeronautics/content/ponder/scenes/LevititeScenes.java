@@ -547,7 +547,7 @@ public class LevititeScenes {
         world.hideIndependentSection(ground,null);
         overlay.showControls(
                 util.vector().topOf(gearshiftPos.east()), Pointing.DOWN,
-                10).withItem(new ItemStack(AllItems.BLAZE_CAKE.asItem()));
+                10).withItem(new ItemStack(AllItems.BLAZE_CAKE.get().asItem()));
         scene.idle(4);
         world.multiplyKineticSpeed(util.select().everywhere(),2);
 

@@ -2,7 +2,6 @@ package dev.simulated_team.simulated;
 
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
 import dev.simulated_team.simulated.content.blocks.steering_wheel.SteeringWheelRenderer;
-import dev.simulated_team.simulated.content.end_sea.EndSeaFadeTransformer;
 import dev.simulated_team.simulated.content.end_sea.EndSeaShadowRenderer;
 import dev.simulated_team.simulated.content.items.merging_glue.MergingGlueItemHandler;
 import dev.simulated_team.simulated.content.items.plunger_launcher.PlungerLauncherItemRenderer;
@@ -30,18 +29,15 @@ public class SimulatedClient {
 
         PonderIndex.addPlugin(new SimPonderPlugin());
 
-        VeilEventPlatform.INSTANCE.onVeilRenderLevelStage(EndSeaShadowRenderer::renderShadowMap);
+        VeilEventPlatform.INSTANCE.onVeilRenderTypeStageRender(EndSeaShadowRenderer::renderShadowMap);
 
-        VeilEventPlatform.INSTANCE.onVeilAddShaderProcessors((provider, registry) -> {
-            registry.addPreprocessor(new EndSeaFadeTransformer(), false);
-        });
         VeilEventPlatform.INSTANCE.onVeilRegisterFixedBuffers(registry -> {
             registry.registerFixedBuffer(VeilRenderLevelStageEvent.Stage.AFTER_PARTICLES, SimRenderTypes.laser());
             registry.registerFixedBuffer(VeilRenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, SimRenderTypes.lens());
             registry.registerFixedBuffer(VeilRenderLevelStageEvent.Stage.AFTER_LEVEL, SimRenderTypes.staffOverlay());
         });
 
-        VeilEventPlatform.INSTANCE.onVeilRenderLevelStage(SimulatedCommonClientEvents::onRenderLevelStage);
+        VeilEventPlatform.INSTANCE.onVeilRenderTypeStageRender(SimulatedCommonClientEvents::onRenderLevelStage);
 
         SuperByteBufferCache.getInstance().registerCompartment(SteeringWheelRenderer.STEERING_WHEEL);
     }

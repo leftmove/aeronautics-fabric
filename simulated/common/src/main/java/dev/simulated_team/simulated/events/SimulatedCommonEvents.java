@@ -47,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class SimulatedCommonEvents {
     /**
@@ -118,7 +119,7 @@ public class SimulatedCommonEvents {
     }
 
     public static @Nullable InteractionResult rightClickBlock(final Level level, final BlockPos pos, final Player player, final ItemStack useStack) {
-        if (level.getBlockState(pos).is(SimBlocks.SPRING) && useStack.is(SimTags.Items.SPRING_ADJUSTER)) {
+        if (level.getBlockState(pos).is(SimBlocks.SPRING.get()) && useStack.is(SimTags.Items.SPRING_ADJUSTER)) {
             if (SpringBlock.tryAdjustSpring(level, pos, player)) {
                 return InteractionResult.SUCCESS;
             } else {
@@ -148,27 +149,6 @@ public class SimulatedCommonEvents {
     }
 
     public static void modifyDefaultComponents(final BiConsumer<ItemLike, Consumer<DataComponentPatch.Builder>> modify) {
-        final ResourceLocation basePunchStrengthId = Simulated.path("base_punch_strength");
-        final ResourceLocation basePunchCooldownId = Simulated.path("base_punch_cooldown");
-
-        modify.accept(AllItems.EXTENDO_GRIP, builder -> {
-            final AttributeModifier strengthModifier = new AttributeModifier(basePunchStrengthId, 10.0f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            final AttributeModifier cooldownModifier = new AttributeModifier(basePunchCooldownId, 0.5f, AttributeModifier.Operation.ADD_VALUE);
-
-            builder.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.builder()
-                    .add(SableAttributes.PUNCH_STRENGTH, strengthModifier, EquipmentSlotGroup.MAINHAND)
-                    .add(SableAttributes.PUNCH_COOLDOWN, cooldownModifier, EquipmentSlotGroup.MAINHAND)
-                    .build());
-        });
-
-        modify.accept(AllItems.CARDBOARD_SWORD, builder -> {
-            final AttributeModifier attributeModifier = new AttributeModifier(basePunchStrengthId, 2.0f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-
-            builder.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.builder()
-                    .add(SableAttributes.PUNCH_STRENGTH, attributeModifier, EquipmentSlotGroup.MAINHAND)
-                    .build());
-        });
-
         SimulatedRegistrate.onAddDefaultComponents(modify);
     }
 }

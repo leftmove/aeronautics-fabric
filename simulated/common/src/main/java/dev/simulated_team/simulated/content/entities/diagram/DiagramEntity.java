@@ -53,8 +53,8 @@ import net.minecraft.world.level.block.DiodeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
@@ -200,7 +200,7 @@ public class DiagramEntity extends HangingEntity implements ISyncPersistentData,
         tag.putInt("Size", this.size);
 
         if (this.config != null) {
-            tag.put("Config", DiagramConfig.CODEC.encodeStart(NbtOps.INSTANCE, this.config).getOrThrow());
+            tag.put("Config", DiagramConfig.CODEC.encodeStart(NbtOps.INSTANCE, this.config).getOrThrow(false, s -> {}));
         }
 
         super.addAdditionalSaveData(tag);
@@ -220,7 +220,7 @@ public class DiagramEntity extends HangingEntity implements ISyncPersistentData,
 
         if (tag.contains("Config", Tag.TAG_COMPOUND)) {
             final CompoundTag configTag = tag.getCompound("Config");
-            this.config = DiagramConfig.CODEC.parse(NbtOps.INSTANCE, configTag).getOrThrow();
+            this.config = DiagramConfig.CODEC.parse(NbtOps.INSTANCE, configTag).getOrThrow(false, s -> {});
         } else {
             this.config = DiagramConfig.makeDefault(this);
         }
@@ -251,10 +251,9 @@ public class DiagramEntity extends HangingEntity implements ISyncPersistentData,
 
     @Override
     public EntityDimensions getDimensions(final Pose pose) {
-        return super.getDimensions(pose).withEyeHeight(0);
+        return super.getDimensions(pose);
     }
 
-    @Override
     protected AABB calculateBoundingBox(final BlockPos blockPos, final Direction direction) {
         Vec3 pos = Vec3.atLowerCornerOf(this.getPos())
                 .add(.5, .5, .5)
@@ -389,7 +388,7 @@ public class DiagramEntity extends HangingEntity implements ISyncPersistentData,
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+    protected void defineSynchedData() {
 
     }
 
@@ -400,7 +399,7 @@ public class DiagramEntity extends HangingEntity implements ISyncPersistentData,
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void lerpTo(final double pX, final double pY, final double pZ, final float pYRot, final float pXRot, final int pSteps) {
+    public void lerpTo(final double pX, final double pY, final double pZ, final float pYRot, final float pXRot, final int pSteps, final boolean teleport) {
         final BlockPos blockpos =
                 this.pos.offset(BlockPos.containing(pX - this.getX(), pY - this.getY(), pZ - this.getZ()));
         this.setPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());

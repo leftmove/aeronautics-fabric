@@ -14,15 +14,16 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class OffroadCommonEvents {
 
     public static void modifyDefaultComponents(final BiConsumer<ItemLike, Consumer<DataComponentPatch.Builder>> modify) {
-        modify.accept(AllBlocks.FLYWHEEL, builder -> { builder.set(OffroadDataComponents.TIRE, TireLike.FLYWHEEL); });
-        modify.accept(AllBlocks.LARGE_WATER_WHEEL, builder -> { builder.set(OffroadDataComponents.TIRE, TireLike.LARGE_WATER_WHEEL); });
-        modify.accept(AllBlocks.CRUSHING_WHEEL, builder -> { builder.set(OffroadDataComponents.TIRE, TireLike.CRUSHING_WHEEL); });
-        modify.accept(AllBlocks.WATER_WHEEL, builder -> { builder.set(OffroadDataComponents.TIRE, TireLike.WATER_WHEEL); });
-        modify.accept(AllBlocks.MECHANICAL_ROLLER, builder -> { builder.set(OffroadDataComponents.TIRE, TireLike.MECHANICAL_ROLLER); });
+        modify.accept(AllBlocks.FLYWHEEL, builder -> { ItemComponents.set(builder, OffroadDataComponents.TIRE, TireLike.FLYWHEEL); });
+        modify.accept(AllBlocks.LARGE_WATER_WHEEL, builder -> { ItemComponents.set(builder, OffroadDataComponents.TIRE, TireLike.LARGE_WATER_WHEEL); });
+        modify.accept(AllBlocks.CRUSHING_WHEEL, builder -> { ItemComponents.set(builder, OffroadDataComponents.TIRE, TireLike.CRUSHING_WHEEL); });
+        modify.accept(AllBlocks.WATER_WHEEL, builder -> { ItemComponents.set(builder, OffroadDataComponents.TIRE, TireLike.WATER_WHEEL); });
+        modify.accept(AllBlocks.MECHANICAL_ROLLER, builder -> { ItemComponents.set(builder, OffroadDataComponents.TIRE, TireLike.MECHANICAL_ROLLER); });
     }
 
     public static void physicsTick(final SubLevelPhysicsSystem physicsSystem, final double timeStep) {

@@ -4,8 +4,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 public interface NBTSerializable {
-    CompoundTag write(HolderLookup.Provider provider);
+    public CompoundTag write();
 
-    void read(HolderLookup.Provider provider, CompoundTag nbt);
+    void read(CompoundTag nbt);
 }
 

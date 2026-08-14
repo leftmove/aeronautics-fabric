@@ -1,17 +1,8 @@
 package dev.simulated_team.simulated.mixin.tooltip_flag;
 
-import dev.simulated_team.simulated.mixin_interface.tooltip_flag.TooltipFlagExtension;
-import net.minecraft.client.multiplayer.SessionSearchTrees;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(SessionSearchTrees.class)
+@Mixin(Minecraft.class)
 public class SessionSearchTreesMixin {
-    @ModifyVariable(method = "getTooltipLines", at = @At("HEAD"), argsOnly = true)
-    private static TooltipFlag markAsCreativeSearch(final TooltipFlag value) {
-        ((TooltipFlagExtension)value).simulated$setCreativeSearch(true);
-        return value;
-    }
 }

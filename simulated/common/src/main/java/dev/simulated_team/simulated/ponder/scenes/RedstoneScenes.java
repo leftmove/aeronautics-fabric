@@ -290,9 +290,9 @@ public class RedstoneScenes {
             final PonderLevel level = subScene.getWorld();
             final BlockEntity blockEntity = level.getBlockEntity(modulatingLink);
             final RegistryAccess registryAccess = level.registryAccess();
-            final CompoundTag tag = blockEntity.saveWithFullMetadata(registryAccess);
-            tag.put(FrequencyLast, iron.save(registryAccess, new CompoundTag()));
-            blockEntity.loadWithComponents(tag, registryAccess);
+            final CompoundTag tag = blockEntity.saveWithFullMetadata();
+            tag.put(FrequencyLast, iron.save(new CompoundTag()));
+            blockEntity.load(tag);
         });
     }
 

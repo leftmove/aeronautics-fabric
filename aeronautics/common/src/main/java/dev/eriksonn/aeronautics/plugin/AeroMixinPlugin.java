@@ -19,7 +19,7 @@ public class AeroMixinPlugin implements IMixinConfigPlugin {
         this.sodiumPresent = SodiumCompat.isLoaded();
         this.irisPresent = IrisCompat.isLoaded();
         try {
-            Class.forName("net.neoforged.neoforge.client.ChunkRenderTypeSet");
+            Class.forName("net.minecraftforge.client.ChunkRenderTypeSet");
             this.neoforgePresent = true;
         } catch (final ClassNotFoundException ignored) {
             this.neoforgePresent = false;

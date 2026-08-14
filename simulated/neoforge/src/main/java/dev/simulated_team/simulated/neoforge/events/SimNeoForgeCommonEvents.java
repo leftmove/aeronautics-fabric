@@ -30,29 +30,29 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.capabilities.Capabilities;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
-import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
-import net.neoforged.neoforge.event.level.ChunkEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.ModifyDefaultComponentsEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.UseItemOnBlockEvent;
+import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.concurrent.CompletableFuture;
@@ -114,7 +114,7 @@ public class SimNeoForgeCommonEvents {
 		if (event.getLevel().isClientSide()) {
 			if (event.getPlayer() != null && event.getUsePhase() == UseItemOnBlockEvent.UsePhase.ITEM_AFTER_BLOCK) {
 				if (SimulatedCommonClientEvents.useItemOnBlockEvent(event.getLevel(), event.getPlayer(), event.getItemStack(), event.getHand())) {
-					event.cancelWithResult(ItemInteractionResult.CONSUME);
+					event.cancelWithResult(InteractionResult.CONSUME);
 				}
 			}
 

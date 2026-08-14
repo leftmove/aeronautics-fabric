@@ -28,6 +28,7 @@ dependencies {
 
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation("com.simibubi.create:create-fabric:${create_fabric_version}")
 
     fabricProjects.each {
         implementation it

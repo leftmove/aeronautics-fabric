@@ -30,6 +30,7 @@ import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movem
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
+import dev.simulated_team.simulated.compat.ItemComponents;
 
 public class OffroadBlocks {
     private static final SimulatedRegistrate REGISTRATE = Offroad.getRegistrate();
@@ -84,7 +85,7 @@ public class OffroadBlocks {
                             .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.INDUSTRIAL_IRON_BLOCK))
                             .save(p))
                     .item()
-                    .properties(x -> x.component(OffroadDataComponents.TIRE, TireLike.ROCKCUTTING_WHEEL))
+                    .properties(x -> ItemComponents.with(x, OffroadDataComponents.TIRE, TireLike.ROCKCUTTING_WHEEL))
                     .transform(customItemModel())
                     .lang("Rock Cutting Wheel")
                     .register();

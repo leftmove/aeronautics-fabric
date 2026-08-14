@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
+import dev.simulated_team.simulated.compat.Mc1201;
 
 public class RockCuttingWheelBlockEntity extends SmartBlockEntity {
 
@@ -44,7 +45,7 @@ public class RockCuttingWheelBlockEntity extends SmartBlockEntity {
 
     @Override
     protected AABB createRenderBoundingBox() {
-        return AABB.encapsulatingFullBlocks(this.worldPosition, this.worldPosition.offset(this.getBlockState().getValue(BlockStateProperties.FACING).getNormal()));
+        return Mc1201.encapsulatingFullBlocks(this.worldPosition, this.worldPosition.offset(this.getBlockState().getValue(BlockStateProperties.FACING).getNormal()));
     }
 
     public float getAnimatedSpeed(final float partialTicks) {

@@ -228,7 +228,7 @@ public class PropellerBearingBlockEntity extends MechanicalBearingBlockEntity im
     }
 
     @Override
-    public void write(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    public void write(final CompoundTag compound, final boolean clientPacket) {
         compound.putFloat("LastGenerated", this.lastGeneratedSpeed);
         compound.putFloat("RotationSpeed", this.getRotationSpeed());
 
@@ -237,11 +237,11 @@ public class PropellerBearingBlockEntity extends MechanicalBearingBlockEntity im
             this.slowdownController.serializeIntoNBT(compound);
         }
 
-        super.write(compound, registries, clientPacket);
+        super.write(compound, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void read(final CompoundTag compound, final boolean clientPacket) {
         if (!this.wasMoved) {
             this.lastGeneratedSpeed = compound.getFloat("LastGenerated");
         }
@@ -252,7 +252,7 @@ public class PropellerBearingBlockEntity extends MechanicalBearingBlockEntity im
             this.slowdownController.deserializeFromNBT(compound);
         }
 
-        super.read(compound, registries, clientPacket);
+        super.read(compound, clientPacket);
     }
 
     @Override
